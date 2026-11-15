@@ -1,0 +1,46 @@
+name: Sync proposal list
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened, closed, labeled, unlabeled, ready_for_review, converted_to_draft, review_requested, review_request_removed]
+  workflow_run:
+    workflows: [Proposal review event]
+    types: [completed]
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/sync-proposals.yml
+      - .github/workflows/proposal-review-events.yml
+      - scripts/sync_proposals.py
+      - tests/test_sync_proposals.py
+      - proposals/**
+      - README.md
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: proposal-list-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out trusted default-branch code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Check synchronization logic
+        run: python3 -m unittest discover -s tests -p test_sync_proposals.py -v
+      - name: Refresh the proposal list
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/sync_proposals.py --publish
