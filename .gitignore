@@ -1,0 +1,43 @@
+# OS and Python-generated files
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+
+# Local previews and historical homepage drafts
+/preview/
+/versions/
+/DESIGN.md
+/Personal-Agents-Task-Format.html
+/docs/personal-agent-task-format.md
+
+# Local authoring helpers; future project scripts remain trackable
+/scripts/build_preview.py
+/scripts/build_task_format_preview.py
+/scripts/render_life_animation.py
+/scripts/select_readme.py
+
+# Unpublished design assets; keep the current homepage GIF tracked
+/assets/agent-icon.svg
+/assets/capability-hero.svg
+/assets/domain-hero.svg
+/assets/evaluation-flow.svg
+/assets/life-personalization.png
+/assets/life-world-devices.png
+/assets/life-world-research.png
+/assets/life-world.png
+/assets/pae-video-poster.jpg
+/assets/personalization-cases.json
+/assets/stories-hero.svg
+
+# Local research notes and earlier design references
+/docs/CHALLENGE-IDEAS.md
+/docs/CONTRIBUTION-FLOWS.md
+/docs/CONTRIBUTION-POLICY-REFERENCES.md
+/docs/IMAGE-PROMPT-DEVICES.md
+/docs/IMAGE-PROMPT-RESEARCH.md
+/docs/IMAGE-PROMPT.md
+/docs/RESEARCH.md
+/docs/SCENARIOS.md
+/docs/SOURCES.md
+/docs/source-cases.json
