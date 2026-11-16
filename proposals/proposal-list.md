@@ -8,10 +8,11 @@ Automatically synchronized from proposal PRs, their proposal files, reviews and 
 
 ## 🏗️ Environment Track
 
-**2 proposals.**
+**3 proposals.**
 
 | Submitted (UTC) | PR / app or website | Primary domain | Scope and app connections | Progress | Review | Author | Merged (UTC) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-11-16 03:23:48 | [#6](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/6) · Personal Finance Workspace, a custom simulated banking and brokerage app. Public workflow references: Chase online bank…<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/6/files) | Money &amp; insurance | A resettable personal-finance workspace with bank accounts, brokerage cash and holdings, transaction history, market observations, financial announcements, and concrete-action confirmations. It supports inspecting financial context, transf… | Design review | Awaiting review | [genglinliu](https://github.com/genglinliu) |  |
 | 2026-11-16 03:21:20 | [#5](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/5) · Taskrabbit handyman booking, https://www.taskrabbit.com/services/handyman. The proposed app is independently branded, w…<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/5/files) | Home &amp; utilities | A browser app for one non-emergency service: cabinet-hinge adjustment. The MVP supports four end-to-end workflows: (1) browse a few available slots and their fixed, all-inclusive synthetic estimates within a supplied budget; (2) select a s… | Draft | Awaiting review | [2018cx](https://github.com/2018cx) |  |
 | 2026-11-16 03:12:34 | [#4](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/4) · Zotero; https://www.zotero.org/ and https://www.zotero.org/support/collections\_and\_tags. Build an independently branded…<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/4/files) | Learning &amp; research | A persistent research library whose correct state depends on a person's evolving project, prior annotations, and permission to share. The initial slice has six complete workflows: (1) search/filter synthetic bibliographic records; (2) add/… | Draft | Awaiting review | [2018cx](https://github.com/2018cx) |  |
 
