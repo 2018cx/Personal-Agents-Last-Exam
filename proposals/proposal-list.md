@@ -21,10 +21,11 @@ Automatically synchronized from proposal PRs, their proposal files, reviews and 
 
 ## 🧪 Task Track
 
-**1 proposals.**
+**2 proposals.**
 
 | Submitted (UTC) | PR / task title | Primary domain | Personalization insight | Progress | Review | Author | Merged (UTC) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-11-16 04:18:56 | [#9](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/9) · Move home internet without breaking a work commitment<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/9/files) | Home &amp; utilities<br>Also: Work &amp; business | The key is a person-conditioned temporal invariant: every protected work interval must be covered by a verified adequate service at the user's location. Identical final states—old service closed, new service active, loan returned—can hide … | Draft | Awaiting review | [Peizeli1](https://github.com/Peizeli1) |  |
 | 2026-11-16 01:49:29 | [#3](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3) · Rerank a mountain biker's reading list when his daughter joins<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3/files) | Fitness &amp; wellbeing<br>Also: Shopping &amp; groceries | Whose ride is being planned and who received a purchase can reverse the relevance of the same post. An expert descent guide belongs near the top for the father alone. A youth race post contains both “youth” and “downhill” but helps neither… | Design review | Awaiting review | [LucasXinYu](https://github.com/LucasXinYu) |  |
 
 
