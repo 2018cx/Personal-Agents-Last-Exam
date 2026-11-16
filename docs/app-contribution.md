@@ -1,0 +1,78 @@
+# Contributing an App
+
+Build an App package that tasks can populate and use. Start from the complete [Mail](../examples/apps/mail/) or [Calendar](../examples/apps/calendar/) example, implement your business behavior, and submit the package with reproducible tests. The examples use the proposed reference format; the final platform interface is subject to maintainer review.
+
+## Start with a proposal
+
+Complete the [Environment proposal](../proposals/templates/environment-proposal.md) with the App workflows, connections, data, dependencies and construction plan. Follow the repository's [review and implementation process](../CONTRIBUTING.md#review-and-implementation). After design approval, add implementation and evidence to the same PR.
+
+App authors define what their app does and which data it accepts. A task supplies its particular user records and scenario events. The platform loads the package and runs integration checks. You do not need the platform's Core or Infra source to write or locally test your App.
+
+## Repository location
+
+Reference implementations live in `examples/apps/<app-id>/`. This directory can accept additional complete examples. Copy the closest example into a new App directory and update the App ID, file references, schemas, fixtures, handlers and tests together. Maintainers confirm the final delivery location for an accepted environment before merge.
+
+```text
+examples/apps/<app-id>/
+├── app.json                  # Package identity, versions and entrypoint/file references
+├── package.json              # Local test and example commands
+├── tools.json                # Business operations, input/output schemas and read/write effects
+├── service.cjs               # Platform-provided launch bridge; used by the platform runner
+├── plugin.cjs                # Exports the App functions expected by the host
+├── src/                      # Your domain model, business operations and event handlers
+├── schemas/                  # Seed, state, events, resources and optional messaging formats
+├── contribution/
+│   ├── contribution.json     # App capabilities, dependencies and independent send/receive declarations
+│   ├── gui.json              # Optional renderer and media slots
+│   ├── assets.catalog.json   # Asset IDs, files, MIME types and parent-record relationships
+│   └── dataset.json          # Data/media sources, generation method and quality checks
+├── fixtures/                 # Minimal synthetic data and references for reproducible checks
+├── assets/                   # Actual image, audio, video or observation bytes used by the fixtures
+├── gui/                      # Optional App renderer; layout and connections are supplied by its host
+├── examples/                 # Executable local walkthrough and valid event/message inputs
+├── tests/                    # Business tests and sample inputs for platform validation
+├── README.md                 # Setup, commands, workflows, dependencies and limitations
+└── LICENSE                   # Code license; record data/media reuse terms in dataset.json
+```
+
+The examples retain host-supplied policy samples and lifecycle declarations from the reference format. Contributors describe business effects and object relationships. The platform supplies credentials and applies access policies.
+
+## Implement the App
+
+Keep `plugin.cjs` small and place business logic under `src/`. The reference entrypoint exports `validateSeed`, `handleTool`, `applyEvent`, `records`, `objects` and `references`; Apps with attachments also export `assetReferences`. Internal folders may grow with the App.
+
+`handleTool` receives a context, a working copy of the App data, an operation name and arguments. Return the resulting data and business result. `applyEvent` applies a declared event to the working copy. `validateSeed` checks domain consistency, such as account ownership, unique record IDs, calendar ranges and cross-App references. The host validates the declared interfaces and controls persistence.
+
+Describe the operations accurately in `tools.json`, including what each operation reads or changes. Keep the seed and event examples consistent with their schemas. Provide relevant failure cases, such as editing a sent email, scheduling an overlapping event or receiving data for the wrong account.
+
+For messaging, declare `publishes` and `receives` separately. Mail implements both directions for text email. Calendar has neither direction, while still accepting a calendar update event. A sender uses the receiver's versioned message format; the platform resolves recipients and performs delivery. The examples use MCP for platform calls and CloudEvents for the message envelope. Neither declaration by itself grants access.
+
+## Data and media
+
+Put minimal reusable App records in `fixtures/`. A task can replace them with its own scenario data. A fixture is an example, not the full evaluation task.
+
+Records reference attachments by asset ID. Declare file paths, MIME types, integrity information and record associations in the catalog; store the actual bytes in `assets/`. Distinguish UI assets from content attachments. Record sources, reuse terms and generation methods in `dataset.json`. Synthetic or collected example data needs the same consistency and provenance checks.
+
+## Check your App locally
+
+The reference examples require Node.js 18 or later and no external packages:
+
+```sh
+cd examples/apps/mail
+npm test
+npm run example
+```
+
+Run the same commands in `examples/apps/calendar`. The tests call the real App business functions using small in-memory fixtures. The example command applies one sample event and prints the before/after data. Both commands exit unsuccessfully when an assertion or operation fails.
+
+Use the included tests as a pattern for your App. Cover successful workflows, representative invalid inputs, missing records, duplicate IDs, domain constraints, event handling and record/media associations. Keep source fixtures unchanged between runs. Document additional dependencies and commands in the App README.
+
+Passing local tests establishes that the tested business behavior works. It does not establish that the package is accepted or that platform permissions, persistence, isolation, retries, lifecycle operations or MCP transport have passed validation.
+
+## What to submit
+
+Submit the App directory, its README, license/provenance records, declared interfaces and schemas, minimal fixtures, examples and tests. Include the exact local commands, runtime version and test output. Provide valid operation/event inputs and expected outcomes so the platform can reproduce your workflows. Use the Mail and Calendar `tests/cases.json` and `examples/scenario.json` as small examples.
+
+The platform review runs the submitted package with the internal host. It checks startup and tool discovery, actual calls, initial data loading, state changes, reset/snapshot, event application, access boundaries, retries and concurrency where required by the approved scope. Messaging Apps also need delivery and receipt checks. Reviewers return results against the submitted revision through the existing PR review process.
+
+The repository's acceptance criteria remain the source of truth. Local checks and platform validation evidence are separate parts of the delivery.

@@ -70,6 +70,8 @@ Include milestone order, responsible contributors, expected calendar duration, d
 
 After plan approval, develop the concrete interfaces and implementation details. Final review checks complete workflows, permissions, state consistency, reset behavior, and integration evidence.
 
+For a proposed App package layout, locally testable Mail/Calendar examples and delivery instructions, see the [App contribution guide](docs/app-contribution.md).
+
 “Complete” means each declared workflow operates end to end, including modification, cancellation, confirmations, and realistic errors where relevant. It does not mean recreating every feature of the reference product.
 
 ## 🧪 Task Track
