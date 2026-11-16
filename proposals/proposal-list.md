@@ -8,12 +8,13 @@ Automatically synchronized from proposal PRs, their proposal files, reviews and 
 
 ## 🏗️ Environment Track
 
-**0 proposals.**
+**1 proposals.**
 
 | Submitted (UTC) | PR / app or website | Primary domain | Scope and app connections | Progress | Review | Author | Merged (UTC) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 2026-11-16 03:12:34 | [#4](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/4) · Zotero; https://www.zotero.org/ and https://www.zotero.org/support/collections\_and\_tags. Build an independently branded…<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/4/files) | Learning &amp; research | A persistent research library whose correct state depends on a person's evolving project, prior annotations, and permission to share. The initial slice has six complete workflows: (1) search/filter synthetic bibliographic records; (2) add/… | Draft | Awaiting review | [2018cx](https://github.com/2018cx) |  |
 
-No proposals submitted yet.
+
 
 ## 🧪 Task Track
 
