@@ -40,6 +40,13 @@ Name possible connections and briefly explain their purpose. Internal personal a
 - **Internal personal apps (required):** `[Fill in: personal apps and what could be read or updated, or None / TBD]`
 - **Other apps and websites (required):** `[Fill in: services and potential shared workflows, or None / TBD]`
 
+### Integration details
+
+- **Operations and access (required):** `[Fill in: MCP, API or GUI entry points; agent-facing actions; setup, reset and event-injection operations used by the platform]`
+- **State and lifecycle (required):** `[Fill in: how app, account and run state is separated; initial data, reset and snapshot behavior; write confirmation, retries and concurrent updates]`
+- **Events and notifications (required):** `[Fill in: external events the app accepts and notifications it sends; channels and example input/output data, or None. Task scenarios define when events occur.]`
+- **Shared data and dependencies (required):** `[Fill in: people, accounts and object references; media and attachment formats; shared components or services needed to run the app]`
+
 ## 4. Construction plan and effort
 
 Specify how the environment will be built, what will be collected or synthesized, and how each deliverable will be checked. Include expected counts or coverage where relevant. Effort estimates may be ranges; use person-days for human work. Mark reusable components and explain any workstream that is not applicable.
@@ -52,7 +59,7 @@ Specify how the environment will be built, what will be collected or synthesized
 | Data and image collection | `[Fill in: sources, crawling or reuse method, expected records/images and cleaning work]` | `[Fill in: collected assets, source/reuse records and checks for completeness and broken media]` | `[Fill in: estimate, or N/A with reason]` |
 | Synthetic data and assets | `[Fill in: records/images to generate, quantities, generation method and realistic variation]` | `[Fill in: generated fixtures and checks for consistency, duplication and realism]` | `[Fill in: estimate, or N/A with reason]` |
 | App integrations | `[Fill in: internal personal apps and other services in initial scope; reads/writes and dependencies]` | `[Fill in: connected workflows and state-consistency checks]` | `[Fill in: estimate, or N/A with reason]` |
-| Validation and reset | `[Fill in: workflow, permission and error cases; initial-state restoration]` | `[Fill in: reproducible checks and evidence that a reset restores the expected state]` | `[Fill in: estimate]` |
+| Validation and reset | `[Fill in: local business tests, workflow/error cases and reset checks; fixtures and expected outcomes for platform integration validation]` | `[Fill in: reproducible local test results and platform validation evidence covering permissions, state consistency and reset]` | `[Fill in: estimate]` |
 
 - **Milestones, owners and dependencies (required):** `[Fill in: work order, responsible contributors, expected calendar duration and dependencies; link related PRs]`
 - **Resources and total effort (required):** `[Fill in: total person-days, expected collection/generation costs and storage/compute needs; estimates or explained TBDs]`
