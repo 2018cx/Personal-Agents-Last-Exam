@@ -57,5 +57,6 @@ Specify how the environment will be built, what will be collected or synthesized
 - **Milestones, owners and dependencies (required):** `[Fill in: work order, responsible contributors, expected calendar duration and dependencies; link related PRs]`
 - **Resources and total effort (required):** `[Fill in: total person-days, expected collection/generation costs and storage/compute needs; estimates or explained TBDs]`
 - **Scope boundary and open questions (required):** `[Fill in: what is excluded or deferred, and how unresolved decisions will be settled]`
+- **License and external dependencies (required):** `[Fill in: license for code and assets, and whether any part is hosted instead of redistributed; any external service needed at run time and how it is replayed or controlled, or None]`
 
 After approval, add implementation and validation links against these deliverables in the same PR. Reviewers use the approved plan as the acceptance baseline; substantial scope changes require another design review. See the [contribution guide](../../CONTRIBUTING.md#review-and-implementation).
