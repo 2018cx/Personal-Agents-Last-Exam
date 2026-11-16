@@ -41,7 +41,7 @@ What does the user want, what changes, and what would a good outcome look like? 
 
 ## 4. What makes this distinct and personal
 
-How does this person's context change the right action, and what might a generic assistant miss?
+How does this person's context change the right action, and what might a generic assistant miss? Use one concrete example to show the request or trigger, where and when the agent can discover the decisive personal context, and how that context changes the appropriate action. If relevant, include one key change and the user’s response or non-response. 
 
 **✍️ Your answer (required):** `[Fill in: the central personalization challenge or insight]`
 
