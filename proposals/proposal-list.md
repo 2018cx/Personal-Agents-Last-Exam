@@ -21,7 +21,7 @@ No proposals submitted yet.
 
 | Submitted (UTC) | PR / task title | Primary domain | Personalization insight | Progress | Review | Author | Merged (UTC) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 2026-11-16 01:49:29 | [#3](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3) · Adapt a saved solo ride when a child joins<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3/files) | Fitness &amp; wellbeing | The same browsing history is relevant to the same rider on both days. What changes is whose needs the route must meet. A short route marketed as a family lake loop includes a mixed-traffic connector. Another lake route exceeds the family's… | Design review | Awaiting review | [LucasXinYu](https://github.com/LucasXinYu) |  |
+| 2026-11-16 01:49:29 | [#3](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3) · Rerank a mountain biker's reading list when his daughter joins<br>[View changes](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/3/files) | Fitness &amp; wellbeing<br>Also: Shopping &amp; groceries | Whose ride is being planned and who received a purchase can reverse the relevance of the same post. An expert descent guide belongs near the top for the father alone. A youth race post contains both “youth” and “downhill” but helps neither… | Design review | Awaiting review | [LucasXinYu](https://github.com/LucasXinYu) |  |
 
 
 
