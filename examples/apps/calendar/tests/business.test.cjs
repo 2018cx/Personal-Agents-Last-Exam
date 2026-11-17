@@ -10,3 +10,25 @@ test('adjacent events do not overlap',()=>{const f=fixture();const id=f.call('ca
 test('upsert changes the matching event without creating a duplicate',()=>{const f=fixture(),event=structuredClone(require('../examples/scenario.json'));f.event(event);const n=f.data.events.length;event.payload.title='Changed by scenario';f.event(event);assert.equal(f.data.events.length,n);assert.equal(f.data.events.find(e=>e.id===event.payload.id).title,'Changed by scenario');});
 test('event from another account and unknown organizer are rejected',()=>{const f=fixture(),event=structuredClone(require('../examples/scenario.json'));event.payload.account_id='other';assert.throws(()=>f.event(event),{code:'invalid_event'});const data=f.data;data.events[0].organizer_person_id='unknown';assert.throws(()=>plugin.validateSeed(f.ctx,data),{code:'invalid_event'});});
 test('unknown events are rejected and messaging capability is empty',()=>{const f=fixture();assert.throws(()=>f.event({operation:'calendar.unknown'}),{code:'invalid_event'});const messaging=require('../contribution/contribution.json').messaging;assert.deepEqual(messaging.publishes,[]);assert.deepEqual(messaging.receives,[]);});
+
+test('optional logging preserves Calendar results and state, including older contexts',()=>{
+ const a=fixture(),b=fixture({logging:false}),ra=a.call('calendar.create',args),rb=b.call('calendar.create',args);
+ assert.deepEqual(ra,rb);assert.deepEqual(a.data,b.data);
+ assert.deepEqual(a.logs.map(x=>x.step),['calendar.create.started','calendar.create.conflict_checked','calendar.create.prepared']);
+ assert.doesNotMatch(JSON.stringify(a.logs),/Local review|2026-11-16/);assert.deepEqual(b.logs,[]);
+});
+test('conflict diagnostics survive rejection and contain no prepared change',()=>{
+ const f=fixture(),before=f.data;assert.throws(()=>f.call('calendar.update',{id:'evt-review',patch:{start:'2026-11-16T13:30:00-08:00',end:'2026-11-16T14:30:00-08:00'}}),{code:'calendar_overlap'});
+ assert.deepEqual(f.data,before);assert.deepEqual(f.logs.map(x=>x.step),['calendar.update.started','calendar.record.found','calendar.update.conflict_checked']);assert.equal(f.logs.at(-1).details.conflict,true);
+});
+test('Calendar events report preparation; later validation can still reject the change',()=>{
+ const f=fixture(),event=structuredClone(require('../examples/scenario.json'));f.event(event);
+ assert.deepEqual(f.logs.map(x=>x.step),['calendar.event.started','calendar.upsert.matched','calendar.upsert.prepared']);
+ const before=f.data;event.payload.account_id='wrong';assert.throws(()=>f.event(event),{code:'invalid_event'});assert.deepEqual(f.data,before);
+ assert.equal(f.logs.at(-1).step,'calendar.upsert.prepared');assert.ok(f.logs.every(x=>!x.step.endsWith('.committed')));
+});
+test('unavailable logging never changes a Calendar result or domain error',()=>{
+ const a=fixture(),b=fixture({logging:false});a.ctx.log=()=>{throw Error('Sink unavailable');};
+ assert.deepEqual(a.call('calendar.list'),b.call('calendar.list'));assert.deepEqual(a.data,b.data);
+ assert.throws(()=>a.call('calendar.update',{id:'missing',patch:{title:'X'}}),{code:'not_found'});
+});

@@ -30,3 +30,13 @@ The manifest and contribution declarations retain the reference format, includin
 - `examples/`, `tests/`: a local event demonstration, unit tests and platform input examples.
 
 Data and media provenance is recorded in `contribution/dataset.json`; the inherited synthetic media review remains pending. Review asset reuse before final merge. See [the contribution guide](../../../docs/app-contribution.md).
+
+## Business results and step diagnostics
+
+`handleTool` still returns `{ data, result }`. The host validates and commits the data, then returns the business result through MCP. Diagnostic steps are not part of the result, tool schema or App state.
+
+Key operations and incoming events call the optional `ctx.log(step, details)` hook through `src/diagnostics.cjs`. The helper tolerates a missing or failing hook so older hosts and standalone business use keep the same behavior. App steps describe checks and prepared changes; only the host can confirm a persisted commit. Use fixed step names and minimal IDs/counts, not message text, addresses, credentials, codes or complete records.
+
+The local test fixture exposes `fixture().logs`. `npm run example` prints a separate `diagnostic_steps` section, and `npm test` checks successful and failed paths, unchanged results/state, and absent/failing log hooks. This collector is in-memory only: it is not the platform log service or proof of persistence.
+
+The platform owns correlation IDs, timestamps, storage, access and retention. See [the contributor logging contract](../../../docs/app-contribution.md#business-results-and-step-diagnostics) for the division of responsibilities. Diagnostic persistence requires the host logging extension; a host without that optional extension can still run the business operations.

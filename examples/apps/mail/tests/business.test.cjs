@@ -12,3 +12,30 @@ test('cross-account event, duplicate seed and unresolved cross-App reference are
 test('publisher constructs the declared CloudEvents envelope from a sent record',()=>{const f=fixture(),id=draft(f);f.call('mail.send',{id});const m=f.call('mail.get',{id}).message,event=notification(m,{sourceAccount:f.data.account_id,recipient:{account_id:'mail-alex',address:'alex@example.com'}});assert.equal(event.specversion,'1.0');assert.equal(event.dataschema,'urn:pale:email-payload:1');assert.equal(event.type,'org.pale.mail.notification.v1');assert.equal(event.data.content.body.text,'Synthetic');assert.equal(event.data.recipient.id,'mail-alex');assert.throws(()=>notification(m,{sourceAccount:'another',recipient:{account_id:'x',address:'alex@example.com'}}));assert.throws(()=>notification({...m,attachments:['image']},{sourceAccount:f.data.account_id,recipient:{account_id:'x',address:'alex@example.com'}}));});
 test('receiver maps message content and rejects a mismatched destination',()=>{const f=fixture(),message=structuredClone(require('../examples/message.json'));const event={event_id:'notification-local',at:f.ctx.virtual_now,operation:'mail.receive_notification',payload:{recipient_account_id:f.data.account_id,message}};f.event(event);assert.equal(f.call('mail.get',{id:event.event_id}).message.body,message.data.content.body.text);assert.equal(f.call('mail.get',{id:event.event_id}).message.read,false);assert.throws(()=>f.event({...event,event_id:'wrong',payload:{...event.payload,recipient_account_id:'other'}}),{code:'invalid_seed'});});
 test('outbound adapter does not publish if the injected client rejects send',async()=>{let published=false;const f=fixture(),id=draft(f),m=f.call('mail.get',{id}).message;const result=await send({agent:{call:async name=>name==='mail.get'?{status:'ok',message:m,version:{epoch:1,revision:0}}:{status:'permission_denied'}},router:{call:async()=>{published=true;}},messageId:id,requestId:'unit',sourceAccount:f.data.account_id,recipient:{account_id:'mail-alex',address:'alex@example.com'}});assert.equal(result.stage,'agent_authorization');assert.equal(published,false);});
+
+test('optional logging preserves business results and records, including older contexts',()=>{
+ const a=fixture(),b=fixture({logging:false});
+ const input={to:['alex@example.com'],subject:'Do not log this subject',body:'Do not log authentication code 739102'};
+ const resultA=a.call('mail.draft.create',input),resultB=b.call('mail.draft.create',input);
+ assert.deepEqual(resultA,resultB);assert.deepEqual(a.call('mail.send',{id:resultA.id}),b.call('mail.send',{id:resultB.id}));assert.deepEqual(a.data,b.data);
+ assert.deepEqual(a.logs.filter(x=>x.call_index===2).map(x=>x.step),['mail.send.started','mail.record.found','mail.send.validated','mail.send.prepared']);
+ assert.doesNotMatch(JSON.stringify(a.logs),/739102|Do not log|alex@example/);assert.deepEqual(b.logs,[]);
+});
+test('failed send retains diagnostic steps without claiming success or altering data',()=>{
+ const f=fixture(),before=f.data;assert.throws(()=>f.call('mail.send',{id:'materials'}),{code:'invalid_state'});
+ assert.deepEqual(f.data,before);assert.deepEqual(f.logs.map(x=>x.step),['mail.send.started','mail.record.found']);
+});
+test('incoming mail and notification diagnostics contain IDs rather than message content',()=>{
+ const f=fixture(),event=structuredClone(require('../examples/scenario.json'));f.event(event);
+ assert.deepEqual(f.logs.map(x=>x.step),['mail.event.started','mail.deliver.validated','mail.deliver.prepared']);
+ const before=f.data;assert.throws(()=>f.event({...event,event_id:'duplicate-record'}),{code:'already_exists'});assert.deepEqual(f.data,before);
+ assert.deepEqual(f.logs.filter(x=>x.call_index===2).map(x=>x.step),['mail.event.started']);
+ const message=structuredClone(require('../examples/message.json'));f.event({event_id:'logged-notification',at:f.ctx.virtual_now,operation:'mail.receive_notification',payload:{recipient_account_id:f.data.account_id,message}});
+ assert.deepEqual(f.logs.filter(x=>x.call_index===3).map(x=>x.step),['mail.event.started','mail.notification.validated','mail.notification.prepared']);
+ assert.ok(f.logs.every(x=>!Object.hasOwn(x.details,'body')));
+});
+test('unavailable logging never changes a Mail result or domain error',()=>{
+ const a=fixture(),b=fixture({logging:false});a.ctx.log=()=>{throw Error('Sink unavailable');};
+ assert.deepEqual(a.call('mail.get',{id:'materials'}),b.call('mail.get',{id:'materials'}));
+ assert.throws(()=>a.call('mail.send',{id:'materials'}),{code:'invalid_state'});assert.deepEqual(a.data,b.data);
+});
