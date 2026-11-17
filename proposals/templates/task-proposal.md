@@ -41,7 +41,7 @@ What does the user want, what changes, and what would a good outcome look like? 
 
 ## 4. What makes this distinct and personal
 
-How does this person's context change the right action, and what might a generic assistant miss?
+How does this person's context change the right action, and what might a generic assistant miss? Use one concrete example to show the request or trigger, where and when the agent can discover the decisive personal context, and how that context changes the appropriate action. If relevant, include one key change and the user’s response or non-response.
 
 **✍️ Your answer (required):** `[Fill in: the central personalization challenge or insight]`
 
@@ -54,10 +54,10 @@ Specify the work needed to turn the story into an executable, scoreable task. In
 | Workstream | Planned work and scale | Deliverable / quality check | Effort (person-days) |
 | :--- | :--- | :--- | :--- |
 | Persona, history and workspace | `[Fill in: context, records/media to create or reuse, quantities and sources]` | `[Fill in: coherent user context and discoverable evidence for the personalization insight]` | `[Fill in: estimate]` |
-| User rollout and scenario script | **Sessions:** `[Fill in: number of sessions]`<br>**Simulated world time span:** `[Fill in: hours, days, months or years covered]`<br>**Estimated total tokens:** `[Fill in: range or order of magnitude across all sessions]` | `[Fill in: executable user script, response/no-reply paths, changes over simulated time and state carried across sessions]` | `[Fill in: estimate]` |
+| User rollout and scenario script | **Sessions:** `[Fill in: number of sessions]`<br>**Simulated world time span:** `[Fill in: hours, days, months or years covered]`<br>**Estimated total tokens:** `[Fill in: range or order of magnitude across all sessions]`<br>Use timestamps with UTC offsets for sessions and events (e.g. `2026-11-12T08:30:00-08:00`). | `[Fill in: executable user script, response/no-reply paths, changes over simulated time and state carried across sessions]` | `[Fill in: estimate]` |
 | Environment integration | `[Fill in: apps/environments to reuse or build, fixtures, actions and missing dependencies]` | `[Fill in: runnable task package and initial-state/reset checks]` | `[Fill in: estimate]` |
-| Rubrics, reference and hints | `[Fill in: intended success criteria, key constraints, reference approach and hint design]` | `[Fill in: grading checks for success, partial/incorrect actions and reference feasibility]` | `[Fill in: estimate]` |
-| Agent rollouts and analysis | `[Fill in: planned runs per designated GPT, Claude and Gemini model, hinted runs and analysis work]` | `[Fill in: traces, scores and failure analysis meeting the linked validation protocol]` | `[Fill in: estimate]` |
+| Rubrics, reference and hints | `[Fill in: intended success criteria, key constraints, reference approach and hint design]` | `[Fill in: grading checks for success, partial/incorrect actions and reference feasibility]`<br>Before submission, check that the fixed hint addresses the decisive difficulty and, together with the available context, supports full credit across all scoring criteria and success gates without revealing the solution. | `[Fill in: estimate]` |
+| Agent rollouts and analysis | `[Fill in: planned runs per designated GPT, Claude and Gemini model, hinted runs and analysis work]` | `[Fill in: traces, scores and failure analysis meeting the linked validation protocol]`<br>Timestamp agent actions and observations on the same simulated timeline as the user script; record real execution dates and wall-clock duration separately. | `[Fill in: estimate]` |
 
 Estimate token volume for **one complete scenario across all sessions** and state what is included, such as dialogue, prior context and tool outputs. The simulated time span is the time elapsed in the user's world; development duration is recorded below.
 
