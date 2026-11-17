@@ -43,6 +43,7 @@ jobs:
         with:
           name: app-runtime-node-${{ matrix.node }}
           path: .artifacts/
+          include-hidden-files: true
           if-no-files-found: warn
   base-runtime-compatibility:
     if: github.event_name == 'pull_request'
