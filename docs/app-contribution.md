@@ -70,8 +70,8 @@ The runtime is a sibling shared component, not something each App author reimple
 
 | Package | App-specific files and behavior |
 | --- | --- |
-| Mail | `src/messaging.cjs`, `publisher.cjs`, `message-envelope.cjs`; Email payload/wire schemas; incoming mail and outgoing text notification examples. |
-| Calendar | `src/formats/ical.cjs`; calendar ranges, conflict rules and `calendar.upsert` examples. Its messaging send/receive lists are empty. |
+| Mail | `src/messaging.cjs`, `publisher.cjs`, `message-envelope.cjs`; Email payload/wire schemas; incoming mail, text notifications and a separate file-bearing notification contract. |
+| Calendar | `src/formats/ical.cjs` and `import-ical.cjs`; event attachments, calendar ranges, conflict/sequence rules and `calendar.upsert` examples. Its messaging send/receive lists are empty. |
 
 Copy only capabilities relevant to your App. A Calendar-like App need not have an Email payload file; a send-only App need not implement a receiver.
 
@@ -103,7 +103,7 @@ The public local host writes `<state-dir>/<run>/<app>.debug.jsonl`. Reset retain
 
 `fixtures/` holds small reusable examples, not a complete evaluation task. A Task can supply different historical records using the same seed schema. Store asset bytes under `assets/`, associate them by ID, and describe MIME, integrity, parent objects and provenance in the catalog. UI images and content attachments are distinct uses.
 
-The reference profile supports PNG/JPEG, MP3/WAV, MP4 and JSON in local bundles of at most 64 assets / 1 MiB. A general MIME field does not imply PDF, OCR or arbitrary-format runtime support. New App resource-access mappings require platform review; unknown mappings deny access rather than trusting App-supplied authorization code.
+The reference profile supports PDF, UTF-8 text, ICS, PNG/JPEG, MP3/WAV, MP4 and JSON in local bundles of at most 64 assets / 1 MiB. Attachment operations accept up to eight files per call. File storage and format checks do not perform OCR. New App resource-access mappings require platform review; unknown mappings deny access rather than trusting App-supplied authorization code.
 
 ## Verify before submission
 
@@ -140,3 +140,7 @@ Submit the App package, exact commands, package/runtime versions, verification r
 CI reruns checks without production credentials. For App-only PRs, a separate job uses the base revision's public validator; modifying the candidate's validator cannot establish independent compatibility. Runtime changes require Infra review. During the initial runtime bootstrap, unavailable base-runtime checks are explicitly not run.
 
 Maintainers reproduce essential outcomes and review business usefulness, GUI behavior where promised, media quality and provenance against the approved proposal. Public reference-runtime success is not automatic acceptance or evidence that production remote authentication is deployed.
+
+## File-bearing workflows
+
+See [attachment implementation and verification](app-attachments.md) for the receiver-owned contract, `ctx.assets` interface, Mail/Calendar tools, runnable example and the exact proposal fields to fill. Run `npm run example:attachments` from the repository root.

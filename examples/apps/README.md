@@ -22,4 +22,4 @@ npm run app:verify -- --app examples/apps/calendar
 npm test
 ```
 
-Common integration reports are separate from manual workflow/provenance review and remote production deployment. Mail's messaging is text Email; Calendar has no messaging directions. Other destinations require their own receive contracts and implementations.
+Common integration reports are separate from manual workflow/provenance review and remote production deployment. Mail declares separate text and attachment Email channels; Calendar exposes ICS import and attachment operations while keeping its messaging directions empty. Other destinations require their own receive contracts and implementations.

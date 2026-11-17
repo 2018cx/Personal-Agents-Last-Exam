@@ -12,6 +12,14 @@ Read the destination App's public contracts before implementing an integration. 
 
 For Mail, start with [tools](../examples/apps/mail/tools.json), [receive declarations](../examples/apps/mail/contribution/contribution.json), [Email payload](../examples/apps/mail/schemas/email-payload.schema.json) and [wire schema](../examples/apps/mail/schemas/router-message.schema.json). For Calendar, start with [tools](../examples/apps/calendar/tools.json) and [events](../examples/apps/calendar/schemas/events.schema.json). Calendar currently has no messaging receiver: do not assume a notification can create a calendar event automatically.
 
+## Record dependencies and the verification path
+
+In your README and proposal, name the existing App, link the exact tool or receive-schema file/version you reuse, and describe the expected change in that App. Distinguish a required dependency from an optional connection. For a required package dependency, pin its `app_id` and `version` in `app.json.dependencies`, and list the same ID in `contribution/contribution.json.dependencies.required_apps`. Supply its package with `app:verify --with PATH`. A scenario-specific recipient belongs in the run assembly; do not turn every possible message destination into a hard package dependency.
+
+Include an integration example/test that invokes the real dependency through its public interface and verifies the receiver's records, files or receipt. An App-only fake client is useful for business tests but does not prove integration. Missing dependencies, incompatible versions/contracts and rejected calls need visible outcomes. If the required receiving capability does not exist, identify that gap for scope review instead of implementing a private copy of the receiving App.
+
+Proposal reviewers check the dependency choice, interface links and acceptance plan. Implementation reviewers check the pinned packages, actual calls and receiver-side evidence using the [delivery review criteria](review/app-implementation.md).
+
 ## Responsibilities
 
 1. **Receiver App:** owns its public payload/operation contract and implementation. It validates accepted content and updates its own business state. Its internal `src/` layout is not a caller's API.
@@ -58,3 +66,7 @@ A local order commit or Mail `sent` state does not prove downstream delivery. Aw
 Preserve optional CloudEvents `time` as producer-reported event time. Core and Messaging separately record reception/application/acknowledgement metadata. Missing source time stays absent. Use event IDs, run/account binding and state versions to correlate, not host clock comparisons alone.
 
 Local stdio identity is fixed by the trusted launcher. A source field, an internal/external label or an Agent argument does not authenticate a caller. Production HTTPS/OAuth, restricted delivery credentials and network controls require Infra deployment work; changing App schema is not a substitute for them.
+
+## File-bearing workflows
+
+See [attachment implementation and verification](app-attachments.md) for the receiver-owned contract, `ctx.assets` interface, Mail/Calendar tools, runnable example and the exact proposal fields to fill. Run `npm run example:attachments` from the repository root.

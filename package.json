@@ -1,6 +1,6 @@
 {
   "name": "pale-public-app-examples",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "engines": {
     "node": ">=18"
@@ -13,6 +13,7 @@
     "example:mail-to-mail": "node examples/workflows/mail-to-mail/run.cjs",
     "example:delivery-to-mail": "node examples/workflows/delivery-to-mail/run.cjs",
     "contracts:check": "node runtime/build-contracts.cjs --check",
-    "contracts:build": "node runtime/build-contracts.cjs"
+    "contracts:build": "node runtime/build-contracts.cjs",
+    "example:attachments": "node examples/workflows/attachments/run.cjs"
   }
 }

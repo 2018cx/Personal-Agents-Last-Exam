@@ -18,7 +18,9 @@ const entries=[
  ['time-tracing',['runtime/messaging/tests/test_time_trace.cjs',path.join(reportDir,'time-trace.json')]],
  ['mail-to-mail',['runtime/tests/mail-to-mail.cjs']],
  ['delivery-to-mail',['examples/workflows/delivery-to-mail/run.cjs']],
- ['non-mail-route',['runtime/tests/non-mail-routing.cjs']]
+ ['non-mail-route',['runtime/tests/non-mail-routing.cjs']],
+ ['attachment-safety',['runtime/tests/attachments.cjs']],
+ ['attachment-workflow',['examples/workflows/attachments/run.cjs']]
 ];
 const stages=[];
 for(const [name,args]of entries){

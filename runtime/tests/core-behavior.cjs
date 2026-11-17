@@ -49,7 +49,7 @@ const data=app=>JSON.stringify(states[app].data);
  try{
   const make=async(app,role,run='test')=>{const c=new Client(app,role,run,dir);clients.push(c);await c.initialize();return c;};
   const mi=await make('mail','infra'),ci=await make('calendar','infra'),ma=await make('mail','agent'),ca=await make('calendar','agent');
-  let list=await ma.request('tools/list');check(list.result.tools.length===2&&list.result.tools.every(t=>t.inputSchema.additionalProperties===false),'actual MCP discovery');
+  let list=await ma.request('tools/list');check(JSON.stringify(list.result.tools.map(t=>t.name))===JSON.stringify(['mail.search','mail.get','mail.attachment.get'])&&list.result.tools.every(t=>t.inputSchema.additionalProperties===false),'actual MCP discovery');
   check((await ma.call('env.reset',{})).status==='permission_denied','actual MCP admin deny');
   check((await ma.call('mail.get',{id:'materials',run_id:'other'})).status==='invalid_arguments','actual MCP run override deny');
   const snap=await mi.call('env.snapshot');await mi.call('env.apply_event',{event:m.scenario,expected_version:snap.version});

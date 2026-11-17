@@ -55,7 +55,7 @@ function load(pkg,inside){
  const a=c.asset_runtime;
  requireThat(JSON.stringify(a.implemented_descriptor_versions)===JSON.stringify(['pale.asset-descriptor.v1']),'Descriptor runtime mismatch');
  requireThat(a.implemented_storage_adapters.every(x=>['storage.file','storage.inline'].includes(x))&&a.max_assets===64&&a.max_bundle_bytes===1048576,'Unsupported asset runtime limits / adapter');
- requireThat(JSON.stringify([...a.implemented_mime_types].sort())===JSON.stringify(['image/png','image/jpeg','audio/mpeg','audio/wav','video/mp4','application/json'].sort()),'MIME capability mismatch');
+ requireThat(a.implemented_mime_types.every(x=>['image/png','image/jpeg','audio/mpeg','audio/wav','video/mp4','application/json','application/pdf','text/plain','text/calendar'].includes(x)),'MIME capability mismatch');
  if(pkg.manifest.resources)requireThat(inside(pkg.dir,pkg.manifest.resources.catalog)===inside(dir,refs[0]),'Resource catalog reference mismatch');
  requireThat(inside(pkg.dir,pkg.manifest.dataset)===inside(dir,catalog.dataset_ref),'Dataset reference mismatch');
  return {declaration:c,catalog,dataset,gui,directory:dir};

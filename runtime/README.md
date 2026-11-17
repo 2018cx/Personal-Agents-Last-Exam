@@ -1,6 +1,6 @@
 # Public App runtime
 
-This package exposes the local reference Core and Infra-owned Messaging module so contributors can reproduce integration checks. Runtime release 1.3.0 supports App/Core API 1.2.0, contribution revision 0.4.0 and Email wire schema 2. Existing Mail/Calendar schemas, manifests, tool definitions and MCP business responses are retained.
+This package exposes the local reference Core and Infra-owned Messaging module so contributors can reproduce integration checks. Runtime release 1.4.0 supports Mail/Calendar 1.3.0, Core API 1.2.0 and contribution revision 0.4.0. Existing business tool schemas and the text Email wire contract are retained; attachment tools, a separate attachment channel and Calendar ICS import are additive.
 
 Requires Node.js 18+; no external packages or private credentials. From the repository root:
 
@@ -10,6 +10,7 @@ npm run app:verify -- --app examples/apps/mail --output .artifacts/mail.json
 npm run app:verify -- --app examples/apps/calendar --output .artifacts/calendar.json
 npm run example:delivery-to-mail
 npm run example:mail-to-mail
+npm run example:attachments
 ```
 
 `npm test` writes a per-stage summary and logs to `.artifacts/`, which is ignored. `PALE_REPORT_DIR` can choose another report directory. State is temporary for verification; normal service launches use the selected state directory. Business tests also run from each App alone.
@@ -56,8 +57,8 @@ Core event receipts/audit and Messaging receipts preserve optional producer time
 - Messaging currently uses trusted Infra receiver connections. Production deployment needs restricted delivery credentials and shared identity/access enforcement.
 - No reliable outbox, durable retry queue, crash resume or cross-App atomic transaction. Unknown receipt outcomes halt for inspection.
 - Per-App virtual clocks, not a global scheduler or reminder-triggered Agent sessions.
-- Text Email example; no cross-App media transfer. Custom receiver/channel support is proven by a test fixture, not a complete Messages/Push service.
-- Small local media bundles only; no PDF/OCR/live streams. Parent-resource access mappings remain platform-controlled and deny unknown mappings.
+- Mail supports the original text channel plus a separately authorized attachment channel. A custom receiver/channel is also covered by a test fixture.
+- Local media includes PDF, UTF-8 text, ICS, PNG/JPEG, MP3/WAV, MP4 and JSON; 64 assets / 1 MiB decoded bytes per App bundle. Parent-resource access mappings remain platform-controlled.
 - Mail/Calendar GUI files are reviewer renderers requiring a host. This package's automated tests do not claim a complete Agent CUA UI or a new public web deployment.
 - Human workflow realism, media quality, provenance and official platform acceptance remain separate reviews.
 

@@ -173,6 +173,47 @@
         "payload"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "operation": {
+          "const": "mail.receive_attachments"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "recipient_account_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "message": {
+              "$ref": "router-attachments.schema.json"
+            }
+          },
+          "required": [
+            "recipient_account_id",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "event_id",
+        "at",
+        "operation",
+        "payload"
+      ],
+      "additionalProperties": false
     }
   ]
 }

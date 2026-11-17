@@ -21,6 +21,8 @@ Read the proposal, PR body, comments, explicitly related tasks/environments and 
 
 Authors should consult the [existing App contracts](../app-integrations.md) and reuse receiver business interfaces. They implement their own business, publish declarations and compatible messages; they do not implement a replacement personal inbox/calendar just to connect to it. A required receiver/channel that does not exist is an explicit dependency.
 
+For each planned connection, check the linked App/tool/receive-schema version, whether the dependency is required or optional, the direction and data/file formats, and the observable outcome in the receiving App. The plan should identify who supplies a missing capability and how the integration will be demonstrated. A sender's successful return alone is not a sufficient acceptance criterion.
+
 Public Core/Messaging makes reference integration reproducible by contributors. Authors identify intended checks and required runtime capabilities in the existing Validation and reset workstream. Do not require token policies, TLS deployment, log retention design or completed tests in a proposal. Optional step logging becomes a delivery requirement only when included in approved scope.
 
 ## Findings and outcome

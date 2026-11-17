@@ -70,6 +70,14 @@
         "status": "implemented",
         "event_type": "org.pale.mail.notification.v1",
         "payload_schema_id": "urn:pale:email-payload:1"
+      },
+      {
+        "channel": "channel.email.attachments",
+        "schema_id": "urn:pale:email-attachments-message:1",
+        "schema_ref": "schemas/router-attachments.schema.json",
+        "status": "implemented",
+        "event_type": "org.pale.mail.attachments.v1",
+        "payload_schema_id": "urn:pale:email-attachments-payload:1"
       }
     ],
     "receives": [],

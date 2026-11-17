@@ -5,6 +5,7 @@ function fixture({logging=true}={}){
  const logs=[];let callIndex=0;
  let data=structuredClone(require('../fixtures/minimal.json'));
  const ctx={app_id:require('../app.json').app_id,virtual_now:'2026-11-15T09:00:00-08:00',binding:structuredClone(require('../fixtures/binding.json'))};
+ ctx.assets={add:({object_id,files})=>files.map((f,i)=>'test-'+object_id+'-'+i)};
  if(logging)ctx.log=(step,details={})=>logs.push({call_index:callIndex,step,details:structuredClone(details)});
  plugin.validateSeed(ctx,data);
  return {ctx,get logs(){return structuredClone(logs);},get data(){return structuredClone(data);},

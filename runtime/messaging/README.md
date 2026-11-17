@@ -32,7 +32,7 @@ Internal → external, external → internal and other directions use the same r
 
 MCP supplies tool discovery/calls. CloudEvents supplies the envelope (`specversion: "1.0"`); this implementation uses the 1.0.2 specification's JSON object profile. It requires JSON object `data`, `datacontenttype`, and `dataschema`; it does not support binary/batch delivery or arbitrary context extensions. AsyncAPI is not included.
 
-PALE defines its own routing fields, source URI naming, account grants, result receipts and MCP message argument. No official CloudEvents-over-MCP binding is claimed. App wire formats remain unchanged. Common wire copies are checked with `npm run contracts:check`.
+PALE defines its own routing fields, source URI naming, account grants, result receipts and MCP message argument. No official CloudEvents-over-MCP binding is claimed. The text Email wire format remains unchanged. File-bearing Email uses the additional `channel.email.attachments` declaration and `schemas/router-attachments.schema.json`. Common wire copies are checked with `npm run contracts:check`.
 
 ## Receipts, failure and time
 

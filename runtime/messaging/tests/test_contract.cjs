@@ -10,7 +10,7 @@ let count=0;const check=(v,m)=>{assert.ok(v,m);count++;};
  try{
   fs.mkdirSync(path.join(fixture,'contribution'));fs.mkdirSync(path.join(fixture,'schemas'));
   const declaration=read('examples/apps/mail/contribution/contribution.json');
-  fs.writeFileSync(path.join(fixture,'schemas/router-message.schema.json'),JSON.stringify(read('examples/apps/mail/schemas/router-message.schema.json')));
+  for(const name of ['router-message','router-attachments'])fs.writeFileSync(path.join(fixture,'schemas/'+name+'.schema.json'),JSON.stringify(read('examples/apps/mail/schemas/'+name+'.schema.json')));
   const declarationFile=path.join(fixture,'contribution/contribution.json'),configFile=path.join(data,'config.json');
   // Same config for all four directions. Only the App's declaration changes.
   const config={schema_version:2,registry:'examples/registry.calendar.json',authentication:{mode:'trusted-stdio'},publishers:[{app_id:'mail',account_id:'mail-a',owner_person_id:'person-maya',package_root:path.relative(root,fixture),contribution_ref:'contribution/contribution.json',allowed_recipients:[]}]};
@@ -20,7 +20,7 @@ let count=0;const check=(v,m)=>{assert.ok(v,m);count++;};
    const c=new Client(null,null,null,null,'router-contract-test',{commandArgs:[path.join(root,'runtime/messaging/service.cjs'),'--config',configFile,'--publisher','mail','--run',direction,'--state-dir',data]});clients.push(c);await c.initialize();
    const names=(await c.request('tools/list')).result.tools.map(x=>x.name),cap=await c.call('router.capabilities');
    check(cap.app_messaging.direction===direction,'MCP direction comes only from App: '+direction);
-   check(cap.app_messaging.publishes.length===(send?1:0)&&cap.app_messaging.receives.length===(receive?1:0),'directions are independent');
+   check(cap.app_messaging.publishes.length===(send?declaration.messaging.publishes.length:0)&&cap.app_messaging.receives.length===(receive?declaration.messaging.receives.length:0),'directions are independent');
    check(names.includes('router.publish')===send,'only implemented publishing enables tools/call');
    check(cap.authentication.mode==='trusted-stdio'&&!names.some(n=>n.startsWith('env.')),'fixed identity without management tools');
    if(!send)check((await c.call('router.publish',{})).status==='permission_denied','guessing publish cannot bypass an empty declaration');

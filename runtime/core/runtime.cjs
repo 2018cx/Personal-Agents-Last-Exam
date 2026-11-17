@@ -18,7 +18,7 @@ function createRuntime({registryFile,assemblyFile}={}){
   for(const id of configs.keys())if(!used.has(id))configs.delete(id);
  }
  const get=id=>{if(!configs.has(id))fail('invalid_configuration','App not enabled in assembly');return registry.apps.get(id);};
- function context(s,log){const ctx=copy({app_id:s.app_id,run_id:s.run_id,role:'agent',binding:s.binding,policy:s.policies[s.profile],virtual_now:s.virtual_now});if(typeof log==='function')ctx.log=log;return freeze(ctx);}
+ function context(s,log,withAssets=false){const ctx=copy({app_id:s.app_id,run_id:s.run_id,role:'agent',binding:s.binding,policy:s.policies[s.profile],virtual_now:s.virtual_now});if(typeof log==='function')ctx.log=log;if(withAssets)ctx.assets=require('./attachment-context.cjs').create(s,get(s.app_id));return freeze(ctx);}
  const validBinding=compile(bindingSchema,__dirname),validPolicies=compile(policySchema,__dirname);
  function checkConfig(pkg,binding,policies){
   if(!validBinding(binding)||new Set(binding.people.map(x=>x.person_id)).size!==binding.people.length||new Set(binding.accounts.map(x=>x.app_id+':'+x.account_id)).size!==binding.accounts.length||binding.accounts.some(x=>!binding.people.some(p=>p.person_id===x.owner_person_id)))fail('invalid_seed','Invalid identity binding');
@@ -50,6 +50,8 @@ function createRuntime({registryFile,assemblyFile}={}){
    s.initial_resources=assets.check(p,s.initial_data,migrate(s.initial_resources.bundle,s.app_id),{runId:s.run_id});
    s.package_version=p.manifest.version;s.core_api_version=registry.api;
   }
+  // Only these reference Apps retain the unchanged 1.2 data/state contract.
+  if(['mail','calendar'].includes(s.app_id)&&s.schema==='pale.app-state.v1'&&s.package_version==='1.2.0'&&p.manifest.version==='1.3.0'&&s.core_api_version===registry.api)s={...copy(s),package_version:'1.3.0'};
   if(s.schema!=='pale.app-state.v1'||s.package_version!==p.manifest.version||s.core_api_version!==registry.api||!p.validators.state(s))fail('invalid_state','Stored state/schema/package version mismatch');
   checkConfig(p,s.binding,s.policies);validateData(s,s.data);
   assets.check(p,s.data,s.resources.bundle,{strictCounts:false,strictOwners:false});
@@ -95,20 +97,20 @@ function createRuntime({registryFile,assemblyFile}={}){
     if(!p.manifest.event_types.includes(e.operation))fail('invalid_event','Undeclared event type');
     if(prior){if(prior.fingerprint!==fp)fail('idempotency_conflict','相同事件 ID 不得用于不同内容。');return {state:original,result:{...copy(prior.result),duplicate:true}};}
     checkVersion(s,args.expected_version);if(Date.parse(e.at)<Date.parse(s.virtual_now))fail('invalid_event','不能把 App 虚拟时间向后移动。');
-    s.data=p.plugin.applyEvent(freeze({...context(s,log),role:'infra'}),copy(s.data),copy(e));validateData(s,s.data,'invalid_event');if(args.bundle)s.resources=assets.check(p,s.data,args.bundle,{runId:s.run_id});s.virtual_now=e.at;s.revision++;changed=true;result={status:'committed',event_id:e.event_id};
+    s.data=p.plugin.applyEvent(freeze({...context(s,log,true),role:'infra'}),copy(s.data),copy(e));validateData(s,s.data,'invalid_event');if(args.bundle)s.resources=assets.check(p,s.data,args.bundle,{runId:s.run_id});s.virtual_now=e.at;s.revision++;changed=true;result={status:'committed',event_id:e.event_id};
    }else{
     const policy=s.policies[s.profile].constraints[name];if(policy&&(policy.ids&&!policy.ids.includes(args.id)||policy.fields&&args.patch&&Object.keys(args.patch).some(f=>!policy.fields.includes(f))))fail('permission_denied','对象或字段不在当前任务授权范围。');
     const key='request:'+args.request_id,fp=JSON.stringify({name,args});
     if(!t.read_only){if(!args.request_id||!args.request_id.trim())fail('invalid_arguments','Writes require a request_id');const prior=s.receipts[key];if(prior){if(prior.fingerprint!==fp)fail('idempotency_conflict','相同 request_id 不得用于不同请求。');return {state:original,result:{...copy(prior.result),duplicate:true}};}checkVersion(s,args.expected_version);}
-    const out=p.plugin.handleTool(context(s,log),copy(s.data),name,copy(args));
-    if(t.read_only&&JSON.stringify(out.data)!==JSON.stringify(s.data))fail('invalid_plugin_result','Read tool attempted a business mutation');
+    const out=p.plugin.handleTool(context(s,log,true),copy(s.data),name,copy(args));
+    if(t.read_only&&(JSON.stringify(out.data)!==JSON.stringify(s.data)||JSON.stringify(s.resources)!==JSON.stringify(original.resources)))fail('invalid_plugin_result','Read tool attempted a business mutation');
     validateData(s,out.data,'invalid_event');s.data=out.data;
     if(!t.read_only){s.revision++;changed=true;}
     result={...out.result,status:t.read_only?'ok':'committed',app_id:s.app_id,version:version(s)};
     if(!t.validateOutput(result))fail('invalid_plugin_result','Result does not match outputSchema');
     if(!t.read_only)s.receipts[key]={fingerprint:fp,result:copy(result)};
    }
-   if(changed)assets.check(p,s.data,s.resources.bundle,{strictCounts:false,strictOwners:false});
+   if(changed)s.resources=assets.check(p,s.data,s.resources.bundle,{strictCounts:false,strictOwners:false,runId:s.run_id});
    if(eventTrace){
     // processed_at is the Core decision time, before transport persistence.
     // Messaging records committed_at only after the receiver acknowledges storage.

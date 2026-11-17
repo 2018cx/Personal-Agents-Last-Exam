@@ -24,7 +24,7 @@ const path=require('node:path'),readline=require('node:readline'),{create}=requi
   error(m.id,-32601,'Method unavailable');
  }
  const input=readline.createInterface({input:process.stdin,crlfDelay:Infinity});
- input.on('line',line=>{let m;try{if(Buffer.byteLength(line)>65536)throw Error();m=JSON.parse(line);}catch{error(null,-32700,'Invalid / oversized JSON');return;}queue=queue.then(()=>handle(m)).catch(()=>error(m.id??null,-32603,'Router failure'));});
+ input.on('line',line=>{let m;try{if(Buffer.byteLength(line)>2*1024*1024)throw Error();m=JSON.parse(line);}catch{error(null,-32700,'Invalid / oversized JSON');return;}queue=queue.then(()=>handle(m)).catch(()=>error(m.id??null,-32603,'Router failure'));});
  input.on('close',()=>queue.finally(()=>router.close()));
  for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>router.close().finally(()=>process.exit(0)));
 })().catch(e=>{process.stderr.write(e.message+'\n');process.exitCode=1;});

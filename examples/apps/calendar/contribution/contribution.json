@@ -50,6 +50,26 @@
           "name": "calendar.export_ics",
           "effect": "read",
           "caller": "agent"
+        },
+        {
+          "name": "calendar.attachment.add",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "calendar.attachment.remove",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "calendar.import_ics",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "calendar.attachment.get",
+          "effect": "read",
+          "caller": "agent"
         }
       ]
     },
@@ -154,7 +174,10 @@
       "audio/mpeg",
       "audio/wav",
       "video/mp4",
-      "application/json"
+      "application/json",
+      "application/pdf",
+      "text/calendar",
+      "text/plain"
     ],
     "implemented_storage_adapters": [
       "storage.file",

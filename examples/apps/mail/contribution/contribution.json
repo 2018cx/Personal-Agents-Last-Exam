@@ -55,6 +55,21 @@
           "name": "mail.trash",
           "effect": "write",
           "caller": "agent"
+        },
+        {
+          "name": "mail.attachment.add",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "mail.attachment.remove",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "mail.attachment.get",
+          "effect": "read",
+          "caller": "agent"
         }
       ]
     },
@@ -126,6 +141,11 @@
         "type": "mail.receive_notification",
         "schema_ref": "schemas/events.schema.json",
         "status": "implemented"
+      },
+      {
+        "type": "mail.receive_attachments",
+        "schema_ref": "schemas/events.schema.json",
+        "status": "implemented"
       }
     ],
     "emits": [],
@@ -166,7 +186,10 @@
       "audio/mpeg",
       "audio/wav",
       "video/mp4",
-      "application/json"
+      "application/json",
+      "application/pdf",
+      "text/calendar",
+      "text/plain"
     ],
     "implemented_storage_adapters": [
       "storage.file",
@@ -184,6 +207,14 @@
         "status": "implemented",
         "event_type": "org.pale.mail.notification.v1",
         "payload_schema_id": "urn:pale:email-payload:1"
+      },
+      {
+        "channel": "channel.email.attachments",
+        "schema_id": "urn:pale:email-attachments-message:1",
+        "schema_ref": "schemas/router-attachments.schema.json",
+        "status": "implemented",
+        "event_type": "org.pale.mail.attachments.v1",
+        "payload_schema_id": "urn:pale:email-attachments-payload:1"
       }
     ],
     "receives": [
@@ -196,6 +227,16 @@
         "operation": "mail.receive_notification",
         "event_type": "org.pale.mail.notification.v1",
         "payload_schema_id": "urn:pale:email-payload:1"
+      },
+      {
+        "channel": "channel.email.attachments",
+        "schema_id": "urn:pale:email-attachments-message:1",
+        "schema_ref": "schemas/router-attachments.schema.json",
+        "status": "implemented",
+        "mcp_tool": "env.apply_event",
+        "operation": "mail.receive_attachments",
+        "event_type": "org.pale.mail.attachments.v1",
+        "payload_schema_id": "urn:pale:email-attachments-payload:1"
       }
     ],
     "envelope": "cloudevents/1.0"

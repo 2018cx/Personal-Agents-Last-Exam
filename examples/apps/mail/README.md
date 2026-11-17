@@ -44,7 +44,7 @@ The platform owns correlation IDs, timestamps, storage, access and retention. Se
 
 ## Public runtime integration
 
-This App now launches with the public runtime in the same checkout. Its existing business/schema/MCP contracts are unchanged. From the repository root:
+This App now launches with the public runtime in the same checkout. Existing business tool schemas and MCP response envelopes are preserved. App 1.3.0 adds attachment tools; use public runtime 1.4.0 for these additions. From the repository root:
 
 ```sh
 npm run app:verify -- --app examples/apps/mail --output .artifacts/mail.json
@@ -52,3 +52,13 @@ npm test
 ```
 
 See [App integration instructions](../../../docs/app-integrations.md) before using this App from another package. Inspect this App's `tools.json` and declared receive contracts; do not copy its backend or write its state files. Public local verification does not establish remote deployment authentication.
+
+## Attachment workflows
+
+`mail.attachment.add` accepts `id`, `files`, `expected_version` and `request_id`. Each file supplies a filename, MIME type, canonical base64 bytes and SHA-256, plus media metadata when applicable. `mail.attachment.get` takes `id` and `asset_id`, and returns `file`; `mail.attachment.remove` removes the selected record's reference. Core applies parent-record access checks and commits bytes with business state. Removed references are no longer readable; reset restores the loaded baseline.
+
+The App calls the injected `ctx.assets.add` / `ctx.assets.read`; it does not implement storage, permissions or reset. App-only tests use a small fake context to test business decisions. The public runtime suite separately checks actual bytes, hashes, access, rollback, retry and persistence.
+
+From the repository root, run `npm run example:attachments` for the complete order notification → Mail → Calendar workflow. See [attachment implementation and acceptance](../../../docs/app-attachments.md).
+
+Only drafts accept attachment edits. Mail's receive handler imports a delivered file under a new recipient-owned ID and associates it with the received message. Senders reuse `schemas/router-attachments.schema.json` for `channel.email.attachments`; the original `channel.email` contract is still supported. The publisher adapter exports bytes through authorized `mail.attachment.get` calls before sending.

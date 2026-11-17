@@ -13,6 +13,8 @@ function decode(value){
  const b=Buffer.from(value,'base64');if(b.toString('base64')!==value)throw new Error('Invalid canonical base64');return b;
 }
 function mimeMatches(b,type){
+ if(type==='application/pdf')return b.length>=20&&/^%PDF-[12]\.[0-9]/.test(b.toString('ascii',0,8))&&/%%EOF\s*$/.test(b.toString('ascii',Math.max(0,b.length-1024)));
+ if(type==='text/plain'||type==='text/calendar'){try{const t=new TextDecoder('utf-8',{fatal:true}).decode(b);return !t.includes('\0')&&(type==='text/plain'||/^BEGIN:VCALENDAR\r?\n/.test(t)&&/END:VCALENDAR\r?\n?$/.test(t));}catch{return false;}}
  if(type==='image/png')return b.length>=33&&b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))&&b.toString('ascii',12,16)==='IHDR';
  if(type==='image/jpeg')return b.length>4&&b[0]===255&&b[1]===216&&b[2]===255&&b[b.length-2]===255&&b[b.length-1]===217;
  if(type==='audio/mpeg')return b.length>4&&(b.toString('ascii',0,3)==='ID3'||b[0]===255&&(b[1]&224)===224);
@@ -62,6 +64,7 @@ function inspect(pkg,data,bundle,{strictCounts=true,strictOwners=true,runId}={})
   readyIds.add(a.asset_id);actual.ready_assets++;
   let b;try{b=decode(bundle.blobs[a.asset_id]);if(descriptor.storage.adapter==='storage.inline'&&descriptor.storage.inline_base64!==bundle.blobs[a.asset_id])throw new Error('Inline payload mismatch');}catch{add('bytes:'+a.asset_id,false,'Missing or invalid base64');continue;}
   actual.total_bytes+=b.length;add('bytes:'+a.asset_id,b.length===a.bytes&&sha(b)===a.sha256,'Size and SHA-256 must match the actual bytes.');
+  add('declared_mime:'+a.asset_id,pkg.contribution.declaration.asset_runtime.implemented_mime_types.includes(a.mime_type),'App must declare supported formats.');
   add('mime:'+a.asset_id,mimeMatches(b,a.mime_type),'File signature / JSON syntax check; not a full media decoder.');
   if(a.mime_type==='image/png'&&mimeMatches(b,a.mime_type))add('dimensions:'+a.asset_id,a.width===b.readUInt32BE(16)&&a.height===b.readUInt32BE(20));
   if(a.mime_type==='image/jpeg')add('image_metadata:'+a.asset_id,Number.isInteger(a.width)&&Number.isInteger(a.height));
@@ -78,7 +81,7 @@ function inspect(pkg,data,bundle,{strictCounts=true,strictOwners=true,runId}={})
  const fingerprints=records.map(x=>JSON.stringify(canonical(Object.fromEntries(Object.entries(x).filter(([k])=>!['id','uid'].includes(k))))));
  const duplicateRecords=fingerprints.length-new Set(fingerprints).size;
  add('duplicate_records',!duplicateRecords||d.quality_policy.duplicate_records==='allow',duplicateRecords+' duplicate record bodies (id / uid excluded).');
- add('duplicate_assets',!duplicateAssets||d.quality_policy.duplicate_assets==='allow',duplicateAssets+' repeated byte hashes.');
+ add('duplicate_assets',!strictCounts||!duplicateAssets||d.quality_policy.duplicate_assets==='allow',duplicateAssets+' repeated byte hashes.');
  if(duplicateRecords)warnings.push('重复记录 '+duplicateRecords+' 条；按显式策略处理。');
  if(duplicateAssets)warnings.push('重复素材 '+duplicateAssets+' 个；按显式策略处理。');
  if(d.review.status==='pending')warnings.push('真实性、变化丰富度和许可仍待人工审核。');
