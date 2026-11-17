@@ -16,7 +16,7 @@ Tests call the real App business functions with an in-memory fixture. They check
 
 ## Platform execution
 
-`service.cjs` is the platform-provided entrypoint, used when this package is assembled under `apps/mail/` by the platform runner. Contributors use the local commands above; the platform executes the entrypoint and performs full integration checks. Its runtime dependency is intentionally not distributed here.
+`service.cjs` is the provided launcher for the public runtime. It can start from this example directory in the full checkout; use the common verifier to drive MCP automatically. App-only business tests still need no runtime.
 
 The manifest and contribution declarations retain the reference format, including host-provided lifecycle behavior. A declaration is not proof that the local fixture implements that behavior. Public sample checks and platform integration evidence are reported separately.
 
@@ -39,4 +39,16 @@ Key operations and incoming events call the optional `ctx.log(step, details)` ho
 
 The local test fixture exposes `fixture().logs`. `npm run example` prints a separate `diagnostic_steps` section, and `npm test` checks successful and failed paths, unchanged results/state, and absent/failing log hooks. This collector is in-memory only: it is not the platform log service or proof of persistence.
 
-The platform owns correlation IDs, timestamps, storage, access and retention. See [the contributor logging contract](../../../docs/app-contribution.md#business-results-and-step-diagnostics) for the division of responsibilities. Diagnostic persistence requires the host logging extension; a host without that optional extension can still run the business operations.
+The platform owns correlation IDs, timestamps, storage, access and retention. See [the contributor logging contract](../../../docs/app-contribution.md#business-results-and-optional-diagnostics) for the division of responsibilities. Diagnostic persistence requires the host logging extension; a host without that optional extension can still run the business operations.
+
+
+## Public runtime integration
+
+This App now launches with the public runtime in the same checkout. Its existing business/schema/MCP contracts are unchanged. From the repository root:
+
+```sh
+npm run app:verify -- --app examples/apps/mail --output .artifacts/mail.json
+npm test
+```
+
+See [App integration instructions](../../../docs/app-integrations.md) before using this App from another package. Inspect this App's `tools.json` and declared receive contracts; do not copy its backend or write its state files. Public local verification does not establish remote deployment authentication.

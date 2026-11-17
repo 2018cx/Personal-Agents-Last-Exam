@@ -45,6 +45,8 @@ For example, Task proposal `#57` can depend on Environment proposal `#42`. These
 
 ## 🏗️ Environment Track
 
+The [App delivery guide](docs/app-contribution.md) and [public Core / Messaging runtime](runtime/README.md) provide reproducible local business and integration checks. Consult [existing App interfaces](docs/app-integrations.md) before building cross-App connections. Use the separate [proposal review](docs/review/environment-proposal.md) and [implementation review](docs/review/app-implementation.md) criteria; local runtime success does not replace maintainer acceptance or deployment-specific checks.
+
 Propose a website or app you would like to build and the main workflows it could support. Choose one primary domain and any relevant secondary domains from the list below. Use these exact names in the proposal and PR title.
 
 <a name="environment-domains"></a>

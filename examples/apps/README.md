@@ -1,14 +1,25 @@
-# App contribution examples
+# Complete App reference packages
 
-These independently packaged Mail and Calendar Apps show the proposed contribution format and provide local business tests that do not require platform source or credentials.
+[Mail](mail/README.md) and [Calendar](calendar/README.md) are two separate App implementations. Each has its own schema, tools, business modules, fixtures, media, examples and tests. Their internal folders need not be identical.
 
-| Example | Business workflows | Local commands from its directory |
-| --- | --- | --- |
-| [Mail](mail/) | Search/read, drafts/send, flags/folders, incoming events, text-email message conversion | `npm test`; `npm run example` |
-| [Calendar](calendar/) | List/read, free/busy, create/reschedule/cancel, ICS export, incoming updates | `npm test`; `npm run example` |
+Use the [common contribution structure](../../docs/app-contribution.md), then read the [App integration guide](../../docs/app-integrations.md) before calling another App or producing a notification. New contributions can live under `apps/<app-id>/`; keep one implementation per App.
 
-Start with [the App contribution guide](../../docs/app-contribution.md). Add future reference examples as sibling directories with the same documentation and local-test expectations.
+App-only checks (Node.js 18+, no dependencies):
 
-The sample packages retain the reference format (App/Core API 1.2.0, contribution revision 0.4.0, email wire schema 2). This is a proposed interface for review, not an announcement that PALE's first infrastructure release has adopted it.
+```sh
+cd examples/apps/mail
+npm test
+npm run example
+```
 
-Local tests exercise App functions and domain errors using synthetic data. `service.cjs` is the platform launch bridge and requires the internal host when assembled under `apps/<id>/`. Full MCP, permission, reset, persistence and routing validation is performed on the platform. This folder does not distribute the Core, Infra, Router implementation or live run state.
+Use the same commands in Calendar. These directly test business functions.
+
+The full public repository also includes [Core and Messaging](../../runtime/README.md), so contributors can run real MCP/lifecycle/permission checks:
+
+```sh
+npm run app:verify -- --app examples/apps/mail
+npm run app:verify -- --app examples/apps/calendar
+npm test
+```
+
+Common integration reports are separate from manual workflow/provenance review and remote production deployment. Mail's messaging is text Email; Calendar has no messaging directions. Other destinations require their own receive contracts and implementations.

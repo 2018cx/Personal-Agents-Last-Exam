@@ -1,104 +1,115 @@
 # Contributing an App
 
-Build an App package that tasks can populate and use. Start from the complete [Mail](../examples/apps/mail/) or [Calendar](../examples/apps/calendar/) example, implement your business behavior, and submit the package with reproducible tests. The examples use the proposed reference format; the final platform interface is subject to maintainer review.
+Build a reusable App that tasks can populate and operate. Start with an [Environment proposal](../proposals/templates/environment-proposal.md), agree on scope, then add the implementation and evidence to the same PR. The [repository process](../CONTRIBUTING.md#review-and-implementation) remains authoritative.
 
-## Start with a proposal
+The public checkout now contains the same local Core and Messaging implementation used for reference integration checks. Contributors can run business tests and real MCP integration without private source, credentials, a model API or a remote service. This is a proposed reference runtime, not a declaration that PALE production infrastructure is finalized.
 
-Complete the [Environment proposal](../proposals/templates/environment-proposal.md) with the App workflows, connections, data, dependencies and construction plan. Follow the repository's [review and implementation process](../CONTRIBUTING.md#review-and-implementation). After design approval, add implementation and evidence to the same PR.
+## Where to start
 
-App authors define what their app does and which data it accepts. A task supplies its particular user records and scenario events. The platform loads the package and runs integration checks. You do not need the platform's Core or Infra source to write or locally test your App.
+- [Mail](../examples/apps/mail/README.md): a complete Mail reference package.
+- [Calendar](../examples/apps/calendar/README.md): a separate Calendar reference package.
+- [App integration guide](app-integrations.md): **read this before connecting to an existing personal or external App**.
+- [Public runtime](../runtime/README.md): launch, validation, state, diagnostics and current limitations.
+- [Proposal review](review/environment-proposal.md) and [implementation review](review/app-implementation.md): review expectations.
 
-## Repository location
+Keep the reference Mail and Calendar under `examples/apps/`. New contributed Apps go under `apps/<app-id>/`, subject to maintainer scope/location review. Personal and external Apps use the same package contract. Do not copy an existing receiving App into your package to implement an integration.
 
-Reference implementations live in `examples/apps/<app-id>/`. This directory can accept additional complete examples. Copy the closest example into a new App directory and update the App ID, file references, schemas, fixtures, handlers and tests together. Maintainers confirm the final delivery location for an accepted environment before merge.
+## Common package structure
+
+This tree describes common responsibilities. Each App supplies its own domain files; it is not a combined Mail/Calendar checklist.
 
 ```text
-examples/apps/<app-id>/
-├── app.json                  # Package identity, versions and entrypoint/file references
-├── package.json              # Local test and example commands
-├── tools.json                # Business operations, input/output schemas and read/write effects
-├── service.cjs               # Platform-provided launch bridge; used by the platform runner
-├── plugin.cjs                # Exports the App functions expected by the host
-├── src/                      # Your domain model, business operations and event handlers
-│   └── diagnostics.cjs       # Optional ctx.log wrapper; no storage or private platform dependency
-├── schemas/                  # Seed, state, events, resources and optional messaging formats
+apps/<app-id>/
+├── app.json                  # Identity, version, dependencies and package-local entry/file references
+├── package.json              # Documented business test and example commands
+├── tools.json                # Business operations: names, inputs, outputs and read/write effects
+├── service.cjs               # Provided launcher for the public host; no business logic here
+├── plugin.cjs                # Thin exports of the hooks required by the host
+├── src/                      # Your business implementation, organized freely by domain
+│   ├── model.cjs             # Record consistency, object IDs and cross-App/media relationships
+│   ├── operations.cjs        # Tool handlers and business transitions
+│   ├── events.cjs            # Handlers for declared incoming events, when supported
+│   ├── diagnostics.cjs       # Optional safe ctx.log adapter
+│   └── ...                   # Optional messaging, formats, helpers or larger business modules
+├── schemas/                  # App-owned business rules plus matching provided public contracts
+│   ├── seed.schema.json      # Account and business records accepted as initial/history data
+│   ├── events.schema.json    # Declared incoming operations and the payload each handler accepts
+│   ├── state.schema.json     # Provided Core state envelope referring to this App's data rules
+│   ├── resources.schema.json # Provided resource descriptions/operations, when the App uses resources
+│   ├── ...payload.schema.json # Optional channel-specific business content owned by the receiver
+│   ├── router-message.schema.json # Optional generated CloudEvents + payload wire contract
+│   └── ...                   # Matching provided asset, catalog, bundle, dataset and quality contracts
 ├── contribution/
-│   ├── contribution.json     # App capabilities, dependencies and independent send/receive declarations
-│   ├── gui.json              # Optional renderer and media slots
-│   ├── assets.catalog.json   # Asset IDs, files, MIME types and parent-record relationships
-│   └── dataset.json          # Data/media sources, generation method and quality checks
-├── fixtures/                 # Minimal synthetic data and references for reproducible checks
-├── assets/                   # Actual image, audio, video or observation bytes used by the fixtures
-├── gui/                      # Optional App renderer; layout and connections are supplied by its host
-├── examples/                 # Executable local walkthrough and valid event/message inputs
-├── tests/                    # Business tests and sample inputs for platform validation
-├── README.md                 # Setup, commands, workflows, dependencies and limitations
-└── LICENSE                   # Code license; record data/media reuse terms in dataset.json
+│   ├── contribution.json     # Interfaces, lifecycle, dependencies and independent publishes/receives
+│   ├── gui.json              # Optional renderer/GUI declaration when referenced by the manifest
+│   ├── assets.catalog.json   # Asset identity, format, location, provenance and parent relationships
+│   └── dataset.json          # Record/media sources, generation, counts and quality-review status
+├── fixtures/                 # Minimal synthetic records; tasks may replace these with their history
+│   ├── minimal.json          # Accounts and business records matching the seed schema
+│   ├── binding.json          # Example people, accounts and object relationships
+│   └── policies.json         # Provided local policy samples, applied by Core
+├── assets/                   # Optional real fixture bytes; records reference asset IDs
+├── gui/                      # Optional App-owned renderer; describe its actual intended audience
+│   ├── src/                  # Components/pages use authorized interfaces and the same App state
+│   └── README.md             # Host requirements, supported interactions and unimplemented UI scope
+├── examples/                 # Runnable walkthrough and valid event/message inputs
+│   ├── run.cjs               # Uses fresh synthetic data to show actual business state changes
+│   ├── scenario.json         # One valid incoming event, if supported; does not schedule itself
+│   └── ...                   # Optional message input or replacement Task-data example, as relevant
+├── tests/                    # App business tests and inputs for common host checks
+│   ├── business.test.cjs     # Domain success/failure tests; may delegate to additional test modules
+│   ├── harness.cjs           # App-only in-memory test context; not a second Core implementation
+│   └── cases.json            # Valid business-call input for the public verifier, including a read
+├── README.md                 # Setup, workflow coverage, dependencies, commands and limitations
+└── LICENSE                   # Code license; data/media reuse conditions belong in dataset.json
 ```
 
-The examples retain host-supplied policy samples and lifecycle declarations from the reference format. Contributors describe business effects and object relationships. The platform supplies credentials and applies access policies.
+The runtime is a sibling shared component, not something each App author reimplements. Its `core/`, `messaging/`, contracts and tests live under [`runtime/`](../runtime/README.md).
 
-## Implement the App
+### How the reference Apps differ
 
-Keep `plugin.cjs` small and place business logic under `src/`. The reference entrypoint exports `validateSeed`, `handleTool`, `applyEvent`, `records`, `objects` and `references`; Apps with attachments also export `assetReferences`. Internal folders may grow with the App.
+| Package | App-specific files and behavior |
+| --- | --- |
+| Mail | `src/messaging.cjs`, `publisher.cjs`, `message-envelope.cjs`; Email payload/wire schemas; incoming mail and outgoing text notification examples. |
+| Calendar | `src/formats/ical.cjs`; calendar ranges, conflict rules and `calendar.upsert` examples. Its messaging send/receive lists are empty. |
 
-`handleTool` receives a context, a working copy of the App data, an operation name and arguments. Return the resulting data and business result. `applyEvent` applies a declared event to the working copy. `validateSeed` checks domain consistency, such as account ownership, unique record IDs, calendar ranges and cross-App references. The host validates the declared interfaces and controls persistence.
+Copy only capabilities relevant to your App. A Calendar-like App need not have an Email payload file; a send-only App need not implement a receiver.
 
-Describe the operations accurately in `tools.json`, including what each operation reads or changes. Keep the seed and event examples consistent with their schemas. Provide relevant failure cases, such as editing a sent email, scheduling an overlapping event or receiving data for the wrong account.
+## Implement business behavior
 
-For messaging, declare `publishes` and `receives` separately. Mail implements both directions for text email. Calendar has neither direction, while still accepting a calendar update event. A sender uses the receiver's versioned message format; the platform resolves recipients and performs delivery. The examples use MCP for platform calls and CloudEvents for the message envelope. Neither declaration by itself grants access.
+Keep `plugin.cjs` small; put business modules under `src/`. The current hooks are `validateSeed`, `handleTool`, `applyEvent`, `records`, `objects` and `references`; resource-bearing Apps also expose `assetReferences`. An App with no incoming events may reject all event operations and declare none.
 
-## Business results and step diagnostics
+`handleTool(ctx, data, name, args)` operates on a working copy and returns `{ data, result }`. `applyEvent` returns updated business data. Core validates input/output and business records, controls persistence, and returns the existing result/status/version through MCP. A read-only handler may not change business data.
 
-Keep two channels separate:
+Tasks supply actual accounts, history, preferences and scenario events. Apps define valid records and resulting transitions. Infra loads history with `env.load_seed`, applies changes with `env.apply_event`, and manages reset/snapshot. These administrative operations are unavailable to Agent connections, including when an Agent guesses their names.
 
-- **Business result:** the App returns `{ data, result }`; the platform validates and commits data, adds its existing status/version fields and returns the result through MCP. Existing `tools.json` output schemas remain the contract for Agent observations.
-- **Step diagnostics:** App code reports selected checks and prepared changes through an optional host hook. The platform records these separately for maintainers and Infra; they are not returned to the Agent or added to business state.
+Contributors describe business effects and record relationships. Core enforces local policy; production Infra supplies trusted identities, credentials and deployment access controls. Authors do not implement token issuance or authentication policy.
 
-```js
-const { log } = require('./diagnostics.cjs');
+## Connecting to another App
 
-log(ctx, 'mail.send.validated', { message_id: message.id });
-// Prepare changes to the working data copy.
-log(ctx, 'mail.send.prepared', { message_id: message.id });
-return { data, result: { id: message.id, simulated_delivery: true } };
-```
+First inspect the receiving App's `tools.json`, `contribution/contribution.json` and referenced schemas. Use business tools for actions such as creating a Calendar event. Use a declared messaging receive contract for asynchronous-style notifications such as an order notice. [The integration guide](app-integrations.md) explains both paths, account binding, version matching and examples.
 
-The template helper calls `ctx.log(step, details)` when provided and ignores logger failures. It does not store logs or implement Core. The hook is an optional additive extension: the App/Core API version, manifests, tool results and existing JSON schemas are unchanged. Hosts without the extension run the same business logic without collecting internal steps.
+A message declaration is a capability, not a grant. Infra supplies permitted sources, target accounts and explicit grants. Do not choose arbitrary receiver URLs, write another App's state files, create a shadow inbox/calendar, or bypass its business handler.
 
-### What the App records
+## Business results and optional diagnostics
 
-Use fixed, App-prefixed step names such as `mail.send.validated`, `mail.deliver.prepared`, `calendar.update.conflict_checked` and `calendar.upsert.prepared`. Report the key decision points needed to explain a result, not every line of code. Record only minimal, non-sensitive metadata:
+`{ data, result }` remains the business return. An optional `ctx.log(step, details)` channel records checks and prepared changes separately. The App-local diagnostics helper tolerates a missing or failing hook; it never decides that a commit occurred.
 
-- Stable object identifiers using `*_id` keys and a controlled `operation` name.
-- Nonnegative integer counters using `*_count` keys.
-- Boolean `found` / `conflict`, and `changed_fields` containing field names without values.
+Use stable step names and minimal non-sensitive metadata: object IDs, counters, booleans and changed field names. Never log bodies, subject lines, addresses, authentication codes, tokens, raw requests or full state. Core adds trusted run/App/call identity, real and virtual times, and the outcome after persistence. Diagnostics do not appear in Agent tools, resources, MCP business returns or business state.
 
-Do not log message bodies, subject lines, email addresses, event descriptions, authentication codes, tokens, raw requests/results or full state. Do not copy private content into an ID field. The platform bounds and filters metadata; this does not replace the author's responsibility to select safe diagnostic information.
+The public local host writes `<state-dir>/<run>/<app>.debug.jsonl`. Reset retains the separate diagnostic file. It is a best-effort sink, not a transactional archive; remote access, central collection, retention and alerts remain deployment concerns. Logging is optional unless included in the approved delivery scope.
 
-A `prepared` step is not proof of success. Later schema validation or persistence can reject a change. The host records the final outcome. App errors should keep their earlier diagnostic steps; diagnostics must not alter the business return or turn a rejected operation into a success.
+## Data, media and history
 
-### What the platform supplies
+`fixtures/` holds small reusable examples, not a complete evaluation task. A Task can supply different historical records using the same seed schema. Store asset bytes under `assets/`, associate them by ID, and describe MIME, integrity, parent objects and provenance in the catalog. UI images and content attachments are distinct uses.
 
-The platform attaches trusted App/run/call identity, request/event correlation where available, real timestamps, virtual time and an ordered sequence within a call. It records a separate outcome after persistence, including rejection and duplicate attempts. Repeated requests must not rerun business steps merely to generate logs.
+The reference profile supports PNG/JPEG, MP3/WAV, MP4 and JSON in local bundles of at most 64 assets / 1 MiB. A general MIME field does not imply PDF, OCR or arbitrary-format runtime support. New App resource-access mappings require platform review; unknown mappings deny access rather than trusting App-supplied authorization code.
 
-In the local reference host, valid MCP tool calls write separate per-App JSONL diagnostic files under the configured run state directory. They are not exposed by Agent tools or resource discovery. Infra/maintainers access the files through the host. App reset does not erase them; deleting the run directory does. Central collection, retention/rotation, remote access control, dashboards and alerts remain deployment responsibilities. The sink is best-effort: a diagnostic storage error emits a host warning without changing an already determined business result. This is not a transactional audit archive or automatic tracing of every internal function.
+## Verify before submission
 
-### Local verification
+Node.js 18+ is required. Current examples and runtime use Node built-ins and need no package installation.
 
-`tests/harness.cjs` supplies an in-memory `ctx.log` and exposes `fixture().logs`; `fixture({ logging: false })` exercises compatibility without the hook. The fixture does not manufacture platform commit receipts. `npm run example` displays the event's diagnostic steps separately from before/after business data. Tests compare logging-on/off results and state, retain partial steps on failure and verify that log-hook errors do not affect business behavior.
-
-For an Environment proposal, use the existing **Validation and reset** workstream to identify key success/error scenarios and the diagnostic evidence reviewers should be able to inspect. Authors do not need to propose logging infrastructure, token policies or retention settings.
-
-## Data and media
-
-Put minimal reusable App records in `fixtures/`. A task can replace them with its own scenario data. A fixture is an example, not the full evaluation task.
-
-Records reference attachments by asset ID. Declare file paths, MIME types, integrity information and record associations in the catalog; store the actual bytes in `assets/`. Distinguish UI assets from content attachments. Record sources, reuse terms and generation methods in `dataset.json`. Synthetic or collected example data needs the same consistency and provenance checks.
-
-## Check your App locally
-
-The reference examples require Node.js 18 or later and no external packages:
+App-only business checks still work with just that App directory:
 
 ```sh
 cd examples/apps/mail
@@ -106,16 +117,26 @@ npm test
 npm run example
 ```
 
-Run the same commands in `examples/apps/calendar`. The tests call the real App business functions using small in-memory fixtures. The example command applies one sample event and prints the before/after data. Both commands exit unsuccessfully when an assertion or operation fails.
+From a full public checkout, run real host checks:
 
-Use the included tests as a pattern for your App. Cover successful workflows, representative invalid inputs, missing records, duplicate IDs, domain constraints, event handling and record/media associations. Keep source fixtures unchanged between runs. Document additional dependencies and commands in the App README.
+```sh
+npm run app:verify -- --app examples/apps/mail --output .artifacts/mail.json
+npm run app:verify -- --app examples/apps/calendar --output .artifacts/calendar.json
+npm run example:delivery-to-mail
+npm run example:mail-to-mail
+npm test
+```
 
-Passing local tests establishes that the tested business behavior works. It does not establish that the package is accepted or that platform permissions, persistence, isolation, retries, lifecycle operations or MCP transport have passed validation.
+For a new package, use `--app apps/<app-id>`. Supply each pinned App dependency with `--with PATH`; the verifier never silently substitutes an unavailable dependency. The common checker uses `tests/cases.json.read` and, for declared incoming events, `examples/scenario.json`. Missing business-test evidence is reported as not run. A legitimately different App interface needs an agreed validation adapter, not invented functionality just to satisfy a reference test.
 
-## What to submit
+The verifier copies exact packages to temporary state, loads real Core, uses separate Agent and Infra MCP connections, and records versioned results. Temporary directories are not containment of malicious code; inspect submissions before executing them. Local credentials are unnecessary.
 
-Submit the App directory, its README, license/provenance records, declared interfaces and schemas, minimal fixtures, examples and tests. Include the exact local commands, runtime version and test output. Provide valid operation/event inputs and expected outcomes so the platform can reproduce your workflows. Use the Mail and Calendar `tests/cases.json` and `examples/scenario.json` as small examples.
+`npm test` also checks media, concurrency, failure atomicity, logging, four messaging directions, delivery rejection, retries, source time, lost acknowledgements and a non-Mail receiver. Mail is an example destination, not a built-in routing requirement. These checks exercise the reference packages; a new App must add evidence for its own approved workflows.
 
-The platform review runs the submitted package with the internal host. It checks startup and tool discovery, actual calls, initial data loading, state changes, reset/snapshot, event application, access boundaries, retries and concurrency where required by the approved scope. Messaging Apps also need delivery and receipt checks. When the logging extension is enabled, reviewers also verify separate diagnostics for successful, failed and duplicate calls, correct run/App correlation, and unchanged MCP results and business state schemas. Reviewers return results against the submitted revision through the existing PR review process.
+## Submit and review
 
-The repository's acceptance criteria remain the source of truth. Local checks and platform validation evidence are separate parts of the delivery.
+Submit the App package, exact commands, package/runtime versions, verification reports, workflow-to-test mapping and provenance. Generated state/logs stay out of source control. Reports should use synthetic data and be attached as review evidence.
+
+CI reruns checks without production credentials. For App-only PRs, a separate job uses the base revision's public validator; modifying the candidate's validator cannot establish independent compatibility. Runtime changes require Infra review. During the initial runtime bootstrap, unavailable base-runtime checks are explicitly not run.
+
+Maintainers reproduce essential outcomes and review business usefulness, GUI behavior where promised, media quality and provenance against the approved proposal. Public reference-runtime success is not automatic acceptance or evidence that production remote authentication is deployed.
