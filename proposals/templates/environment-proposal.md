@@ -8,6 +8,8 @@ Copy this template to `proposals/environment/<slug>.md`. Keep the overview conci
 
 ✍️ Replace each `[Fill in: …]` with your answer. Optional fields can be `None`. For unresolved details, use `TBD` and explain how they will be resolved.
 
+After design approval, use the [App contribution guide](../../docs/app-contribution.md) and [public Core / Messaging runtime](../../runtime/README.md) to reproduce local integration checks. For connections to existing Apps, consult their [business and receive contracts](../../docs/app-integrations.md) before implementing the sender.
+
 ## 1. App and domains
 
 - **Authors / GitHub handles (required):** `[Fill in: names and @handles]`
@@ -59,7 +61,7 @@ Specify how the environment will be built, what will be collected or synthesized
 | Data and image collection | `[Fill in: sources, crawling or reuse method, expected records/images and cleaning work]` | `[Fill in: collected assets, source/reuse records and checks for completeness and broken media]` | `[Fill in: estimate, or N/A with reason]` |
 | Synthetic data and assets | `[Fill in: records/images to generate, quantities, generation method and realistic variation]` | `[Fill in: generated fixtures and checks for consistency, duplication and realism]` | `[Fill in: estimate, or N/A with reason]` |
 | App integrations | `[Fill in: internal personal apps and other services in initial scope; reads/writes and dependencies]` | `[Fill in: connected workflows and state-consistency checks]` | `[Fill in: estimate, or N/A with reason]` |
-| Validation and reset | `[Fill in: local business tests, workflow/error cases and reset checks; fixtures and expected outcomes for platform integration validation]` | `[Fill in: reproducible local test results and platform validation evidence covering permissions, state consistency and reset]` | `[Fill in: estimate]` |
+| Validation and reset | `[Fill in: local business tests plus public-runtime MCP, workflow/error, history-loading and reset checks; declared cross-App flows and expected receiver state/receipts where applicable]` | `[Fill in: after implementation: exact App/runtime versions, commands and reproducible reports covering permissions, state consistency, reset and declared integrations; note remaining manual or deployment checks]` | `[Fill in: estimate]` |
 
 - **Milestones, owners and dependencies (required):** `[Fill in: work order, responsible contributors, expected calendar duration and dependencies; link related PRs]`
 - **Resources and total effort (required):** `[Fill in: total person-days, expected collection/generation costs and storage/compute needs; estimates or explained TBDs]`
