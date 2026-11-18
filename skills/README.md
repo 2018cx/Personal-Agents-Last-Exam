@@ -39,17 +39,14 @@ claude plugin install pale-env@pale        # or pale-task@pale, pale-general@pal
 
 Inside a session, use `/plugin marketplace add …` and `/plugin install …` with the same arguments.
 
-Codex, from a local clone of this repository:
+Codex:
 
-```toml
-# ~/.codex/config.toml
-[marketplaces.pale]
-source_type = "local"
-source = "/path/to/Personal-Agents-Last-Exam"
-
-[plugins."pale-env@pale"]
-enabled = true
+```sh
+codex plugin marketplace add MatrAIx-ai/Personal-Agents-Last-Exam --sparse .claude-plugin --sparse skills
+codex plugin add pale-env@pale             # or pale-task@pale, pale-general@pale
 ```
+
+Both tools also accept the path of a local clone in place of `MatrAIx-ai/Personal-Agents-Last-Exam`. Installed skills carry their category in both tools, for example `pale-env:<skill>`.
 
 ## Add a skill
 
@@ -66,5 +63,5 @@ enabled = true
 
    Agents decide whether to load a skill from its description, so state when to use it.
 4. **Keep the skill self-contained.** Put everything it needs in its own `references/` and `scripts/` folders. Do not point to files in other skills or categories, and do not hard-code personal paths, hosts or credentials.
-5. **Bump the version.** Raise `version` in the category's two plugin manifests and in its entry in `.claude-plugin/marketplace.json`.
-6. **Validate before opening the PR.** Run `claude plugin validate .` from the repository root and `claude plugin validate skills/<category>`.
+5. **Bump the version.** Raise `version` in the category's two plugin manifests and in its entry in `.claude-plugin/marketplace.json`. Codex keeps installed plugins in a cache folder named by version, so an unchanged version can hide your edits.
+6. **Validate before opening the PR.** Run `claude plugin validate .` from the repository root and `claude plugin validate skills/<category>`. For Codex, add your clone with `codex plugin marketplace add <clone path>`, install the category with `codex plugin add pale-<category>@pale`, and check that `codex debug prompt-input` lists the skill.
