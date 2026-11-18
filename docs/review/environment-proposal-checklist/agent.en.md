@@ -1,6 +1,6 @@
 # Environment proposal checklist · agent version
 
-Follows the 8 review dimensions of the proposal review guide in PR #12 (`docs/review/environment-proposal.md`), with 3 checks each. Every check ends in one of four verdicts.
+Follows the 8 review dimensions of the [proposal review guide](../environment-proposal.md), with 3 checks each. Every check ends in one of four verdicts.
 
 ## How to use this file
 
@@ -8,7 +8,7 @@ Run it on one proposal PR. Give your agent (Claude Code, Codex or similar, with 
 
 > Read `docs/review/environment-proposal-checklist/agent.en.md`. Review PR #<number> of MatrAIx-ai/Personal-Agents-Last-Exam against it. Get the title, description, comments and file list with `gh pr view <number> --repo MatrAIx-ai/Personal-Agents-Last-Exam --json title,body,comments,files,headRefOid`, and read the proposal file with `gh api "repos/MatrAIx-ai/Personal-Agents-Last-Exam/contents/<path>?ref=refs/pull/<number>/head" -H "Accept: application/vnd.github.raw"`. Follow the steps, then output the workflow traces, the verdict table and the recommendation. Do not post anything on GitHub.
 
-The reviewer then works through `human.en.md` (or `human.zh-Hans.md`). These checks follow the proposal review guide in PR #12 (`docs/review/environment-proposal.md`) at `0e9ede3`. They are a draft and have not yet been validated against reviewed proposals.
+The reviewer then works through `human.en.md` (or `human.zh-Hans.md`). These checks follow the [proposal review guide](../environment-proposal.md), the [contribution process](../../../CONTRIBUTING.md#review-and-implementation) and the [runtime extension boundaries](../../environment-architecture.md). Record the revision of these guides with each review. They are a draft and have not yet been validated against reviewed proposals.
 
 ## How to run
 
@@ -30,7 +30,9 @@ The reviewer then works through `human.en.md` (or `human.zh-Hans.md`). These che
 
 - Quote the proposal as path:line for every verdict.
 - A missing platform capability is a dependency, not the author’s defect: use Partial approve or Human judge, not Reject.
-- The author’s own open questions are open decisions, not omissions.
+- The author’s own open questions are open decisions, not omissions. Missing detail alone does not prove an unsafe design; request clarification and reserve Reject for an evidenced design gap.
+- Notify authors of overlapping proposals and link them. Approval is non-exclusive; parallel implementation is allowed. Only validated merge counts as acceptance.
+- The lightweight reference host is one runtime profile, not the universal limit for Web/CUA or larger-data proposals. Record any required adapter and owner.
 - Do not invent numeric thresholds, apply Task difficulty gates, or require token policies, TLS, log retention or completed tests.
 - Ideas outside the first version are optional improvements; do not widen acceptance.
 
@@ -38,7 +40,7 @@ The reviewer then works through `human.en.md` (or `human.zh-Hans.md`). These che
 
 - Needs design changes: at least one Reject.
 - Insufficient evidence: the proposal cannot be read, or most checks have no evidence either way.
-- Ready for scope approval: no Reject; list the Human judge items for the reviewer.
+- Ready for scope approval: no Reject; list all remaining clarifications and Human judge items. The maintainer resolves scope-blocking decisions before recording approval.
 - The recommendation does not approve or merge. A maintainer records the approved scope.
 
 ## Output example
@@ -56,10 +58,10 @@ Fictional Ternway Air proposal.
 | ID | Verdict | Evidence (path:line) | Requested change |
 | :--- | :--- | :--- | :--- |
 | D2.2 | ✓ Approve | `proposals/environment/ternway-air.md:14` “A cancelled segment can be rebooked onto another flight; the fare difference is charged.” | — |
-| D4.2 | ✗ Reject | `proposals/environment/ternway-air.md:41` “Changes are confirmed by the agent.” | Writes take `request_id` and `expected_version`; the same `request_id` returns the same receipt; a stale version is rejected. |
+| D4.2 | ◐ Partial approve | `proposals/environment/ternway-air.md:41` “Changes are confirmed by the agent.” | Clarify how retries avoid duplicate charges and how stale writes are detected. The reference runtime provides `request_id` and `expected_version`; equivalent adapter guarantees need review. |
 | D5.3 | ? Human judge | `proposals/environment/ternway-air.md:37` “A rebooking updates the traveler’s calendar.” | Calendar has no messaging receiver yet. Either the agent updates Calendar with its tools, or the platform adds a receiver. The reviewer decides. |
 
-Recommendation: needs design changes (Reject: D4.2). Human judge: D5.3.
+Recommendation: ready for scope approval after the maintainer resolves the retry clarification (D4.2) and platform decision (D5.3). Neither missing detail nor an unavailable platform receiver is itself a Reject.
 
 ## The 8 review dimensions
 
@@ -89,12 +91,12 @@ Guide: “An App should expose reusable behavior rather than encode one task’s
 
 #### D1.3 · Overlap and added value
 
-- **What to check:** Overlapping environment and task proposals are linked, with the added value or the split.
+- **What to check:** Link overlapping proposals and notify the author. Suggest collaboration or a division of scope; distinguish approved plans from merged implementations.
 - **Look at:** The current proposal list; §3 Other apps and websites; §4 Milestones; the PR description.
-- **✓ Approve:** Every overlap is linked with its added value or division of work, or “none found” is stated with the date.
-- **◐ Partial approve:** Overlaps are linked without a split or added value.
-- **? Human judge:** A close overlap exists and the added value is debatable.
-- **✗ Reject:** It duplicates a merged or approved environment without added value.
+- **✓ Approve:** Overlaps are linked and acknowledged, or “none found” is stated with the date. Open or approved proposals may proceed in parallel. For already merged implementations, added value is explained.
+- **◐ Partial approve:** Ask the author to acknowledge relevant overlap or clarify the value beyond an already merged implementation. Do not make collaboration mandatory.
+- **? Human judge:** The value beyond an already merged implementation is debatable, or coordination would benefit from a maintainer decision.
+- **✗ Reject:** It duplicates an already merged implementation with no additional value. Never reject solely because another proposal is open or approved; final validated merge determines acceptance.
 - **Source:** Guide · Usefulness and reuse; CONTRIBUTING · Review and implementation
 
 ### D2 · Complete declared workflows (§2, §4)
@@ -184,7 +186,7 @@ Guide: “Prevent duplicate effects, silent conflicts and irreproducible state. 
 - **What to check:** Writes return evidence, retries do not repeat effects, and conflicts are visible.
 - **Look at:** §3 State and lifecycle; Operations and access.
 - **✓ Approve:** Writes return a receipt and a version; the same `request_id` returns the same result; a stale `expected_version` is rejected; reads change nothing.
-- **◐ Partial approve:** Two of these are covered.
+- **◐ Partial approve:** Retry, commit or concurrency behavior is incompletely described; ask for the missing guarantee rather than infer that duplicate effects occur.
 - **? Human judge:** Domain-specific conflicts, such as two people buying the last seat, need a decision on the expected behavior.
 - **✗ Reject:** A retry can repeat an effect (a double charge), or conflicting writes silently overwrite each other.
 - **Source:** Guide · State and lifecycle; PR #12 docs/review/app-implementation.md (Versions and concurrency)
@@ -227,7 +229,7 @@ Guide: “Tasks choose scenario content/timing; Apps define effects; Infra sched
 
 - **What to check:** Send and receive are declared separately, and each message targets a receiver-owned contract.
 - **Look at:** §3 Internal personal apps; Other apps and websites; Events and notifications.
-- **✓ Approve:** Each direction is stated (send-only, receive-only or both), and each message names the receiver’s contract and version and the change expected in the receiving App.
+- **✓ Approve:** Each direction is stated (send-only, receive-only, both or none), and each message names the receiver’s contract and version and the change expected in the receiving App. `None` is valid when the declared workflows need no messaging; do not require Mail integration by default.
 - **◐ Partial approve:** Directions are stated; receiver contracts are not linked.
 - **? Human judge:** The receiver it needs does not exist yet (for example, Calendar has no messaging receiver): a platform decision.
 - **✗ Reject:** It plans a private copy of Mail or Calendar, or assumes a notification creates a Calendar event on its own.
@@ -251,7 +253,7 @@ Guide: “A schema accepting a MIME string does not establish runtime support or
 
 - **What to check:** Media formats, sizes and counts are stated and fit the reference profile, or the gap is flagged.
 - **Look at:** §3 Shared data and dependencies; §4 Data and image collection; Synthetic data and assets.
-- **✓ Approve:** Formats, sizes and counts are given and fit the reference profile (PDF, UTF-8 text, ICS, PNG/JPEG, MP3/WAV, MP4, JSON; up to 64 assets or 1 MiB per bundle), or an extension is flagged as a platform dependency.
+- **✓ Approve:** Formats, sizes and counts are given and fit the reference profile (PDF, UTF-8 text, ICS, PNG/JPEG, MP3/WAV, MP4, JSON; at most 64 assets and at most 1 MiB of decoded bytes per App bundle), or an extension is flagged as a platform dependency with an owner and validation plan. These are reference-profile limits, not project-wide dataset limits.
 - **◐ Partial approve:** Formats are named; sizes or counts are missing.
 - **? Human judge:** A format outside the profile may be needed: a platform decision.
 - **✗ Reject:** It relies on a format just because a schema accepts its MIME type, or on media that exist only as live links.
@@ -261,10 +263,10 @@ Guide: “A schema accepting a MIME string does not establish runtime support or
 
 - **What to check:** Collected and synthetic data have provenance and licenses, and missing data has defined behavior.
 - **Look at:** §4 Data and image collection; Synthetic data and assets; License and external dependencies.
-- **✓ Approve:** Each source has provenance and reuse terms, synthetic data has a stated method, nothing copies the reference brand, and the App’s behavior when data is missing is defined.
+- **✓ Approve:** Each source has provenance and reuse terms, synthetic data has a stated method, any reused brand assets have an explicit permitted basis, and the App’s behavior when data is missing is defined.
 - **◐ Partial approve:** Provenance and licenses are stated; missing-data behavior is not.
 - **? Human judge:** The license terms are ambiguous, such as a site whose terms forbid scraping.
-- **✗ Reject:** Collected assets have no provenance or license, or brand assets are copied.
+- **✗ Reject:** Collected assets have no provenance or license, or brand assets are copied without a permitted basis.
 - **Source:** Guide · Data and media; template §4 · License and external dependencies
 
 ### D7 · Dependencies and effort (§4)
