@@ -12,7 +12,7 @@ Use the public checkout's [commands](../../runtime/README.md). For App-only PRs,
 
 | Gate | Observable evidence | Failure/control to inspect |
 | --- | --- | --- |
-| Package and contract | Pinned versions, valid paths, supported schema, declared tools/hooks/events/media | Missing references, version mismatch, unsupported required schema/extension, declared behavior without a handler |
+| Package and contract | Pinned versions, valid paths, supported schema, declared tools/hooks/events/media; a run from a copy holding only the package, the pinned runtime and pinned dependencies | Missing references, version mismatch, unsupported required schema/extension, declared behavior without a handler; imports or file reads outside the package; works only inside this repository |
 | Existing App dependencies | Links to reused tools/receive schemas, pinned required packages and a real integration test with observable target records/files | Missing or incompatible dependency; copied receiver state; sender-only or fake-client success presented as integration evidence |
 | App-only business | Real App functions tested from the App package without runtime code | Domain failures, invalid input, missing records, duplicate IDs; success tests alone are insufficient |
 | Real MCP | Initialize/discovery/call; declared input/output; result matches committed state | Forged role/run arguments; malformed output; mutation during a read |

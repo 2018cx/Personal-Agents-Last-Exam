@@ -275,13 +275,13 @@ Guide: “Attribute platform dependencies correctly instead of calling them cont
 
 #### D7.1 · Required versus optional dependencies
 
-- **What to check:** Each dependency is marked required or optional and linked to the exact interface it uses.
+- **What to check:** Each dependency is marked required or optional and linked to the exact interface it uses, and the App package runs on its own with only the shared runtime and these dependencies.
 - **Look at:** §3 Internal personal apps; Other apps and websites; §4 App integrations; License and external dependencies.
-- **✓ Approve:** Each dependency names the existing App, links the exact tool or receive-schema file and version, says what changes in that App, and is marked required or optional; run-time external services are replayed or controlled.
-- **◐ Partial approve:** Dependencies are listed without required or optional, or without version links.
+- **✓ Approve:** Each dependency names the existing App, links the exact tool or receive-schema file and version, says what changes in that App, and is marked required or optional; run-time external services are replayed or controlled; the proposal states that the package runs on its own with only the shared runtime and these dependencies.
+- **◐ Partial approve:** Dependencies are listed without required or optional or without version links, or the proposal does not say whether the package runs on its own. Ask the author to add what is missing rather than reject.
 - **? Human judge:** Whether a dependency should be required is debatable.
-- **✗ Reject:** A required capability that does not exist is treated as available.
-- **Source:** Guide · Dependencies and effort; Integration expectations; PR #12 docs/app-integrations.md
+- **✗ Reject:** A required capability that does not exist is treated as available, or the design needs code or files from another App or from outside its package.
+- **Source:** Guide · Dependencies and effort; Integration expectations; PR #12 docs/app-integrations.md; docs/review/app-implementation.md (Package and contract)
 
 #### D7.2 · Owners and sequence
 

@@ -16,7 +16,7 @@ When proposals overlap, notify the author and link the existing work; suggest co
 | State and lifecycle | App/account/run isolation; seed/history; commit evidence, retries, concurrency and reset/restore boundaries | Prevent duplicate effects, silent conflicts and irreproducible state. Snapshot alone does not promise restore. |
 | Events, time and messaging | Accepted events, business timeout effects, independent send/receive directions, relevant receiver-owned contracts | Tasks choose scenario content/timing; Apps define effects; Infra schedules and binds accounts. Mail is only one possible receiver. |
 | Data and media | IDs/references, formats/bytes/counts, collection/synthesis, provenance, licenses and missing-data behavior | A schema accepting a MIME string does not establish runtime support or usable original assets. |
-| Dependencies and effort | Required versus optional services, owners, sequence, effort and resource costs | Attribute platform dependencies correctly instead of calling them contributor defects. |
+| Dependencies and effort | Required versus optional services, owners, sequence, effort and resource costs; the package boundary: what runs from the App package alone and what needs the shared runtime or pinned Apps | Attribute platform dependencies correctly instead of calling them contributor defects. A package that relies on files outside itself cannot be verified or reused on its own. |
 | Verifiability | Core success/error examples, expected state/receipt, business tests, public-runtime checks and human review | An independent reviewer needs observable acceptance criteria rather than a promised test count. |
 
 ## Integration expectations
