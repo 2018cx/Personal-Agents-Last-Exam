@@ -1,6 +1,6 @@
 # Public App runtime
 
-This package exposes the local reference Core and Infra-owned Messaging module so contributors can reproduce integration checks. Runtime release 1.4.0 supports Mail/Calendar 1.3.0, Core API 1.2.0 and contribution revision 0.4.0. Existing business tool schemas and the text Email wire contract are retained; attachment tools, a separate attachment channel and Calendar ICS import are additive.
+This package exposes the local reference Core and Infra-owned Messaging module so contributors can reproduce integration checks. Runtime release 1.5.0 supports Mail/Calendar 1.3.0, Core API 1.2.0 and contribution revision 0.4.0. Existing business tool schemas and the text Email wire contract are retained; attachment tools, a separate attachment channel and Calendar ICS import are additive.
 
 Requires Node.js 18+; no external packages or private credentials. From the repository root:
 
@@ -47,11 +47,15 @@ Core persists under `<state-dir>/<run>/<app>.json`. Separate instance state root
 
 ## Diagnostics and time
 
+The registry's `initial_time` initializes the reference run. App-only launchers use optional `fixtures/clock.json`; absent configuration uses the Unix epoch. Infra can supply a task-specific `virtual_now` to `env.load_seed`, and reset restores that loaded clock baseline. This does not schedule cross-App events. App-specific data migrations belong to the optional `plugin.migrateState` hook.
+
 The App returns `{ data, result }`; Core commits and wraps the same business response. Optional `ctx.log` is injected, never imported by business code. Diagnostic JSONL files are separate from business state and Agent observations; errors in the best-effort sink do not change business outcomes. Reset retains diagnostics; removing the run directory removes them. Central retention, collection and remote queries are deployment responsibilities.
 
 Core event receipts/audit and Messaging receipts preserve optional producer time and record their own processing times. Reset/seed replacement retains the existing audit-clearing behavior; export evidence before discarding a run. See [Messaging](messaging/README.md).
 
 ## Known limits
+
+These limits belong to [`local-reference-v1`](profiles/local-reference.json), not every future environment. See the [extension plan](../docs/environment-architecture.md). Resource registrations live in `runtime/registrations/` and require Infra review; authors do not change Core permission code for each new App.
 
 - Local MCP stdio and trusted launch configuration; no remote OAuth, HTTP MCP, HTTPS ingress or production token validation.
 - Messaging currently uses trusted Infra receiver connections. Production deployment needs restricted delivery credentials and shared identity/access enforcement.

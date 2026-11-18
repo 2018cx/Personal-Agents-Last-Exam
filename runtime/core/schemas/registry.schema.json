@@ -30,6 +30,10 @@
         ],
         "additionalProperties": false
       }
+    },
+    "initial_time": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [

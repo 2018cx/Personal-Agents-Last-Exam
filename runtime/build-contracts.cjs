@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),read=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
 function build({check=false}={}){
+ require('./sdk/sync.cjs').sync({check});
  const envelope=read('runtime/contracts/schemas/cloudevent.schema.json'),payload=read('examples/apps/mail/schemas/email-payload.schema.json');
  const wire={...envelope,$id:'urn:pale:email-message:2',title:'CloudEvents 1.0 + Mail Email payload v1',description:'Generated from the PALE CloudEvents JSON profile and Mail-owned email-payload.schema.json. Do not hand-edit copies.',properties:{...envelope.properties,type:{const:'org.pale.mail.notification.v1'},dataschema:{const:payload.$id},data:payload}};
  const copies=['examples/apps/mail/schemas/router-message.schema.json','runtime/contracts/schemas/router-message.schema.json','runtime/contracts/schemas/notification.schema.json','examples/workflows/delivery-to-mail/delivery/schemas/router-message.schema.json'];

@@ -50,4 +50,6 @@ for(const [change,label] of [
  [x=>x.role='infra','message cannot supply caller role']
 ])bad('router-message',notice,change,label);
 const report={contract_revision:'0.4.0',checks:count,passed:true,scope:'Schema and declaration-reference validation only; not runtime delivery, asset rendering, or human provenance review',schema_count:Object.keys(validators).length};
-fs.writeFileSync(path.join(__dirname,'verification.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS: '+count+' schema and declaration checks');
+const reportDir=path.resolve(process.env.PALE_REPORT_DIR||path.join(__dirname,'../../.artifacts'));
+fs.mkdirSync(reportDir,{recursive:true});
+fs.writeFileSync(path.join(reportDir,'contracts.json'),JSON.stringify(report,null,2)+'\n');console.log('PASS: '+count+' schema and declaration checks');

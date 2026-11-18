@@ -32,7 +32,7 @@ function createRuntime({registryFile,assemblyFile}={}){
  function create(app,run='run-demo',profile='scenario',epoch=1){
   const p=get(app),c=configs.get(app);if(!/^[-a-zA-Z0-9_]{1,80}$/.test(run)||!c.policies[profile])fail('invalid_configuration','Invalid run / profile');
   checkConfig(p,c.binding,c.policies);
-  const s={schema:'pale.app-state.v1',schema_version:1,package_version:p.manifest.version,core_api_version:registry.api,app_id:app,run_id:run,epoch,revision:0,profile,next_id:1,virtual_now:'2026-11-15T09:00:00-08:00',binding:copy(c.binding),policies:copy(c.policies),initial_data:copy(c.seed),data:copy(c.seed),resources:assets.check(p,c.seed,c.bundle),initial_resources:assets.check(p,c.seed,c.bundle),receipts:{},audit:[]};
+  const s={schema:'pale.app-state.v1',schema_version:1,package_version:p.manifest.version,core_api_version:registry.api,app_id:app,run_id:run,epoch,revision:0,profile,next_id:1,virtual_now:registry.initialTime,initial_virtual_now:registry.initialTime,binding:copy(c.binding),policies:copy(c.policies),initial_data:copy(c.seed),data:copy(c.seed),resources:assets.check(p,c.seed,c.bundle),initial_resources:assets.check(p,c.seed,c.bundle),receipts:{},audit:[]};
   validateData(s,s.data);return s;
  }
  function normalize(raw){
@@ -50,8 +50,8 @@ function createRuntime({registryFile,assemblyFile}={}){
    s.initial_resources=assets.check(p,s.initial_data,migrate(s.initial_resources.bundle,s.app_id),{runId:s.run_id});
    s.package_version=p.manifest.version;s.core_api_version=registry.api;
   }
-  // Only these reference Apps retain the unchanged 1.2 data/state contract.
-  if(['mail','calendar'].includes(s.app_id)&&s.schema==='pale.app-state.v1'&&s.package_version==='1.2.0'&&p.manifest.version==='1.3.0'&&s.core_api_version===registry.api)s={...copy(s),package_version:'1.3.0'};
+  if(typeof p.plugin.migrateState==='function')s=p.plugin.migrateState(copy(s),{package_version:p.manifest.version,core_api_version:registry.api});
+  if(s.initial_virtual_now===undefined)s={...s,initial_virtual_now:registry.initialTime};
   if(s.schema!=='pale.app-state.v1'||s.package_version!==p.manifest.version||s.core_api_version!==registry.api||!p.validators.state(s))fail('invalid_state','Stored state/schema/package version mismatch');
   checkConfig(p,s.binding,s.policies);validateData(s,s.data);
   assets.check(p,s.data,s.resources.bundle,{strictCounts:false,strictOwners:false});
@@ -60,7 +60,7 @@ function createRuntime({registryFile,assemblyFile}={}){
  function tools(s,role){return role==='infra'?admin.slice():role==='agent'?get(s.app_id).tools.filter(t=>s.policies[s.profile].allow.includes(t.name)).map(t=>t.name):[];}
  function adminSchemas(app){const p=get(app);return {
   'env.reset':shape({expected_version:ver,profile:{type:'string',enum:Object.keys(configs.get(app).policies)}},['expected_version']),
-  'env.load_seed':shape({expected_version:ver,data:read(path.join(p.dir,p.manifest.schemas.seed)),binding:bindingSchema,policies:policySchema,bundle:bundleSchema,request_id:{type:'string',minLength:1}},['expected_version','data']),
+  'env.load_seed':shape({expected_version:ver,data:read(path.join(p.dir,p.manifest.schemas.seed)),binding:bindingSchema,policies:policySchema,bundle:bundleSchema,virtual_now:{type:'string',format:'date-time'},request_id:{type:'string',minLength:1}},['expected_version','data']),
   'env.apply_event':shape({expected_version:ver,event:read(path.join(p.dir,p.manifest.schemas.events)),bundle:bundleSchema},['expected_version','event']),
   'env.validate_bundle':shape({data:read(path.join(p.dir,p.manifest.schemas.seed)),bundle:bundleSchema,binding:bindingSchema,policies:policySchema},['data','bundle']),
   'env.snapshot':shape(), 'env.event_status':shape({event_id:str})};}
@@ -78,14 +78,14 @@ function createRuntime({registryFile,assemblyFile}={}){
    if(name==='env.snapshot')return {state:original,result:{status:'ok',snapshot:copy(original),app_id:s.app_id,version:before}};
    if(name==='env.event_status')result={status:'ok',receipt:copy(s.receipts['event:'+args.event_id]?.result||null)};
    else if(name==='env.reset'){
-    checkVersion(s,args.expected_version);s.data=copy(s.initial_data);s.resources=copy(s.initial_resources);s.profile=args.profile||s.profile;s.epoch++;s.revision=0;s.next_id=1;s.virtual_now='2026-11-15T09:00:00-08:00';s.audit=[];s.receipts={};changed=true;result={status:'ready',reset_scope:s.app_id};
+    checkVersion(s,args.expected_version);s.data=copy(s.initial_data);s.resources=copy(s.initial_resources);s.profile=args.profile||s.profile;s.epoch++;s.revision=0;s.next_id=1;s.virtual_now=s.initial_virtual_now||registry.initialTime;s.audit=[];s.receipts={};changed=true;result={status:'ready',reset_scope:s.app_id};
    }else if(name==='env.load_seed'){
-    const key='seed:'+args.request_id,fp=JSON.stringify({data:args.data,binding:args.binding,policies:args.policies,bundle:args.bundle});
+    const key='seed:'+args.request_id,fp=JSON.stringify({data:args.data,binding:args.binding,policies:args.policies,bundle:args.bundle,virtual_now:args.virtual_now});
     if(args.bundle&&!args.request_id)fail('invalid_arguments','Bundle loads require request_id');
     if(args.request_id&&s.receipts[key]){if(s.receipts[key].fingerprint!==fp)fail('idempotency_conflict','相同 request_id 不得用于不同素材包。');return {state:original,result:{...copy(s.receipts[key].result),duplicate:true}};}
     checkVersion(s,args.expected_version);
     if(!args.binding&&args.data.account_id!==s.data.account_id)fail('invalid_seed','Changing account requires an explicit trusted binding');
-    s.binding=copy(args.binding||s.binding);s.policies=copy(args.policies||s.policies);checkConfig(p,s.binding,s.policies);if(!s.policies[s.profile])fail('invalid_configuration','Current profile unavailable');validateData(s,args.data);
+    s.virtual_now=args.virtual_now||s.virtual_now;s.initial_virtual_now=s.virtual_now;s.binding=copy(args.binding||s.binding);s.policies=copy(args.policies||s.policies);checkConfig(p,s.binding,s.policies);if(!s.policies[s.profile])fail('invalid_configuration','Current profile unavailable');validateData(s,args.data);
     s.resources=assets.check(p,args.data,args.bundle||assets.legacy(p,args.data,s.resources,s.data.account_id),{runId:s.run_id});s.initial_resources=copy(s.resources);
     s.data=copy(args.data);s.initial_data=copy(args.data);s.epoch++;s.revision=0;s.next_id=1;s.audit=[];s.receipts={};changed=true;result={status:'ready',loaded:p.plugin.objects?.(s.data).length||0,quality:copy(s.resources.quality)};if(args.request_id)s.receipts[key]={fingerprint:fp,result:{...copy(result),app_id:s.app_id,version:version(s)}};
    }else if(name==='env.validate_bundle'){

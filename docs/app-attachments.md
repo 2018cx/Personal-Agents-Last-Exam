@@ -1,6 +1,6 @@
 # Attachments: implement once, verify the complete workflow
 
-Use public runtime 1.4.0 with the Mail/Calendar 1.3.0 reference Apps. The existing App package layout and business response envelope stay the same. Existing text messages keep their original contract; attachments use an additional capability declaration.
+Use public runtime 1.5.0 with the Mail/Calendar 1.3.0 reference Apps. The existing App package layout and business response envelope stay the same. Existing text messages keep their original contract; attachments use an additional capability declaration.
 
 ## What a new sender implements
 

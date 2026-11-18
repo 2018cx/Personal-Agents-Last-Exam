@@ -30,13 +30,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Reproduce from a fresh public checkout
+      - name: Select affected Apps and their dependents
+        id: selection
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node runtime/ci/select-apps.cjs . "$BASE_SHA"
+      - name: Reproduce the full reference suite
+        if: steps.selection.outputs.full == 'true'
         run: npm test
       - name: Validate submitted App packages
-        run: node runtime/ci/verify-submissions.cjs . .artifacts/submissions
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: node runtime/ci/verify-submissions.cjs . .artifacts/submissions "$BASE_SHA"
       - name: Save results even on failure
         if: always()
         uses: actions/upload-artifact@v4
@@ -55,6 +64,7 @@ jobs:
           path: candidate
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
+          fetch-depth: 0
       - uses: actions/checkout@v4
         with:
           path: trusted-base
@@ -65,10 +75,12 @@ jobs:
           node-version: 22
       - name: Check with the base revision's validator
         shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           mkdir -p evidence
           if [ -f trusted-base/runtime/ci/verify-submissions.cjs ]; then
-            node trusted-base/runtime/ci/verify-submissions.cjs candidate evidence
+            node trusted-base/runtime/ci/verify-submissions.cjs candidate evidence "$BASE_SHA"
           else
             echo 'Base runtime not available: bootstrap PR needs maintainer review; this is not a compatibility pass.' | tee evidence/NOT-RUN.txt
             echo 'Base-runtime compatibility: NOT RUN (runtime bootstrap).' >> "$GITHUB_STEP_SUMMARY"

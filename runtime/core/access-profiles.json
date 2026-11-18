@@ -1,7 +1,0 @@
-{
-  "description": "Platform-maintained attachment access mappings. App contributors provide records and assetReferences, not authorization code. Unknown mappings deny access.",
-  "apps": {
-    "mail": { "message": "mail.get" },
-    "calendar": { "event": "calendar.get" }
-  }
-}

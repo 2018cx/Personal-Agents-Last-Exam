@@ -14,6 +14,8 @@ The public checkout now contains the same local Core and Messaging implementatio
 
 Keep the reference Mail and Calendar under `examples/apps/`. New contributed Apps go under `apps/<app-id>/`, subject to maintainer scope/location review. Personal and external Apps use the same package contract. Do not copy an existing receiving App into your package to implement an integration.
 
+See [architecture and extension boundaries](environment-architecture.md) for shared sources, task clocks, resource registration and the distinction between this reference profile and future Web/CUA or larger-data adapters.
+
 ## Common package structure
 
 This tree describes common responsibilities. Each App supplies its own domain files; it is not a combined Mail/Calendar checklist.
@@ -65,6 +67,8 @@ apps/<app-id>/
 ```
 
 The runtime is a sibling shared component, not something each App author reimplements. Its `core/`, `messaging/`, contracts and tests live under [`runtime/`](../runtime/README.md).
+
+Run `node runtime/build-contracts.cjs` after editing the canonical shared contracts or App tool/dependency declarations. Generated package copies allow standalone verification; do not hand-maintain duplicate schemas or operation lists. App-owned business schemas, behavior and provenance still need direct review.
 
 ### How the reference Apps differ
 

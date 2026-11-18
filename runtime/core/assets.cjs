@@ -5,7 +5,8 @@ const {compile}=require('./schema.cjs'),{copy,fail}=require('./helpers.cjs');
 const contract=require('../contracts/validate.cjs'),{extensions}=require('./contribution.cjs');
 const base=path.join(__dirname,'schemas'),read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
 const schema=read(path.join(base,'bundle.schema.json')),valid=compile(schema,base);
-const MAX_BYTES=1024*1024;
+const profile=require('../profiles/local-reference.json');
+const MAX_BYTES=profile.max_bundle_bytes;
 function validateContract(kind,value){try{contract.validate(kind,value);extensions(value);}catch(e){fail('invalid_bundle',e.message);}}
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 function decode(value){
@@ -33,7 +34,7 @@ function inspect(pkg,data,bundle,{strictCounts=true,strictOwners=true,runId}={})
  const d=bundle.dataset,assets=bundle.catalog.assets,records=pkg.plugin.records(data),objects=new Set(pkg.plugin.objects(data)),refs=pkg.plugin.assetReferences?.(data)||[];
  const sources=new Map(d.sources.map(s=>[s.source_id,s])),ids=new Map(assets.map(a=>[a.asset_id,display(a,d)]));
  validateContract('asset-catalog',bundle.catalog);validateContract('dataset',d);
- add('catalog_app',bundle.catalog.app_id===pkg.manifest.app_id);add('asset_count_limit',assets.length<=64);
+ add('catalog_app',bundle.catalog.app_id===pkg.manifest.app_id);add('asset_count_limit',assets.length<=profile.max_assets);
  add('unique_source_ids',sources.size===d.sources.length);add('unique_asset_ids',ids.size===assets.length);
  add('app_resource_capability',pkg.manifest.capabilities.resources||assets.length===0);
  add('record_provenance',d.record_source_ids.every(id=>sources.has(id)));
@@ -52,7 +53,7 @@ function inspect(pkg,data,bundle,{strictCounts=true,strictOwners=true,runId}={})
   add('asset_run:'+a.asset_id,descriptor.scope.level!=='run'||runId===undefined||descriptor.scope.run_id===runId);
   add('access_rule:'+a.asset_id,descriptor.access.rule==='parent_object'||descriptor.access.rule==='app_surface'&&!content);
   add('subject_app:'+a.asset_id,descriptor.subjects.every(x=>x.app_id===pkg.manifest.app_id));
-  add('implemented_storage:'+a.asset_id,descriptor.availability.status!=='ready'||['storage.file','storage.inline'].includes(descriptor.storage.adapter));
+  add('implemented_storage:'+a.asset_id,descriptor.availability.status!=='ready'||profile.storage_adapters.includes(descriptor.storage.adapter));
   const source=sources.get(a.source.source_id);
   add('asset_source:'+a.asset_id,!!source&&source.kind===a.source.kind);
   add('asset_app:'+a.asset_id,a.app_id===pkg.manifest.app_id);
@@ -75,7 +76,7 @@ function inspect(pkg,data,bundle,{strictCounts=true,strictOwners=true,runId}={})
   if(hashes.has(a.sha256))duplicateAssets++;hashes.add(a.sha256);
  }
  add('blob_ids',Object.keys(bundle.blobs).every(id=>readyIds.has(id))&&Object.keys(bundle.blobs).length===readyIds.size,'Only ready catalog assets may have byte payloads.');
- add('bundle_size',actual.total_bytes<=MAX_BYTES,'Maximum decoded bytes: 1 MiB');
+ add('bundle_size',actual.total_bytes<=MAX_BYTES,'Maximum decoded bytes: '+MAX_BYTES);
  for(const r of refs){const a=ids.get(r.asset_id);add('attachment:'+r.object_id+':'+r.asset_id,!!a&&a.owner.account_id===data.account_id&&a.owner.object_id===r.object_id&&a.owner.object_type===r.object_type,'Attachment must resolve to an asset owned by the same parent object.');}
  const canonical=x=>{if(Array.isArray(x))return x.map(canonical);if(x&&typeof x==='object')return Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])]));return x;};
  const fingerprints=records.map(x=>JSON.stringify(canonical(Object.fromEntries(Object.entries(x).filter(([k])=>!['id','uid'].includes(k))))));

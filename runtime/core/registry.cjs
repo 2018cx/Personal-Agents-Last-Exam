@@ -25,6 +25,7 @@ function load(registryFile=path.join(__dirname,'../../examples/registry.json')){
   const fixtures={};for(const [key,file] of Object.entries(manifest.fixtures))fixtures[key]=read(inside(dir,file));
   const resources=manifest.resources?{catalog:read(inside(dir,manifest.resources.catalog)),directory:inside(dir,manifest.resources.directory)}:null;
   const pkg={dir,manifest,tools,validators,fixtures,resources,dataset:read(inside(dir,manifest.dataset)),entry:inside(dir,manifest.entrypoint)};
+  pkg.resourceAccess=require('./registration.cjs').load(item.app_id,tools);
   pkg.contribution=require('./contribution.cjs').load(pkg,inside);
   apps.set(item.app_id,pkg);
  }
@@ -37,6 +38,6 @@ function load(registryFile=path.join(__dirname,'../../examples/registry.json')){
   pkg.bundle=require('./assets.cjs').fromPackage(pkg,inside);
   pkg.quality=require('./assets.cjs').check(pkg,pkg.fixtures.seed,pkg.bundle).quality;
  }
- return {root,apps,api:API};
+ return {root,apps,api:API,initialTime:registry.initial_time||'1970-01-01T00:00:00Z'};
 }
 module.exports={load,inside,read,API};

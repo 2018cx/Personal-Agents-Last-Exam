@@ -4,7 +4,9 @@ Review a plan for useful, reusable App behavior. Working implementation or compl
 
 ## Review baseline
 
-Read the proposal, PR body, comments, explicitly related tasks/environments and current template. Record exact revision and review scope. PR #12 provides a proposed public App/runtime reference, not permanently frozen infrastructure. Distinguish blocking dependencies, optional reuse and merely related work.
+Read the proposal, PR body, comments, explicitly related tasks/environments and current template. Record exact revision and review scope. The public App/runtime is a reference profile, not permanently frozen infrastructure. Distinguish blocking dependencies, optional reuse and merely related work. See the [extension boundaries](../environment-architecture.md).
+
+When proposals overlap, notify the author and link the existing work; suggest collaboration or a clear division of scope. Approval does not reserve ownership or prevent parallel implementation. Do not reject solely because another proposal is approved. Once related work merges, assess later submissions for additional value. Only a validated merge counts as an accepted contribution.
 
 | Dimension | Evidence to request | Reason for the check |
 | --- | --- | --- |

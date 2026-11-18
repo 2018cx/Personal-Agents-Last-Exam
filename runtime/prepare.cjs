@@ -13,7 +13,9 @@ function prepare(appDirectory,dependencies=[]){
    const ref='apps/'+manifest.app_id;fs.cpSync(source,path.join(root,ref),{recursive:true});
    entries.push({app_id:manifest.app_id,version:manifest.version,path:ref});
   }
-  const registry=path.join(root,'registry.json');fs.writeFileSync(registry,JSON.stringify({schema_version:1,apps:entries}));
+  const clockFile=path.join(fs.realpathSync(appDirectory),'fixtures/clock.json');
+  const initial_time=fs.existsSync(clockFile)?JSON.parse(fs.readFileSync(clockFile,'utf8')).initial_time:'1970-01-01T00:00:00Z';
+  const registry=path.join(root,'registry.json');fs.writeFileSync(registry,JSON.stringify({schema_version:1,initial_time,apps:entries}));
   const model=createRuntime({registryFile:registry});
   return {root,registry,app:entries[0].app_id,model,cleanup:()=>fs.rmSync(root,{recursive:true,force:true})};
  }catch(e){fs.rmSync(root,{recursive:true,force:true});throw e;}

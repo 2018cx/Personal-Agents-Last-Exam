@@ -163,6 +163,10 @@
     },
     "initial_resources": {
       "$ref": "resources.schema.json"
+    },
+    "initial_virtual_now": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [
