@@ -2,6 +2,14 @@
 
 Follows the 8 review dimensions of the proposal review guide in PR #12 (`docs/review/environment-proposal.md`), with 3 checks each. Every check ends in one of four verdicts.
 
+## How to use this file
+
+Run it on one proposal PR. Give your agent (Claude Code, Codex or similar, with `gh` available) this prompt:
+
+> Read `docs/review/environment-proposal-checklist/agent.en.md`. Review PR #<number> of MatrAIx-ai/Personal-Agents-Last-Exam against it. Get the title, description, comments and file list with `gh pr view <number> --repo MatrAIx-ai/Personal-Agents-Last-Exam --json title,body,comments,files,headRefOid`, and read the proposal file with `gh api "repos/MatrAIx-ai/Personal-Agents-Last-Exam/contents/<path>?ref=refs/pull/<number>/head" -H "Accept: application/vnd.github.raw"`. Follow the steps, then output the workflow traces, the verdict table and the recommendation. Do not post anything on GitHub.
+
+The reviewer then works through `human.en.md` (or `human.zh-Hans.md`). These checks follow the proposal review guide in PR #12 (`docs/review/environment-proposal.md`) at `0e9ede3`. They are a draft and have not yet been validated against reviewed proposals.
+
 ## How to run
 
 1. **Baseline.** Read the proposal file, the PR description and comments, related proposals and the current template. Record the PR number, head commit, date and scope.
