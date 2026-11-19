@@ -88,6 +88,8 @@ Keep `plugin.cjs` small; put business modules under `src/`. The current hooks ar
 
 Tasks supply actual accounts, history, preferences and scenario events. Apps define valid records and resulting transitions. Infra loads history with `env.load_seed`, applies changes with `env.apply_event`, and manages reset/snapshot. These administrative operations are unavailable to Agent connections, including when an Agent guesses their names.
 
+Use the supplied `ctx.virtual_now` for current-time business fields. Infra advances idle Apps with Core's `env.advance_time` before later sessions; contributors do not implement that tool or change their schemas. Event handlers observe their event's `at` time. The [time contract and example](runtime-time.md) explain initial/history time, session synchronization, delivery time and reset behavior.
+
 Contributors describe business effects and record relationships. Core enforces local policy; production Infra supplies trusted identities, credentials and deployment access controls. Authors do not implement token issuance or authentication policy.
 
 ## Connecting to another App

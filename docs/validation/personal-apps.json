@@ -1,8 +1,8 @@
 {
   "schema": "pale.personal-apps-evidence.v1",
-  "checked_at": "2026-11-19T03:41:53.158Z",
+  "checked_at": "2026-11-19T05:54:26.150Z",
   "base_commit": "718a4cbc7709dee22bf1e4ad1cff984550d7e519",
-  "runtime_version": "1.5.0",
+  "runtime_version": "1.6.0",
   "core_api_version": "1.2.0",
   "apps": [
     {
@@ -10,7 +10,7 @@
       "app_version": "1.0.0",
       "package_sha256": "7509b1a611656a0d655eb45ebfbc8c16d128046c3071d75f9b24afc4da40de95",
       "business_tests": 7,
-      "public_checks": 36,
+      "public_checks": 37,
       "base_runtime": "passed"
     },
     {
@@ -18,7 +18,7 @@
       "app_version": "1.0.0",
       "package_sha256": "813c7fc86ad1602d59c9216d6db6a71047f70c86175e073be87da2c2a8326013",
       "business_tests": 10,
-      "public_checks": 38,
+      "public_checks": 39,
       "base_runtime": "passed"
     },
     {
@@ -26,7 +26,7 @@
       "app_version": "1.0.0",
       "package_sha256": "6e46775ee19f559163864fe1251f4b3cd06bf8aa638c0ccc1dc403c7f0e1908a",
       "business_tests": 7,
-      "public_checks": 36,
+      "public_checks": 37,
       "base_runtime": "passed"
     },
     {
@@ -34,7 +34,7 @@
       "app_version": "1.0.0",
       "package_sha256": "3fdacd452b301d6ec89efb9602dfdeea5a6e9de976cea3c57a0f59eac5613cd6",
       "business_tests": 7,
-      "public_checks": 35,
+      "public_checks": 36,
       "base_runtime": "passed"
     },
     {
@@ -42,7 +42,7 @@
       "app_version": "1.0.0",
       "package_sha256": "47dbd6952f052572c30c241717d30169b9e17da9e1be4678fddc14f816360375",
       "business_tests": 7,
-      "public_checks": 35,
+      "public_checks": 36,
       "base_runtime": "passed"
     }
   ],
@@ -65,6 +65,14 @@
         },
         {
           "name": "extensibility",
+          "status": "passed"
+        },
+        {
+          "name": "clock-contract",
+          "status": "passed"
+        },
+        {
+          "name": "session-time",
           "status": "passed"
         },
         {
@@ -151,6 +159,14 @@
         },
         {
           "name": "extensibility",
+          "status": "passed"
+        },
+        {
+          "name": "clock-contract",
+          "status": "passed"
+        },
+        {
+          "name": "session-time",
           "status": "passed"
         },
         {
@@ -330,5 +346,11 @@
     "checks": 109,
     "evidence": "personal-apps-gui.json",
     "scope": "Real local business browser UI, not a model-agent evaluation or complete user-simulator integration."
+  },
+  "clock": {
+    "evidence": "runtime-time.json",
+    "unit_cases": 7,
+    "mcp_assertions": 44,
+    "app_package_changes": false
   }
 }

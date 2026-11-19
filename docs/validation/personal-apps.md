@@ -1,6 +1,6 @@
 # Personal Apps validation report
 
-Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0** packages in this PR, public runtime **1.5.0**, Core API **1.2.0**. Exact package hashes, runtime stages and workflow assertions are recorded in [personal-apps.json](personal-apps.json). Package hashes were compared across both Node runs and the independent base-runtime reports after the last App edit.
+Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0** packages in this PR, public runtime **1.6.0**, Core API **1.2.0**. Exact package hashes, runtime stages and workflow assertions are recorded in [personal-apps.json](personal-apps.json). Package hashes were compared across both Node runs and the independent base-runtime reports after the last App edit.
 
 **Automated outcome: passed.** This is a maintainer implementation submitted directly for code review. Human workflow acceptance and provenance review remain pending; no approval is claimed. Technical scope and interfaces are documented in the suite guide rather than a separate community proposal.
 
@@ -10,10 +10,10 @@ Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0
 | --- | --- | --- |
 | App-only business | 38 tests passed: Files 7, Messages 10, Notes 7, Tasks 7, Contacts 7 | Real App hooks, input/output/seed schemas, domain failures, history retention, read-only behavior, optional logging and escaped rendering |
 | Isolated App package | All five passed | Public verifier copies each App without a sibling runtime, then executes its local tests and event example |
-| Real public MCP | 180 common checks across the five packages passed | Discovery, argument/role restrictions, reads, history loading, event application/retry, reset, separate run and restarted process |
+| Real public MCP | 185 common checks across the five packages passed | Discovery, argument/role restrictions, reads, history loading, event application/retry, reset, separate run and restarted process |
 | Declared cross-App workflows | 83 assertions passed | Real business writes, receipts, destination records and actual attachment bytes, with negative controls |
-| Node 18.20.8 | 20/20 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
-| Node 22.14.0 | 20/20 full-suite stages passed | Same full-suite stages on the second supported runtime family |
+| Node 18.20.8 | 22/22 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
+| Node 22.14.0 | 22/22 full-suite stages passed | Same full-suite stages on the second supported runtime family |
 | Independent base validator | All seven discovered packages passed | Unmodified main at `718a4cbc7709dee22bf1e4ad1cff984550d7e519` validated the candidate packages, including existing Mail/Calendar |
 | Human review | Pending | Implementation scope, overlap, realistic coverage and provenance; automated green results do not grant acceptance |
 
@@ -34,7 +34,7 @@ Run the independent package check from a separate checkout of the pinned base:
 node runtime/ci/verify-submissions.cjs /path/to/candidate /path/to/reports
 ```
 
-The base checker was not changed or supplied from the candidate. Its package/MCP/lifecycle checks are separate from candidate business tests. The new parent-resource registrations for Files, Notes and Messages are reviewed additions to the public host; actual resource and cross-App checks run with those registrations present. No Core or Messaging business implementation changes are required by this PR.
+The base checker was not changed or supplied from the candidate. Its package/MCP/lifecycle checks are separate from candidate business tests. The new parent-resource registrations for Files, Notes and Messages are reviewed additions to the public host; actual resource and cross-App checks run with those registrations present. The clock follow-up changes Core management and event-context timing; Messaging business code and App package schemas remain unchanged. The base validator certifies package compatibility, not the new clock operation.
 
 ## Workflow evidence
 
@@ -59,7 +59,7 @@ The review reproduced and corrected two Messages defects before the final valida
 | Marking an outgoing message read at a later virtual time changed its CloudEvent identity/time, so a retry could create another receiving record. | Derive identity from content/destination/revision, and preserve original `sent_at`. App-only tests cover read changes and text edit/revert; real MCP advances time, marks read, republishes and verifies one receiver effect. |
 | A service notification whose source account had the same owner as the recipient was editable as if locally authored. | Store optional immutable `delivery_source` on received records. App-only tests reject edit, retract, attachment changes and provenance removal; real MCP grants the edit tool but verifies that the App rejects editing a received notification and preserves its data. |
 
-The new optional Messages record field is reflected in its seed/event/tool-output schemas. Existing historical fixtures remain valid. The chat wire contract and Core/Messaging business implementation are unchanged. Mail/Calendar now additionally include App-owned web pages and public Host metadata; their business logic and schemas are unchanged.
+The new optional Messages record field is reflected in its seed/event/tool-output schemas. Existing historical fixtures remain valid. The chat wire contract and Messaging business implementation are unchanged. Core additionally provides the clock operation described below. Mail/Calendar now additionally include App-owned web pages and public Host metadata; their business logic and schemas are unchanged.
 
 | Review gate | Outcome |
 | --- | --- |
@@ -94,3 +94,16 @@ The current browser report covers **109 checks**: Mail 17, Calendar 17, Files 14
 Additional tests exercise Reply recipient/subject prefills, actual authorized image preview, missing-attachment fallback, month navigation/date-to-create, folder double-click, in-thread sending, pinned-note filtering, task-checkbox transitions and contact groups. Selection keeps prior-item actions disabled until the new item is loaded; folder double-click remains available during a read. Calendar accepts the existing valid event representation without an attachments array. These are interface fixes, not new backend operations.
 
 The final package hashes were matched across Node 18, Node 22, the unmodified base validator and browser reports. Desktop and narrow live-preview layouts were also inspected without modifying user/demo records. This establishes the declared local workflows, not parity with complete commercial Apps. Business schema and MCP return changes are absent from this GUI refinement.
+
+## Cross-session clock follow-up
+
+Runtime **1.6.0** adds Infra-only `env.advance_time` and ensures event handlers observe `event.at` while they execute. App packages, business schemas and Agent tool response shapes remain unchanged. Core's remaining Chinese error/quality strings in `runtime.cjs`, `helpers.cjs` and `assets.cjs` are translated to English; status codes are unchanged.
+
+[Calling contract](../runtime-time.md) · [Runnable example](../../examples/workflows/session-time/README.md) · [Recorded evidence](runtime-time.json)
+
+- Seven clock unit cases cover preservation of data/resources/reset history, version and permission checks, valid/invalid/equal/backwards time, retries, all seven packages, event-handler time and rollback, and due-event ordering.
+- **44 real MCP assertions** reproduce October 26 → October 29 with no incoming Mail, verify the sent timestamp and Calendar ICS timestamp, then trace delivery at the synchronized receiver time while retaining the older producer time. Restart, original retry receipts, conflicting management clients and reset are checked.
+- Both Node 18 and 22 pass **22/22 stages**. The existing five-App common checks increase to **185** because the verifier also checks Agent denial of the new management operation. The 38 App-only business tests and 83 cross-App assertions still pass.
+- All seven packages retain their prior hashes and pass the independent base validator. Browser acceptance still passes **109** checks.
+
+The Infra caller must pause actors, process earlier due events, advance every enabled App and confirm snapshots before resuming. This repository supplies the per-App primitive and executable calling example; it does not verify the external orchestrator or provide a global scheduler.

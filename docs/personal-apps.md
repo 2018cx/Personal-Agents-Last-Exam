@@ -1,6 +1,6 @@
 # Shared personal Apps
 
-Five independently loadable local packages extend the Mail and Calendar references. They implement bounded, deterministic personal-App workflows using Core API **1.2.0** and the public runtime **1.5.0**. Each package is version **1.0.0**. No service account or private repository is needed.
+Five independently loadable local packages extend the Mail and Calendar references. They implement bounded, deterministic personal-App workflows using Core API **1.2.0** and the public runtime **1.6.0**. Each package is version **1.0.0**. No service account or private repository is needed.
 
 ## Choose a package
 
@@ -80,6 +80,8 @@ node apps/notes/service.cjs --role infra --run demo --state-dir .state --registr
 Both processes use the same App state. The default `scenario` profile permits only reads. Infra can select the example `sandbox` profile with `env.reset` to enable declared writes. Real Task policies replace these examples.
 
 All records carry creation/update times and business history. App writes use `ctx.virtual_now`; event updates use `event.at`. Infra controls advancement. Messages preserves producer `time` as `sent_at`; absent producer time is stored as `null`, while `received_at` and Core/Messaging receipts retain observed application/processing/commit times. The clocks are explicitly named, not assumed synchronized.
+
+Infra uses Core's `env.advance_time` to synchronize every enabled App before a later session, including Apps that received no events. Reads/writes leave logical time fixed. No package schema or business handler change is required; see the [calling contract](runtime-time.md) and [Mail / Calendar example](../examples/workflows/session-time/README.md).
 
 ### Messages integration contract
 

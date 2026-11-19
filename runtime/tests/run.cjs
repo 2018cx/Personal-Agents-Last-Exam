@@ -8,6 +8,8 @@ const entries=[
  ['contract-rules',['runtime/contracts/tests.cjs']],
  ['loader-and-compatibility',['--test','runtime/tests/loader.test.cjs']],
  ['extensibility',['--test','runtime/tests/extensibility.test.cjs']],
+ ['clock-contract',['--test','runtime/tests/clock.test.cjs']],
+ ['session-time',['examples/workflows/session-time/run.cjs',path.join(reportDir,'session-time.json')]],
  ['mail-public-verification',['runtime/cli.cjs','verify','--app','examples/apps/mail','--output',path.join(reportDir,'mail.json')]],
  ['calendar-public-verification',['runtime/cli.cjs','verify','--app','examples/apps/calendar','--output',path.join(reportDir,'calendar.json')]],
  ['core-business-and-mcp',['runtime/tests/core-behavior.cjs']],
