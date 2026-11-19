@@ -48,7 +48,7 @@ npm run test:web
 npm run test:web:browser
 ```
 
-The fixed Playwright dependency is only for browser tests; stdio and App-local tests still need no npm install. CI installs Chromium on Node 22 and runs the same commands.
+The fixed Playwright dependency is only for browser tests; stdio and App-local tests still need no npm install. CI pins Ubuntu 24.04 and Node 22, installs Chromium and runs the same commands.
 
 - Host tests: session/origin/CSRF, role forgery, direct management requests, hidden paths, version/retry, restart and restricted profile.
 - Browser tests: real create/edit controls on every App, MCP state inspection, reload, scenario refresh, business denials/conflicts, original-byte upload/download, text escaping, responsive layout and JavaScript errors.

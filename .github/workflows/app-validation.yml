@@ -95,7 +95,8 @@ jobs:
           path: evidence/
 
   business-web:
-    runs-on: ubuntu-latest
+    # Match the OS supported by the pinned Playwright/browser dependency.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
