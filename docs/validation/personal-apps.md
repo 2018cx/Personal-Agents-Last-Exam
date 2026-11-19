@@ -2,7 +2,7 @@
 
 Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0** packages in this PR, public runtime **1.5.0**, Core API **1.2.0**. Exact package hashes, runtime stages and workflow assertions are recorded in [personal-apps.json](personal-apps.json). Package hashes were compared across both Node runs and the independent base-runtime reports after the last App edit.
 
-**Automated outcome: passed.** Maintainer scope approval, human workflow acceptance and provenance review remain pending. The initial proposal and implementation are presented together for review; no approval is claimed.
+**Automated outcome: passed.** This is a maintainer implementation submitted directly for code review. Human workflow acceptance and provenance review remain pending; no approval is claimed. Technical scope and interfaces are documented in the suite guide rather than a separate community proposal.
 
 ## Reproduction and evidence
 
@@ -15,7 +15,7 @@ Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0
 | Node 18.20.8 | 19/19 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
 | Node 22.14.0 | 19/19 full-suite stages passed | Same full-suite stages on the second supported runtime family |
 | Independent base validator | All seven discovered packages passed | Unmodified main at `718a4cbc7709dee22bf1e4ad1cff984550d7e519` validated the candidate packages, including existing Mail/Calendar |
-| Human review | Pending | Scope, overlap, realistic coverage and provenance; automated green results do not grant acceptance |
+| Human review | Pending | Implementation scope, overlap, realistic coverage and provenance; automated green results do not grant acceptance |
 
 The Node binaries were official releases with their archive SHA-256 checked against Node's published checksum file. All test data was synthetic; tests used temporary directories and local stdio MCP, without private services, user credentials or model APIs.
 
@@ -52,8 +52,8 @@ Individual App tests additionally cover file/folder cycles and collisions, immut
 
 ## Review focus
 
-Start with the [scope proposal](../../proposals/environment/shared-personal-apps.md), [suite guide](../personal-apps.md) and each App's `src/`, `tools.json`, seed/event schemas and tests. Most package JSON files are copies of public contracts or explicit record/tool schemas needed for isolated verification. Shared schema copies are checked by `contracts:check`; the vendored test validator is compared to the canonical public validator.
+Start with the [suite guide](../personal-apps.md) and each App's `src/`, `tools.json`, seed/event schemas and tests. Most package JSON files are copies of public contracts or explicit record/tool schemas needed for isolated verification. Shared schema copies are checked by `contracts:check`; the vendored test validator is compared to the canonical public validator.
 
 Confirm the reuse boundary with #33 Personal Document Records and #85 Kinthread, especially the proposed `channel.chat` contract. The new GUI files are tested as escaped reviewer renderers; their declarations are explicitly **declared**, with no mounted GUI endpoint or Agent CUA claim. Source/product references are documented as design inspiration; their code/assets are not redistributed.
 
-Recommendation: ready for maintainer scope and implementation review, with automated local evidence attached. Merge and acceptance remain maintainer decisions.
+Recommendation: ready for code and implementation review, with automated local evidence attached. Merge and acceptance remain maintainer decisions. This documentation does not change the repository's automated contribution gate.

@@ -14,4 +14,4 @@ Read [App contribution](../docs/app-contribution.md), [integration with other Ap
 | Tasks | [tasks/](tasks/) | Lists, assignments, deadlines and completion |
 | Contacts | [contacts/](contacts/) | Stable person references and contact methods |
 
-Start with the [suite guide](../docs/personal-apps.md) for source references, exact capabilities and commands. Run `npm run test:personal-apps` to validate all five. The [cross-App workflow](../examples/workflows/personal-apps/) shows how to consume another App's interfaces and verify the real receiving state. These packages accompany a scope proposal and require normal maintainer review before adoption.
+Start with the [suite guide](../docs/personal-apps.md) for source references, exact capabilities and commands. Run `npm run test:personal-apps` to validate all five. The [cross-App workflow](../examples/workflows/personal-apps/) shows how to consume another App's interfaces and verify the real receiving state. These packages are submitted by maintainers directly for implementation review; code and validation evidence remain subject to normal review before adoption.

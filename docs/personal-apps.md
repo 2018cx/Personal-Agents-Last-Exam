@@ -14,6 +14,18 @@ Five independently loadable local packages extend the Mail and Calendar referenc
 
 These are reusable capabilities, not claims that the linked proposals have adopted these interfaces. Each App runs on its own; the combined example explicitly enables the packages it needs. Mail and Calendar remain under `examples/apps/` and are unchanged.
 
+These packages are submitted directly for code review as maintainer-provided implementations. They are bounded PALE business simulators, not full deployments or API-compatible replacements for the reference products. Passing validation establishes the declared and tested workflows, not coverage of every Task or every feature of those products.
+
+| App | Capabilities not implemented in this version |
+| --- | --- |
+| Files | File-content/PDF full-text search, OCR, sharing links, WebDAV and a mounted file-preview UI |
+| Messages | Threaded replies, reactions, member add/remove operations, scheduled sends and device push |
+| Notes | A Markdown editor/rendering UI, collaborative editing and note sharing |
+| Tasks | Recurring tasks, hierarchical subtasks and automatic due-time reminders; `due_at` is stored data, not a scheduled callback |
+| Contacts | vCard import/export, duplicate-contact merging and CardDAV/device synchronization |
+
+Reminder/push execution also needs a host scheduling/notification capability. No mounted GUI is delivered by these packages. Verify the specific operations and timing semantics a Task needs before treating an App dependency as fulfilled.
+
 ## Open-source references and reuse decision
 
 Research checked on November 18, 2026. We use original, dependency-free PALE implementations of the selected workflows. No source files, logos, screenshots or production data from these products are redistributed. Their licenses below identify the reference repositories; this table does not relicense upstream code.

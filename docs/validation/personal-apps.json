@@ -299,7 +299,7 @@
     "notes",
     "tasks"
   ],
-  "scope_approval": "pending",
+  "submission_type": "maintainer_direct_implementation_CR",
   "human_acceptance": "pending",
   "gui": "Reviewer renderer only; host GUI integration declared, not an implemented endpoint."
 }
