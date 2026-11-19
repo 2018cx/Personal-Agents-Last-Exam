@@ -86,3 +86,11 @@ Browser verification uses pinned Playwright/Chromium, temporary synthetic state,
 Reproduce with `npm ci`, `npx playwright install chromium`, `npm run test:web` and `npm run test:web:browser`. CI uploads screenshots and `.artifacts/web/report.json`. The committed [GUI evidence summary](personal-apps-gui.json) records the final package hashes and checked browser flows. Screenshots are supplementary; no model-agent benchmark or complete user-simulator integration is claimed.
 
 This corrects the earlier delivery gap: MCP passing and renderer existence did not establish GUI delivery. GUI evidence is now separate and executable. The review-only checklist change is maintained independently in PR #104.
+
+### Product interface refinement
+
+The current browser report covers **109 checks**: Mail 17, Calendar 17, Files 14, Messages 15, Notes 17, Tasks 13, Contacts 13, plus 3 restricted-Calendar permission checks. The interfaces now have mailbox folders/readers, a month calendar, a file browser, conversation bubbles/composer, note navigation, task checkboxes and contact cards. App-owned GUI READMEs describe their controls.
+
+Additional tests exercise Reply recipient/subject prefills, actual authorized image preview, missing-attachment fallback, month navigation/date-to-create, folder double-click, in-thread sending, pinned-note filtering, task-checkbox transitions and contact groups. Selection keeps prior-item actions disabled until the new item is loaded; folder double-click remains available during a read. Calendar accepts the existing valid event representation without an attachments array. These are interface fixes, not new backend operations.
+
+The final package hashes were matched across Node 18, Node 22, the unmodified base validator and browser reports. Desktop and narrow live-preview layouts were also inspected without modifying user/demo records. This establishes the declared local workflows, not parity with complete commercial Apps. Business schema and MCP return changes are absent from this GUI refinement.

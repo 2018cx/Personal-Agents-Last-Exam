@@ -99,3 +99,21 @@ The working surfaces are local MCP and App-owned interactive Web pages through t
 Each of the seven Apps has `gui/index.html` and `gui/src/app.js`, declaring its business actions, fields and record presentation. The shared Host serves these files and connects only to Agent-authorized tools. It has no browser reset/history/event endpoint. Use `node runtime/web/server.cjs --app mail --run web-demo --profile sandbox` from the public checkout, or choose another App ID. See [startup, architecture and browser verification](../runtime/web/README.md).
 
 The optional `pale.web` GUI extension enables this public Host while preserving the existing reviewer-renderer contract and all business schemas. Missing host support must be reported separately; the legacy renderer alone is not the interactive interface.
+
+### Product-oriented local interfaces
+
+The business interfaces use App-specific views instead of a generic record inspector:
+
+| App | Interface and everyday interactions |
+| --- | --- |
+| Mail | Mailbox folders, sender/subject previews, reading pane, compose/edit drafts, Reply/Forward text prefills, named attachment download and media preview |
+| Calendar | Month navigation, date-to-create prefills, agenda, event/guest details and attachment cards |
+| Files | Folder navigation, file cards, destination-folder selectors and immutable version downloads |
+| Messages | Named conversations, sender-labelled bubbles, in-thread composer and advanced delivery-envelope export |
+| Notes | Pinned/tag/archive navigation, note previews, paper-style reader and explicit editing |
+| Tasks | List/status navigation, completion checkboxes, due dates, priorities and dependency details |
+| Contacts | Alphabetical address-book entries, groups, contact cards and editing |
+
+`gui/src/app.js` owns each App's navigation and views. Shared Web primitives handle sessions, discovery, forms, versioned writes and authorized attachment bytes. Business schemas, MCP results, Core and Messaging semantics remain unchanged by this interface refinement. In particular, local send state does not automatically invoke a downstream route. The supported functional scope remains the one described above.
+
+The browser suite tests these interactions against actual MCP state, including native folder double-click, month/date selection, in-thread sending and completion checkboxes. It additionally checks that a rapid selection change does not expose actions for the preceding item and that missing media is shown as unavailable. See the [GUI evidence](validation/personal-apps-gui.json).

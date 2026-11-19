@@ -53,3 +53,11 @@ The fixed Playwright dependency is only for browser tests; stdio and App-local t
 - Host tests: session/origin/CSRF, role forgery, direct management requests, hidden paths, version/retry, restart and restricted profile.
 - Browser tests: real create/edit controls on every App, MCP state inspection, reload, scenario refresh, business denials/conflicts, original-byte upload/download, text escaping, responsive layout and JavaScript errors.
 - Screenshots and a machine-readable report are written to `.artifacts/web/`. A browser test is not a model-agent evaluation.
+
+## App-specific product views
+
+The Apps use distinct interfaces: Mail inbox/reader, Calendar month/agenda, Files folder browser, Messages conversations/composer, Notes paper/editor, Tasks checkable lists, and Contacts address book. Each `gui/src/app.js` supplies its navigation, filters, row/detail rendering and interaction choices. The shared client supplies transport, accessible DOM primitives, versioned writes and attachment rendering; it does not implement App business transitions.
+
+Folder names, conversation names and attachment filenames replace raw references where the authorized API provides those choices. New events without attachments remain valid. Person references without a directory lookup are readable labels derived from the reference, not independently resolved identity records. Refresh re-reads the App; it is not a background push subscription.
+
+Browser acceptance also checks Reply prefills, authorized image preview, missing attachments, month navigation/date prefills, folder double-click navigation, in-thread sending, pinned notes, task checkboxes and contact groups. These workflow checks complement screenshot inspection; passing them does not certify a complete commercial product feature set.

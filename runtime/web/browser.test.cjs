@@ -62,7 +62,7 @@ const configs={
     await page.reload();await page.locator('[data-record-id="'+item.id+'"]').waitFor();await page.locator('#app[aria-busy=false]').waitFor();
     record('Browser reload retains committed record',await page.locator('[data-record-id="'+item.id+'"]').innerText().then(x=>x.includes(c.updated)));
     await page.locator('[data-record-id="'+item.id+'"]').click();
-    await page.locator('.detail .eyebrow').getByText(item.id,{exact:true}).waitFor();
+    await page.locator('.detail[data-selected-id="'+item.id+'"]').waitFor();
     if(app==='notes'){
       record('Untrusted text is displayed, never executed',!(await page.evaluate(()=>window.injected))&&await page.locator('.detail').innerText().then(x=>x.includes('<img src=x')));
       await begin('Edit note',{'patch.title':'Stale overwrite'});
@@ -100,13 +100,60 @@ const configs={
     if(app==='tasks'){await operate('Change status',{status:'completed'});record('GUI completes a task',(await snapshot()).tasks.find(t=>t.id===item.id).status==='completed');}
     if(app==='contacts'){await operate('Archive or restore',{'patch.archived':true});record('GUI archives a contact',(await snapshot()).contacts.find(t=>t.id===item.id).archived);}
     if(app==='messages'){await page.locator('[data-record-id="'+item.id+'"]').click();await operate('Retract');record('GUI retracts a locally authored message',(await snapshot()).messages.find(t=>t.id===item.id).retracted);}
+    // Product-level interactions, in addition to common form-to-MCP checks.
+    if(app==='mail'){
+      await page.locator('nav').getByRole('button',{name:/Inbox/}).click();await page.locator('[data-record-id=confirmation]').click();
+      await page.getByRole('button',{name:'Reply',exact:true}).click();
+      record('Reply opens a draft addressed to the visible sender',await form.locator('[data-field=to]').inputValue()==='alex.rivera@example.com'&&(await form.locator('[data-field=subject]').inputValue()).startsWith('Re: '));
+      await form.getByRole('button',{name:'Cancel',exact:true}).click();
+      await page.locator('[data-record-id=materials]').click();
+      await page.getByRole('button',{name:'Download room.png',exact:true}).waitFor();
+      await page.locator('.attachment-card').filter({hasText:'room.png'}).getByRole('button',{name:'Preview',exact:true}).click();
+      await page.waitForFunction(()=>{const image=document.querySelector('dialog.media-preview img');return image?.complete&&image.naturalWidth>0;});
+      record('Authorized image opens as an actual image preview',await page.locator('dialog.media-preview img').evaluate(e=>e.complete&&e.naturalWidth>0));
+      await page.getByRole('button',{name:'Close preview',exact:true}).click();
+      await page.locator('.attachment-card.unavailable').waitFor();
+      record('Unavailable attachment has a readable fallback',await page.locator('.attachment-card.unavailable').count()===1);
+    }
+    if(app==='calendar'){
+      const beforeMonth=await page.locator('.calendar-toolbar h3').textContent();await page.getByRole('button',{name:'Next month',exact:true}).click();
+      record('Month navigation changes the visible calendar',await page.locator('.calendar-toolbar h3').textContent()!==beforeMonth);
+      await page.locator('.calendar-day:not(.adjacent) button.day-number').first().click();
+      record('Picking a calendar day prefills an event time',(await form.locator('[data-field=start]').inputValue()).includes('T09:00'));
+      await form.getByRole('button',{name:'Cancel',exact:true}).click();
+    }
+    if(app==='files'){
+      await page.locator('nav').getByRole('button',{name:/All files/}).click();await page.locator('[data-record-id=folder-receipts]').dblclick();
+      await page.locator('.section-title').getByText('Receipts',{exact:true}).waitFor();await page.locator('#app[aria-busy=false]').waitFor();
+      await page.locator('[data-record-id=file-receipt]').waitFor();
+      record('Opening a folder shows its actual children',await page.locator('#records [data-record-id]').count()===1);
+    }
+    if(app==='messages'){
+      const text=page.getByRole('textbox',{name:'Message to Household',exact:true});await text.fill('Sent through the conversation composer');
+      await page.locator('.chat-composer').getByRole('button',{name:'Send',exact:true}).click();await page.locator('#app[aria-busy=false]').waitFor();
+      record('In-thread composer saves to the selected conversation',(await snapshot()).messages.some(m=>m.text==='Sent through the conversation composer'&&m.conversation_id==='conversation-home'));
+    }
+    if(app==='notes'){
+      await page.locator('nav').getByRole('button',{name:/Pinned/}).click();
+      record('Pinned filter uses real note state',await page.locator('#records [data-record-id=note-groceries]').count()===1&&await page.locator('#records [data-record-id]').count()===1);
+    }
+    if(app==='tasks'){
+      await page.locator('nav').getByRole('button',{name:/Completed/}).click();await page.getByRole('checkbox',{name:'Complete '+c.updated,exact:true}).uncheck();await page.locator('#app[aria-busy=false]').waitFor();
+      record('Task checkbox updates actual completion status',(await snapshot()).tasks.find(t=>t.id===item.id).status==='todo');
+    }
+    if(app==='contacts'){
+      await page.locator('nav').getByRole('button',{name:/Friends/}).click();
+      record('Contact groups filter the address book',await page.locator('#records [data-record-id=contact-alex]').count()===1&&await page.locator('#records [data-record-id]').count()===1);
+    }
     const event=JSON.parse(fs.readFileSync(path.join(appDir,'examples/scenario.json')));event.at='2026-11-18T10:00:00-08:00';
     if(event.payload.updated_at){event.payload.updated_at=event.at;event.payload.history.at(-1).at=event.at;}
     if(app==='mail')event.payload.received_at=event.at;
     const applied=await infra.call('env.apply_event',{expected_version:(await infra.call('env.snapshot')).version,event});
     record('Independent scenario event commits',applied.status==='committed');
-    await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.locator('#app[aria-busy=false]').waitFor();await page.locator('[data-record-id="'+event.payload.id+'"]').click();
-    await page.locator('.detail').getByText(event.payload.id,{exact:true}).waitFor();
+    await page.getByRole('button',{name:'Refresh',exact:true}).click();await page.locator('#app[aria-busy=false]').waitFor();
+    const section={mail:'Inbox',calendar:'All events',files:'All files',messages:'All conversations',notes:'All notes',tasks:'My tasks',contacts:'All contacts'}[app];
+    await page.locator('nav').getByRole('button',{name:new RegExp(section)}).click();await page.locator('#app[aria-busy=false]').waitFor();await page.locator('[data-record-id="'+event.payload.id+'"]').click();
+    await page.locator('.detail[data-selected-id="'+event.payload.id+'"]').waitFor();
     const key=app==='notes'?'body':app==='tasks'?'description':app==='contacts'?'organization':c.key;
     await page.waitForFunction(({key,value})=>document.querySelector('.detail').textContent.includes(value),{key,value:event.payload[key]});
     record('GUI refresh observes independent scenario state');
