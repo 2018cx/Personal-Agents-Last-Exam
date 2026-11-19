@@ -89,4 +89,6 @@ The payload names a target Messages account and an existing conversation. Sender
 
 `messages.send` writes local outgoing state. `messages.outbound` returns a stable CloudEvent derived from that record. The host explicitly calls `router.publish` and inspects its receipt; generating an event is not delivery confirmation. The ordinary CRUD APIs and `.upsert` events of Files, Notes, Tasks and Contacts do not imply messaging support; their messaging arrays are empty.
 
+Read-status changes preserve the outbound event ID and original `sent_at`. Content revisions or another destination produce a new event identity. Received Messages records retain optional `delivery_source` provenance, which cannot be removed by a later update event. An external notification remains received content even when its source account belongs to the same person: local edit, retract, attachment-write and outbound tools reject it. Task authors should include this provenance when seeding external historical messages.
+
 The working surface is local MCP plus escaped reviewer renderers. This foundation intentionally stays smaller than the referenced full products; proposed extensions such as additional protocol adapters should have their own scope and tests.

@@ -8,10 +8,10 @@ Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0
 
 | Evidence | Result | What was actually exercised |
 | --- | --- | --- |
-| App-only business | 36 tests passed: Files 7, Messages 8, Notes 7, Tasks 7, Contacts 7 | Real App hooks, input/output/seed schemas, domain failures, history retention, read-only behavior, optional logging and escaped rendering |
+| App-only business | 38 tests passed: Files 7, Messages 10, Notes 7, Tasks 7, Contacts 7 | Real App hooks, input/output/seed schemas, domain failures, history retention, read-only behavior, optional logging and escaped rendering |
 | Isolated App package | All five passed | Public verifier copies each App without a sibling runtime, then executes its local tests and event example |
 | Real public MCP | 180 common checks across the five packages passed | Discovery, argument/role restrictions, reads, history loading, event application/retry, reset, separate run and restarted process |
-| Declared cross-App workflows | 76 assertions passed | Real business writes, receipts, destination records and actual attachment bytes, with negative controls |
+| Declared cross-App workflows | 83 assertions passed | Real business writes, receipts, destination records and actual attachment bytes, with negative controls |
 | Node 18.20.8 | 19/19 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
 | Node 22.14.0 | 19/19 full-suite stages passed | Same full-suite stages on the second supported runtime family |
 | Independent base validator | All seven discovered packages passed | Unmodified main at `718a4cbc7709dee22bf1e4ad1cff984550d7e519` validated the candidate packages, including existing Mail/Calendar |
@@ -49,6 +49,24 @@ The base checker was not changed or supplied from the candidate. Its package/MCP
 | Infra applies Notes/Messages content change → inspect business history | Previous text/content is retained alongside the new record | An event cannot erase existing history, creation time or prior revisions |
 
 Individual App tests additionally cover file/folder cycles and collisions, immutable file versions, nonempty-folder trash rules, Notes archive/restore and revisions, Contacts duplicate/invalid emails, conversation membership and author-only message edits/retractions. Reads do not mark Messages as read; that is a separate write tool.
+
+## Follow-up delivery review
+
+The review reproduced and corrected two Messages defects before the final validation runs:
+
+| Reproduced failure | Correction and regression evidence |
+| --- | --- |
+| Marking an outgoing message read at a later virtual time changed its CloudEvent identity/time, so a retry could create another receiving record. | Derive identity from content/destination/revision, and preserve original `sent_at`. App-only tests cover read changes and text edit/revert; real MCP advances time, marks read, republishes and verifies one receiver effect. |
+| A service notification whose source account had the same owner as the recipient was editable as if locally authored. | Store optional immutable `delivery_source` on received records. App-only tests reject edit, retract, attachment changes and provenance removal; real MCP grants the edit tool but verifies that the App rejects editing a received notification and preserves its data. |
+
+The new optional Messages record field is reflected in its seed/event/tool-output schemas. Existing historical fixtures remain valid. The chat wire contract, public Core/Messaging implementation and Mail/Calendar packages are unchanged.
+
+| Review gate | Outcome |
+| --- | --- |
+| Package and contracts | Passed authoritative package/schema checks; exact package hashes match both Node runs and the independent base validator. |
+| App-only business | Passed from isolated copies with no runtime sibling, including the two new regressions. |
+| Public runtime and independent integration | Passed real MCP, lifecycle/permission/media/delivery workflows and the unmodified base validator. Contacts/Tasks and Files/Mail/Notes coordination uses ordinary MCP tools; the two Messages delivery workflows use Router. |
+| Workflow and human review | Automated workflow evidence passed. Human scope/provenance acceptance remains pending; GUI declarations are not mounted interactive interfaces. |
 
 ## Review focus
 

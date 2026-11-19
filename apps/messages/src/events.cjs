@@ -10,6 +10,9 @@ function applyEvent(ctx, data, event) {
   const index = data[APP].findIndex(r => r.id === item.id);
   if (index >= 0) {
     const old = data[APP][index];
+    if (JSON.stringify(item.delivery_source) !== JSON.stringify(old.delivery_source)) {
+      fail('invalid_event', 'Delivery source is immutable for an existing record.');
+    }
     if (item.created_at !== old.created_at || Date.parse(item.updated_at) < Date.parse(old.updated_at) ||
         JSON.stringify(item.history.slice(0, old.history.length)) !== JSON.stringify(old.history) || item.history.length <= old.history.length) {
       fail('invalid_event', 'Updates must retain creation time and extend existing history.');

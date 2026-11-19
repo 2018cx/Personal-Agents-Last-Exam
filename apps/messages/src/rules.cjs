@@ -11,6 +11,11 @@ function validate(ctx,data) {
     if(data.messages.some(m=>m.id===conversation.id)) fail('invalid_seed','Message and conversation IDs must differ.');
   }
   for(const message of data.messages) {
+    if(message.delivery_source) {
+      const source=message.delivery_source;
+      const account=ctx.binding.accounts.find(a=>a.app_id===source.app_id && a.account_id===source.account_id);
+      if(!account || account.owner_person_id!==message.author_person_id) fail('invalid_seed','Delivery source must match its bound owner.');
+    }
     const conversation=conversations.get(message.conversation_id);
     if(!conversation || !conversation.participant_ids.includes(message.author_person_id) ||
        message.read_by.some(id=>!conversation.participant_ids.includes(id))) fail('invalid_seed','Message references a nonparticipant.');

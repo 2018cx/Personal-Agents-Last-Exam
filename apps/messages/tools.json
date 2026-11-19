@@ -162,6 +162,35 @@
                   "additionalProperties": false
                 },
                 "maxItems": 100
+              },
+              "delivery_source": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                  },
+                  "account_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                  },
+                  "object_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "object_id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                  }
+                },
+                "required": [
+                  "app_id",
+                  "object_type",
+                  "object_id",
+                  "account_id"
+                ],
+                "additionalProperties": false,
+                "description": "Provenance of a received message. Account ownership does not grant authorship; existing delivery provenance is immutable."
               }
             },
             "required": [
@@ -353,6 +382,35 @@
                 "additionalProperties": false
               },
               "maxItems": 100
+            },
+            "delivery_source": {
+              "type": "object",
+              "properties": {
+                "app_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                },
+                "account_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                },
+                "object_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "object_id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,149}$"
+                }
+              },
+              "required": [
+                "app_id",
+                "object_type",
+                "object_id",
+                "account_id"
+              ],
+              "additionalProperties": false,
+              "description": "Provenance of a received message. Account ownership does not grant authorship; existing delivery provenance is immutable."
             }
           },
           "required": [

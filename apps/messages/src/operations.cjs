@@ -8,7 +8,7 @@ function conversation(data,id) {
 }
 function own(data,id) {
   const item=c.active(c.find(data,id));
-  if(item.author_person_id!==data.owner_person_id) c.fail('permission_denied','Only the author may edit, retract or forward through this adapter.');
+  if(item.delivery_source || item.author_person_id!==data.owner_person_id) c.fail('permission_denied','Only locally authored messages may be edited, retracted or sent through this adapter.');
   return item;
 }
 function handleTool(ctx,data,name,args) {

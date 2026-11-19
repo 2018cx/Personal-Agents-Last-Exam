@@ -22,6 +22,10 @@ With only this App folder, run `node --test tests/business.test.cjs` and `node e
 
 ## Integration and review
 
+Received records retain `delivery_source` (publishing App/account/object). Sharing a person/account owner does not make an external notification locally authored: edit, retract, outbound adaptation and attachment changes are restricted to local authored messages. An update event cannot remove or replace existing delivery provenance. Optional provenance on historical fixtures must be supplied by the Task when the record came from another App.
+
+`messages.outbound` keeps event identity stable across read-status changes. Content revisions or a different destination produce a different identity; producer `time` preserves the source message's original `sent_at` and is omitted if it is absent. Delivery still requires an explicit `router.publish` call and committed receipt.
+
 `contribution/contribution.json` declares actual Agent/Infra operations, events and messaging directions. Inspect the destination App's `tools.json`, receive declaration and schema before implementing a connection. No other App is required to run this package. Add pinned dependencies when an integration requires another package. See [cross-App guide](../../docs/app-integrations.md) and [implementation review](../../docs/review/app-implementation.md).
 
 `gui/src/view.js` is an escaped, read-only reviewer renderer for host-provided records. The GUI declaration remains `declared` until a host mounts it; no GUI endpoint is launched by this package. MCP is the working operational surface. Asset bytes and metadata are separate; attachment reads use the parent record and platform registration. The public local media profile applies (64 assets, 1 MiB per instance).

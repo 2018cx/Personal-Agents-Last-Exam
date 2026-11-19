@@ -78,3 +78,36 @@ test('outbound contract carries original bytes, stable event ID/time, and explic
   assert.deepEqual(f.call('messages.outbound',args).message,first);
   assert.equal(first.data.channel,'channel.chat');
 });
+
+test('marking an outgoing message read does not create a new delivery identity',()=>{
+  const f=fixture(),id=f.call('messages.send',{conversation_id:'conversation-home',text:'A stable message.'}).id;
+  const args={id,recipient_account_id:'messages-alex',conversation_id:'conversation-home'};
+  const before=f.call('messages.outbound',args).message;
+  f.ctx.virtual_now='2026-11-18T10:00:00-08:00';
+  f.call('messages.mark_read',{id});
+  assert.deepEqual(f.call('messages.outbound',args).message,before);
+  f.call('messages.edit',{id,text:'A different version.'});
+  assert.notEqual(f.call('messages.outbound',args).message.id,before.id);
+  f.call('messages.edit',{id,text:'A stable message.'});
+  assert.notEqual(f.call('messages.outbound',args).message.id,before.id);
+});
+
+test('a received App notification is not an own authored message even when its account owner matches',()=>{
+  const f=fixture();
+  f.ctx.binding.accounts.push({app_id:'orders',account_id:'orders-maya',owner_person_id:'person-maya'});
+  const message={specversion:'1.0',id:'order-notice',source:'urn:pale:app:orders:account:orders-maya',
+    type:'org.pale.messages.chat.v1',time:f.ctx.virtual_now,datacontenttype:'application/json',
+    dataschema:'urn:pale:messages:chat-payload:1',data:{channel:'channel.chat',
+      recipient:{kind:'app_account_ref',app_id:'messages',id:'messages-maya'},
+      source_object:{app_id:'orders',account_id:'orders-maya',object_type:'order',object_id:'order-1'},
+      content:{conversation_id:'conversation-home',text:'Order confirmed.',attachments:[]},extensions:[]}};
+  f.event({event_id:'delivered-order',at:f.ctx.virtual_now,operation:'messages.receive',
+    payload:{recipient_account_id:'messages-maya',message}});
+  unchanged(f,()=>f.call('messages.edit',{id:'delivered-order',text:'Forged confirmation'}),/author|received/);
+  unchanged(f,()=>f.call('messages.retract',{id:'delivered-order'}),/author|received/);
+  unchanged(f,()=>f.call('messages.attachment.add',{id:'delivered-order',files:[blob()]}),/author|received/);
+  const forged=f.call('messages.get',{id:'delivered-order'}).item;
+  delete forged.delivery_source;
+  forged.updated_at='2026-11-18T10:00:00-08:00';forged.history.push({at:forged.updated_at,action:'strip_source'});
+  unchanged(f,()=>f.event({event_id:'strip-source',at:forged.updated_at,operation:'messages.upsert',payload:forged}),/immutable/);
+});

@@ -117,7 +117,7 @@ async function run() {
       [rejectedBefore.snapshot.data,rejectedBefore.snapshot.resources]);
 
     equal('Publisher copy matches receiver-owned wire schema',require('./publisher/schemas/router-message.schema.json'),require('../../../apps/messages/schemas/router-message.schema.json'));
-    const receiverInfra=await open('messages','infra','notifications');await bind(receiverInfra,[orderBinding]);
+    const receiverInfra=await open('messages','infra','notifications');await bind(receiverInfra,[orderBinding]);await sandbox(receiverInfra);
     const receiverAgent=await open('messages','agent','notifications');const bridge=await router();
     const message=notification('order-notice-1',file);
     const receipt=await bridge.call('router.publish',{request_id:'order-1',message});
@@ -125,6 +125,11 @@ async function run() {
     const delivered=(await receiverAgent.call('messages.get',{id:receipt.event_id})).item;
     equal('Receiver stores original sender time',delivered.sent_at,message.time);
     equal('Receiving does not mark a notification read',delivered.read_by,[]);
+    equal('Received provenance identifies the publishing App',delivered.delivery_source,message.data.source_object);
+    const tamper=await receiverAgent.call('messages.edit',{id:delivered.id,text:'Forged order confirmation',
+      expected_version:(await receiverInfra.call('env.snapshot')).version,request_id:'edit-received'});
+    equal('Account ownership does not grant edit rights over a received notification',tamper.status,'permission_denied');
+    equal('Rejected receiver edit preserves the message',(await receiverAgent.call('messages.get',{id:delivered.id})).item,delivered);
     equal('Receiver attachment bytes are readable',(await receiverAgent.call('messages.attachment.read',{id:delivered.id,asset_id:delivered.attachments[0]})).file.base64,file.base64);
     ok('Receipt connects producer, receiver and commit time',receipt.cloud_event.time===message.time && receipt.receiver_trace.cloud_event.id===message.id && !!receipt.committed_at);
     ok('Repeated notification deduplicates',(await bridge.call('router.publish',{request_id:'order-retry',message})).duplicate);
@@ -172,6 +177,21 @@ async function run() {
     equal('Receiver resolves sender through account binding',targetRecord.author_person_id,'person-alex');
     equal('Receiver gets bytes from the source App',(await targetAgent.call('messages.attachment.read',{id:targetRecord.id,asset_id:targetRecord.attachments[0]})).file.sha256,file.sha256);
     equal('Source records remain in the source instance',(await sourceInfra.call('env.snapshot')).snapshot.data.messages.length,1);
+    // Advance the source clock through an independent scripted incoming record.
+    const sourceSnap=await sourceInfra.call('env.snapshot');
+    const incoming=copy(sourceSnap.snapshot.data.messages[0]);
+    incoming.id='clock-update';incoming.attachments=[];incoming.text='A later scripted message';
+    incoming.created_at='2026-11-18T10:00:00-08:00';incoming.updated_at=incoming.created_at;
+    incoming.history=[{at:incoming.created_at,action:'received'}];
+    const advanced=await sourceInfra.call('env.apply_event',{expected_version:sourceSnap.version,
+      event:{event_id:'advance-clock',at:incoming.updated_at,operation:'messages.upsert',payload:incoming}});
+    equal('Source clock advances independently',advanced.status,'committed');
+    await write(sourceAgent,sourceInfra,'messages.mark_read',{id:sourceMessage.id});
+    const afterRead=(await sourceAgent.call('messages.outbound',{id:sourceMessage.id,recipient_account_id:'messages-maya',conversation_id:'conversation-home'})).message;
+    equal('Read-status update preserves outbound identity and producer time',afterRead,outgoing);
+    const replay=await accountBridge.call('router.publish',{request_id:'after-read-retry',message:afterRead});
+    ok('Publish retry after a read-status change remains a duplicate',replay.duplicate && replay.event_id===accountReceipt.event_id);
+    equal('Read-status retry creates no additional receiver record',(await targetInfra.call('env.snapshot')).snapshot.data.messages.length,2);
     return {passed:true,checks,receipt,account_receipt:accountReceipt};
   } finally {
     await Promise.allSettled(clients.map(client=>client.close()));

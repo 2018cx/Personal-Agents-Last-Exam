@@ -1,6 +1,6 @@
 {
   "schema": "pale.personal-apps-evidence.v1",
-  "checked_at": "2026-11-19T01:45:34.621Z",
+  "checked_at": "2026-11-19T02:07:51.839Z",
   "base_commit": "718a4cbc7709dee22bf1e4ad1cff984550d7e519",
   "runtime_version": "1.5.0",
   "core_api_version": "1.2.0",
@@ -16,8 +16,8 @@
     {
       "app_id": "messages",
       "app_version": "1.0.0",
-      "package_sha256": "3d98bf2381d7a6f9c1c45001171376f4a2c26ee9a25890eb9f7603b919649130",
-      "business_tests": 8,
+      "package_sha256": "a49c5a11975716397518cfef2bd5cd291d4051fce235882410fe57ffaf656173",
+      "business_tests": 10,
       "public_checks": 38,
       "base_runtime": "passed"
     },
@@ -272,6 +272,9 @@
     "Independent publisher → Messages commits",
     "Receiver stores original sender time",
     "Receiving does not mark a notification read",
+    "Received provenance identifies the publishing App",
+    "Account ownership does not grant edit rights over a received notification",
+    "Rejected receiver edit preserves the message",
     "Receiver attachment bytes are readable",
     "Receipt connects producer, receiver and commit time",
     "Repeated notification deduplicates",
@@ -288,7 +291,11 @@
     "Messages A → Messages B commits",
     "Receiver resolves sender through account binding",
     "Receiver gets bytes from the source App",
-    "Source records remain in the source instance"
+    "Source records remain in the source instance",
+    "Source clock advances independently",
+    "Read-status update preserves outbound identity and producer time",
+    "Publish retry after a read-status change remains a duplicate",
+    "Read-status retry creates no additional receiver record"
   ],
   "independent_base_apps": [
     "calendar",

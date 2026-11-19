@@ -7,9 +7,9 @@ function outbound(ctx,data,item,args) {
   const payload={channel:'channel.chat',recipient:{kind:'app_account_ref',app_id:'messages',id:args.recipient_account_id},
     source_object:{app_id:'messages',account_id:data.account_id,object_type:'message',object_id:item.id},content,extensions:[]};
   // Stable retries; changed content/destination produces a new event identity.
-  const id='chat-'+crypto.createHash('sha256').update(JSON.stringify([item.id,item.updated_at,payload])).digest('hex').slice(0,40);
+  const id='chat-'+crypto.createHash('sha256').update(JSON.stringify([item.id,item.edits.length,payload])).digest('hex').slice(0,40);
   return {specversion:'1.0',id,source:'urn:pale:app:messages:account:'+encodeURIComponent(data.account_id),
-    type:'org.pale.messages.chat.v1',time:item.updated_at,datacontenttype:'application/json',
+    type:'org.pale.messages.chat.v1',...(item.sent_at===null?{}:{time:item.sent_at}),datacontenttype:'application/json',
     dataschema:'urn:pale:messages:chat-payload:1',data:payload};
 }
 function receive(ctx,data,event) {
@@ -25,7 +25,7 @@ function receive(ctx,data,event) {
   const record={id:event.event_id,account_id:data.account_id,created_at:event.at,updated_at:event.at,
     history:[{at:event.at,action:'received'}],conversation_id:conversation.id,author_person_id:account.owner_person_id,
     text:message.data.content.text,sent_at:message.time || null,received_at:event.at,
-    read_by:[],retracted:false,attachments:[],edits:[]};
+    read_by:[],retracted:false,attachments:[],edits:[],delivery_source:structuredClone(source)};
   if(message.data.content.attachments.length) {
     if(!ctx.assets?.add) fail('unsupported_capability','Receiving attachments requires an asset writer.');
     record.attachments=ctx.assets.add({object_type:'message',object_id:record.id,files:message.data.content.attachments});

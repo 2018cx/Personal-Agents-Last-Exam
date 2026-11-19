@@ -61,7 +61,7 @@ function attachment(ctx, data, name, args) {
     return {file:ctx.assets.read(args.asset_id)};
   }
   active(item);
-  if (APP === 'messages' && item.author_person_id !== data.owner_person_id) {
+  if (APP === 'messages' && (item.delivery_source || item.author_person_id !== data.owner_person_id)) {
     fail('permission_denied', 'Only the author can change attachments.');
   }
   if (!ctx.assets?.add) fail('unsupported_capability', 'An attachment writer is required.');
