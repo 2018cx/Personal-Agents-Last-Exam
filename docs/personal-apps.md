@@ -12,7 +12,7 @@ Five independently loadable local packages extend the Mail and Calendar referenc
 | [Tasks](../apps/tasks/) | Lists, assignment to bound people, due times, priority/tags, blockers, completion/cancellation and explicit reopen | Daily plans and commitments in #29 and #82. A Task scenario decides what counts as an authorized commitment. |
 | [Contacts](../apps/contacts/) | Search/read/create/update/archive, stable person references, multiple emails/phones, organizations and groups | Shared identity lookup for Mail, Calendar and Tasks. A display name or email is not an authorization proof. |
 
-These are reusable capabilities, not claims that the linked proposals have adopted these interfaces. Each App runs on its own; the combined example explicitly enables the packages it needs. Mail and Calendar remain under `examples/apps/` and are unchanged.
+These are reusable capabilities, not claims that the linked proposals have adopted these interfaces. Each App runs on its own; the combined example explicitly enables the packages it needs. Mail and Calendar remain under `examples/apps/`; this update adds their standalone business GUI without changing their backend schemas or logic.
 
 These packages are submitted directly for code review as maintainer-provided implementations. They are bounded PALE business simulators, not full deployments or API-compatible replacements for the reference products. Passing validation establishes the declared and tested workflows, not coverage of every Task or every feature of those products.
 
@@ -24,7 +24,7 @@ These packages are submitted directly for code review as maintainer-provided imp
 | Tasks | Recurring tasks, hierarchical subtasks and automatic due-time reminders; `due_at` is stored data, not a scheduled callback |
 | Contacts | vCard import/export, duplicate-contact merging and CardDAV/device synchronization |
 
-Reminder/push execution also needs a host scheduling/notification capability. No mounted GUI is delivered by these packages. Verify the specific operations and timing semantics a Task needs before treating an App dependency as fulfilled.
+Reminder/push execution also needs a host scheduling/notification capability. A local interactive Web App is delivered for all seven Apps. Verify the specific operations and timing semantics a Task needs before treating an App dependency as fulfilled.
 
 ## Open-source references and reuse decision
 
@@ -91,4 +91,11 @@ The payload names a target Messages account and an existing conversation. Sender
 
 Read-status changes preserve the outbound event ID and original `sent_at`. Content revisions or another destination produce a new event identity. Received Messages records retain optional `delivery_source` provenance, which cannot be removed by a later update event. An external notification remains received content even when its source account belongs to the same person: local edit, retract, attachment-write and outbound tools reject it. Task authors should include this provenance when seeding external historical messages.
 
-The working surface is local MCP plus escaped reviewer renderers. This foundation intentionally stays smaller than the referenced full products; proposed extensions such as additional protocol adapters should have their own scope and tests.
+The working surfaces are local MCP and App-owned interactive Web pages through the [public business Host](../runtime/web/README.md). This foundation intentionally stays smaller than the referenced full products; proposed extensions such as additional protocol adapters should have their own scope and tests.
+
+
+## Interactive App interfaces
+
+Each of the seven Apps has `gui/index.html` and `gui/src/app.js`, declaring its business actions, fields and record presentation. The shared Host serves these files and connects only to Agent-authorized tools. It has no browser reset/history/event endpoint. Use `node runtime/web/server.cjs --app mail --run web-demo --profile sandbox` from the public checkout, or choose another App ID. See [startup, architecture and browser verification](../runtime/web/README.md).
+
+The optional `pale.web` GUI extension enables this public Host while preserving the existing reviewer-renderer contract and all business schemas. Missing host support must be reported separately; the legacy renderer alone is not the interactive interface.

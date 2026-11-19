@@ -1,6 +1,6 @@
 {
   "schema": "pale.personal-apps-evidence.v1",
-  "checked_at": "2026-11-19T02:07:51.839Z",
+  "checked_at": "2026-11-19T02:54:42.390Z",
   "base_commit": "718a4cbc7709dee22bf1e4ad1cff984550d7e519",
   "runtime_version": "1.5.0",
   "core_api_version": "1.2.0",
@@ -8,7 +8,7 @@
     {
       "app_id": "files",
       "app_version": "1.0.0",
-      "package_sha256": "77f38841a09d69478731b4f4f0cf5813f97a68f50e5d0a4ef5bae8c9b4d3d98a",
+      "package_sha256": "2e422b06cd45f085d69260eb8962bfbfbdb5121c4d598799aa243b364ce16110",
       "business_tests": 7,
       "public_checks": 36,
       "base_runtime": "passed"
@@ -16,7 +16,7 @@
     {
       "app_id": "messages",
       "app_version": "1.0.0",
-      "package_sha256": "a49c5a11975716397518cfef2bd5cd291d4051fce235882410fe57ffaf656173",
+      "package_sha256": "76010885aa6e0b5399560b880367a4ee4770a53b7e80c8a2c12b5f718bcd0ade",
       "business_tests": 10,
       "public_checks": 38,
       "base_runtime": "passed"
@@ -24,7 +24,7 @@
     {
       "app_id": "notes",
       "app_version": "1.0.0",
-      "package_sha256": "6ba1fe9079d89eb1aea8c0ec27570d91cf1fb093513bf03d31ede77b67eecf98",
+      "package_sha256": "a48ba3abb4e6d8dedd56fec71284d88ce83338cd5c6f12e2b35df0546d1aeb2b",
       "business_tests": 7,
       "public_checks": 36,
       "base_runtime": "passed"
@@ -32,7 +32,7 @@
     {
       "app_id": "tasks",
       "app_version": "1.0.0",
-      "package_sha256": "cff0e2ef2f2ca22d88ee47f4aebb1b82235f47e1cce0909f15a1674a09b98e25",
+      "package_sha256": "71823d253ee38299843874e16c03310176dd1c5bdc29fa4e2cce46bd03b51e26",
       "business_tests": 7,
       "public_checks": 35,
       "base_runtime": "passed"
@@ -40,7 +40,7 @@
     {
       "app_id": "contacts",
       "app_version": "1.0.0",
-      "package_sha256": "c4c0ff3b11c924e40c5372521d99a85bd244481b02c19c5b9c5caee8a75a0f79",
+      "package_sha256": "2268c64993c5d8112ecd038ce7f18e81ea660601977fbedda8f2590521051685",
       "business_tests": 7,
       "public_checks": 35,
       "base_runtime": "passed"
@@ -126,6 +126,10 @@
         {
           "name": "personal-apps",
           "status": "passed"
+        },
+        {
+          "name": "business-web-host",
+          "status": "passed"
         }
       ]
     },
@@ -207,6 +211,10 @@
         },
         {
           "name": "personal-apps",
+          "status": "passed"
+        },
+        {
+          "name": "business-web-host",
           "status": "passed"
         }
       ]
@@ -308,5 +316,19 @@
   ],
   "submission_type": "maintainer_direct_implementation_CR",
   "human_acceptance": "pending",
-  "gui": "Reviewer renderer only; host GUI integration declared, not an implemented endpoint."
+  "gui": {
+    "passed": true,
+    "apps": [
+      "mail",
+      "calendar",
+      "files",
+      "messages",
+      "notes",
+      "tasks",
+      "contacts"
+    ],
+    "checks": 99,
+    "evidence": "personal-apps-gui.json",
+    "scope": "Real local business browser UI, not a model-agent evaluation or complete user-simulator integration."
+  }
 }

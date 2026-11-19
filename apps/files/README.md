@@ -24,7 +24,7 @@ With only this App folder, run `node --test tests/business.test.cjs` and `node e
 
 `contribution/contribution.json` declares actual Agent/Infra operations, events and messaging directions. Inspect the destination App's `tools.json`, receive declaration and schema before implementing a connection. No other App is required to run this package. Add pinned dependencies when an integration requires another package. See [cross-App guide](../../docs/app-integrations.md) and [implementation review](../../docs/review/app-implementation.md).
 
-`gui/src/view.js` is an escaped, read-only reviewer renderer for host-provided records. The GUI declaration remains `declared` until a host mounts it; no GUI endpoint is launched by this package. MCP is the working operational surface. Asset bytes and metadata are separate; attachment reads use the parent record and platform registration. The public local media profile applies (64 assets, 1 MiB per instance).
+`gui/src/view.js` is an escaped, read-only reviewer renderer for host-provided records. The additive `pale.web` extension provides an interactive business Web App through the public Host; the legacy renderer profile stays compatible. MCP and the Web App share authoritative state. Asset bytes and metadata are separate; attachment reads use the parent record and platform registration. The public local media profile applies (64 assets, 1 MiB per instance).
 
 ## Package map
 
@@ -36,7 +36,7 @@ plugin.cjs                   Standard hooks delegating to src/
 src/                         Business operations, invariants, events and diagnostics
 schemas/                     Seed/state/event rules and copied public media contracts
 contribution/                Capabilities, GUI declaration, media catalog and provenance
-gui/src/view.js              Escaped reviewer rendering, supplied with authorized records
+gui/                         Business page/controller plus compatible reviewer renderer
 assets/                      Actual fixture bytes (catalog references live here)
 fixtures/                    Initial records, account bindings, policy and clock
 examples/run.cjs             Runnable event example without a host
@@ -47,3 +47,7 @@ LICENSE                      MIT for this implementation and synthetic fixtures
 ```
 
 The full suite and open-source design references are documented in [personal Apps](../../docs/personal-apps.md). The implementation is original PALE code; it is not a fork or deployment of the reference products.
+
+## Interactive business Web App
+
+See [GUI startup and boundaries](gui/README.md). From the public repository root run `node runtime/web/server.cjs --app files --run web-demo --profile sandbox`. The App owns its controls in `gui/src/app.js`; the shared Host exposes only the fixed Agent connection.

@@ -12,8 +12,8 @@ Checked November 18, 2026 (America/Los_Angeles). Scope: the five version **1.0.0
 | Isolated App package | All five passed | Public verifier copies each App without a sibling runtime, then executes its local tests and event example |
 | Real public MCP | 180 common checks across the five packages passed | Discovery, argument/role restrictions, reads, history loading, event application/retry, reset, separate run and restarted process |
 | Declared cross-App workflows | 83 assertions passed | Real business writes, receipts, destination records and actual attachment bytes, with negative controls |
-| Node 18.20.8 | 19/19 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
-| Node 22.14.0 | 19/19 full-suite stages passed | Same full-suite stages on the second supported runtime family |
+| Node 18.20.8 | 20/20 full-suite stages passed | Existing Mail/Calendar/Core/Messaging regression suite plus the five-App suite |
+| Node 22.14.0 | 20/20 full-suite stages passed | Same full-suite stages on the second supported runtime family |
 | Independent base validator | All seven discovered packages passed | Unmodified main at `718a4cbc7709dee22bf1e4ad1cff984550d7e519` validated the candidate packages, including existing Mail/Calendar |
 | Human review | Pending | Implementation scope, overlap, realistic coverage and provenance; automated green results do not grant acceptance |
 
@@ -59,19 +59,30 @@ The review reproduced and corrected two Messages defects before the final valida
 | Marking an outgoing message read at a later virtual time changed its CloudEvent identity/time, so a retry could create another receiving record. | Derive identity from content/destination/revision, and preserve original `sent_at`. App-only tests cover read changes and text edit/revert; real MCP advances time, marks read, republishes and verifies one receiver effect. |
 | A service notification whose source account had the same owner as the recipient was editable as if locally authored. | Store optional immutable `delivery_source` on received records. App-only tests reject edit, retract, attachment changes and provenance removal; real MCP grants the edit tool but verifies that the App rejects editing a received notification and preserves its data. |
 
-The new optional Messages record field is reflected in its seed/event/tool-output schemas. Existing historical fixtures remain valid. The chat wire contract, public Core/Messaging implementation and Mail/Calendar packages are unchanged.
+The new optional Messages record field is reflected in its seed/event/tool-output schemas. Existing historical fixtures remain valid. The chat wire contract and Core/Messaging business implementation are unchanged. Mail/Calendar now additionally include App-owned web pages and public Host metadata; their business logic and schemas are unchanged.
 
 | Review gate | Outcome |
 | --- | --- |
 | Package and contracts | Passed authoritative package/schema checks; exact package hashes match both Node runs and the independent base validator. |
 | App-only business | Passed from isolated copies with no runtime sibling, including the two new regressions. |
 | Public runtime and independent integration | Passed real MCP, lifecycle/permission/media/delivery workflows and the unmodified base validator. Contacts/Tasks and Files/Mail/Notes coordination uses ordinary MCP tools; the two Messages delivery workflows use Router. |
-| Workflow and human review | Automated workflow evidence passed. Human scope/provenance acceptance remains pending; GUI declarations are not mounted interactive interfaces. |
+| Workflow and human review | Automated workflow evidence passed. Browser acceptance is recorded separately below; human scope/provenance acceptance remains pending. |
 
 ## Review focus
 
 Start with the [suite guide](../personal-apps.md) and each App's `src/`, `tools.json`, seed/event schemas and tests. Most package JSON files are copies of public contracts or explicit record/tool schemas needed for isolated verification. Shared schema copies are checked by `contracts:check`; the vendored test validator is compared to the canonical public validator.
 
-Confirm the reuse boundary with #33 Personal Document Records and #85 Kinthread, especially the proposed `channel.chat` contract. The new GUI files are tested as escaped reviewer renderers; their declarations are explicitly **declared**, with no mounted GUI endpoint or Agent CUA claim. Source/product references are documented as design inspiration; their code/assets are not redistributed.
+Confirm the reuse boundary with #33 Personal Document Records and #85 Kinthread, especially the proposed `channel.chat` contract. Legacy reviewer renderers remain compatible. The optional `pale.web` extension now mounts business pages through the public Host and has separate real-browser evidence. Source/product references are documented as design inspiration; their code/assets are not redistributed.
 
 Recommendation: ready for code and implementation review, with automated local evidence attached. Merge and acceptance remain maintainer decisions. This documentation does not change the repository's automated contribution gate.
+
+
+## Business GUI acceptance
+
+All seven Apps own their business pages/controllers in `gui/index.html` and `gui/src/app.js`. The public [Web Host](../../runtime/web/README.md) mounts them through a fixed Agent MCP connection. Legacy reviewer-renderer declarations remain compatible; the optional `pale.web` extension identifies the additional business surface. The base validator checks unchanged business contracts; it does not certify the new Web Host.
+
+Browser verification uses pinned Playwright/Chromium, temporary synthetic state, actual buttons/forms and independent MCP inspection. It covers create/edit/reload on all seven Apps, scenario-event refresh, original attachment/file bytes, invalid Calendar overlap, Notes concurrent-edit refusal and lost-response retry, untrusted text, direct management denial and a narrow viewport. Host tests separately cover access sessions, origin/CSRF, forged roles, hidden paths, versions, restart and restricted profiles.
+
+Reproduce with `npm ci`, `npx playwright install chromium`, `npm run test:web` and `npm run test:web:browser`. CI uploads screenshots and `.artifacts/web/report.json`. The committed [GUI evidence summary](personal-apps-gui.json) records the final package hashes and checked browser flows. Screenshots are supplementary; no model-agent benchmark or complete user-simulator integration is claimed.
+
+This corrects the earlier delivery gap: MCP passing and renderer existence did not establish GUI delivery. GUI evidence is now separate and executable. The review-only checklist change is maintained independently in PR #104.
