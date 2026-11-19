@@ -21,7 +21,8 @@ const entries=[
  ['delivery-to-mail',['examples/workflows/delivery-to-mail/run.cjs']],
  ['non-mail-route',['runtime/tests/non-mail-routing.cjs']],
  ['attachment-safety',['runtime/tests/attachments.cjs']],
- ['attachment-workflow',['examples/workflows/attachments/run.cjs']]
+ ['attachment-workflow',['examples/workflows/attachments/run.cjs']],
+ ['personal-apps',['runtime/tests/personal-apps.cjs']]
 ];
 const stages=[];
 for(const [name,args]of entries){

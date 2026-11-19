@@ -14,6 +14,8 @@
     "example:delivery-to-mail": "node examples/workflows/delivery-to-mail/run.cjs",
     "contracts:check": "node runtime/build-contracts.cjs --check",
     "contracts:build": "node runtime/build-contracts.cjs",
-    "example:attachments": "node examples/workflows/attachments/run.cjs"
+    "example:attachments": "node examples/workflows/attachments/run.cjs",
+    "test:personal-apps": "node runtime/tests/personal-apps.cjs",
+    "example:personal-apps": "node examples/workflows/personal-apps/run.cjs"
   }
 }

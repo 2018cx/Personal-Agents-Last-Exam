@@ -8,6 +8,7 @@ The public checkout now contains the same local Core and Messaging implementatio
 
 - [Mail](../examples/apps/mail/README.md): a complete Mail reference package.
 - [Calendar](../examples/apps/calendar/README.md): a separate Calendar reference package.
+- [Shared personal Apps](personal-apps.md): Files, Messages, Notes, Tasks and Contacts packages, open-source design references and executable cross-App checks. New packages use `apps/<app-id>/`; Mail and Calendar stay in their existing reference locations.
 - [App integration guide](app-integrations.md): **read this before connecting to an existing personal or external App**.
 - [Public runtime](../runtime/README.md): launch, validation, state, diagnostics and current limitations.
 - [Proposal review](review/environment-proposal.md) and [implementation review](review/app-implementation.md): review expectations.
