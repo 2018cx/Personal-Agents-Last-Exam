@@ -16,6 +16,8 @@ Open the access link printed by each process. A port is selected automatically; 
 
 Only a **new** instance is initialized with the CLI-selected synthetic profile. `sandbox` enables declared business writes; use a fresh run with `--profile scenario` for restricted Task-like permissions. Starting a Host for existing state never resets that state or changes its policy. To load a real Task or inject a scenario, use the separate Infra MCP interface. There is no browser API for those operations.
 
+The trusted Infra launcher passes `--initial-profile` to Core, which selects that policy in the transaction that first creates state. Concurrent Hosts reuse the winning initialization. The Web Host no longer uses `.web-init` directories: leftovers from an interrupted older Host do not block startup, and no lock needs to be deleted to restart it. This does not change Core's separate transaction-lock recovery or provide distributed locking across machines.
+
 Agent and user-simulator clients can consume the business GUI or its MCP backend when configured by their own runtime. This package provides the interface and browser-test evidence, not a model adapter, remote deployment or user-simulator implementation.
 
 ## App versus Host ownership
@@ -50,7 +52,7 @@ npm run test:web:browser
 
 The fixed Playwright dependency is only for browser tests; stdio and App-local tests still need no npm install. CI pins Ubuntu 24.04 and Node 22, installs Chromium and runs the same commands.
 
-- Host tests: session/origin/CSRF, role forgery, direct management requests, hidden paths, version/retry, restart and restricted profile.
+- Host tests: session/origin/CSRF, role forgery, direct management requests, hidden paths, version/retry, interrupted and concurrent startup, restart and restricted profile.
 - Browser tests: real create/edit controls on every App, MCP state inspection, reload, scenario refresh, business denials/conflicts, original-byte upload/download, text escaping, responsive layout and JavaScript errors.
 - Screenshots and a machine-readable report are written to `.artifacts/web/`. A browser test is not a model-agent evaluation.
 

@@ -13,18 +13,12 @@ async function start({app,registry=path.join(root,'apps.registry.json'),run='web
   if(!web)throw Error('App has no public web controller');
   function inside(relative){const f=path.resolve(pkg.dir,relative);if(!f.startsWith(pkg.dir+path.sep)||!fs.realpathSync(f).startsWith(fs.realpathSync(pkg.dir)+path.sep))throw Error('Invalid App web path');return f;}
   const page=inside(web.page),controller=inside(web.controller);
-  const stateFile=path.join(stateDir,run,app+'.json');
-  // Only a newly created instance gets the CLI-selected fixture profile.
-  // Existing Task state and permissions are never reset by starting a web Host.
-  fs.mkdirSync(path.dirname(stateFile),{recursive:true,mode:0o700});
-  const initLock=path.join(path.dirname(stateFile),app+'.web-init');
-  fs.mkdirSync(initLock,{mode:0o700});
-  const fresh=!fs.existsSync(stateFile);
-  const infra=new Client(app,'infra',run,stateDir,'pale-web-initializer',{registry});
+  // Core initializes the selected policy atomically with first state creation.
+  // No separate web lock or subsequent reset can strand or overwrite a run.
+  const infra=new Client(app,'infra',run,stateDir,'pale-web-initializer',{registry,initialProfile:profile});
   try{
     await infra.initialize();
-    if(fresh){const snapshot=await infra.call('env.snapshot');const r=await infra.call('env.reset',{profile,expected_version:snapshot.version});if(r.status!=='ready')throw Error('Initialization failed: '+r.status);}
-  }finally{await infra.close();fs.rmdirSync(initLock);}
+  }finally{await infra.close();}
   const client=new Client(app,'agent',run,stateDir,'pale-business-web',{registry});
   await client.initialize();
   const token=crypto.randomBytes(32).toString('hex'),cookie=crypto.randomBytes(32).toString('hex'),csrf=crypto.randomBytes(32).toString('hex');

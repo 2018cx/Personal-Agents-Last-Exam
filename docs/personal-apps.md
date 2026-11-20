@@ -14,7 +14,7 @@ Five independently loadable local packages extend the Mail and Calendar referenc
 
 These are reusable capabilities, not claims that the linked proposals have adopted these interfaces. Each App runs on its own; the combined example explicitly enables the packages it needs. Mail and Calendar remain under `examples/apps/`; this update adds their standalone business GUI without changing their backend schemas or logic.
 
-These packages are submitted directly for code review as maintainer-provided implementations. They are bounded PALE business simulators, not full deployments or API-compatible replacements for the reference products. Passing validation establishes the declared and tested workflows, not coverage of every Task or every feature of those products.
+The original implementation was submitted in PR #103. Its maintainer-branch continuation includes a [scope proposal](../proposals/environment/personal-apps-suite.md) for explicit design review and implementation acceptance; the original submission did not have recorded plan approval. These are bounded PALE business simulators, not full deployments or API-compatible replacements for the reference products. Passing validation establishes the declared and tested workflows, not coverage of every Task or every feature of those products.
 
 | App | Capabilities not implemented in this version |
 | --- | --- |

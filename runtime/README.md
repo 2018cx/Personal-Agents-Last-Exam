@@ -46,6 +46,8 @@ Infra operations are `env.load_seed`, `env.apply_event`, `env.reset`, `env.snaps
 
 Core persists under `<state-dir>/<run>/<app>.json`. Separate instance state roots allow multiple instances of one App, as shown by Mail-to-Mail. Only Infra uses complete snapshots. App code runs with the host process's permissions: this is not containment of malicious plugins. Review code before execution and use disposable environments without production credentials.
 
+The trusted `mcp-server.cjs` Infra launcher accepts optional `--initial-profile scenario|sandbox` (default `scenario`). It selects the policy inside the first state-creation transaction and never changes an existing instance. Agent launchers reject this option. The Web Host uses it instead of a separate initialization lock and reset; it is not an Agent tool or a new App contract requirement.
+
 ## Diagnostics and time
 
 The registry's `initial_time` initializes the reference run. App-only launchers use optional `fixtures/clock.json`; absent configuration uses the Unix epoch. Infra can supply a task-specific `virtual_now` to `env.load_seed`, and reset restores that loaded clock baseline. Before a later session, Infra processes due events, uses `env.advance_time` to synchronize every enabled App (including idle Apps), confirms snapshots, then resumes actors. App reads/writes do not advance time. Event handlers see `event.at` during processing; rejected events roll back data and clock. See the [time contract](../docs/runtime-time.md) and [executable example](../examples/workflows/session-time/README.md). The external caller owns coordination; this is not a global scheduler. App-specific data migrations belong to the optional `plugin.migrateState` hook.
