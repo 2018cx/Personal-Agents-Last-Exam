@@ -12,6 +12,7 @@ The public checkout now contains the same local Core and Messaging implementatio
 - [App integration guide](app-integrations.md): **read this before connecting to an existing personal or external App**.
 - [Public runtime](../runtime/README.md): launch, validation, state, diagnostics and current limitations.
 - [Proposal review](review/environment-proposal.md) and [implementation review](review/app-implementation.md): review expectations.
+- [App implementation acceptance checklist](review/app-implementation-checklist.md): scope, public delivery, actual GUI/MCP workflows and evidence required for acceptance.
 
 Keep the reference Mail and Calendar under `examples/apps/`. New contributed Apps go under `apps/<app-id>/`, subject to maintainer scope/location review. Personal and external Apps use the same package contract. Do not copy an existing receiving App into your package to implement an integration.
 
