@@ -6,7 +6,7 @@
 
 1. Check the [proposal list](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/blob/proposal-index/proposals/proposal-list.md) for related work, then copy the [Environment proposal template](proposals/templates/environment-proposal.md) or [Task proposal template](proposals/templates/task-proposal.md).
 2. Replace the `[Fill in: …]` placeholders, then add the completed design to `proposals/environment/<slug>.md` or `proposals/task/<slug>.md` in your fork. Follow the required/optional labels; explain how any `TBD` decisions will be resolved.
-3. Open a PR against `main`. Use the [PR summary template](proposals/templates/pr-summary.md) to describe the track, stage and proposal, and link the design file. Keep it Draft while writing; request review when ready.
+3. Open a PR against `main`. Use the [PR summary template](proposals/templates/pr-summary.md) to describe the track, stage and proposal, and link the design file. Keep it Draft while writing; mark it Ready for review when ready. A reviewer is assigned automatically by Track and primary domain, preserving same-author continuity and existing manual assignments. See the [reviewer routing policy](docs/review/reviewer-routing.md).
 
 ### 🏷️ Proposal naming
 
@@ -88,9 +88,10 @@ Start with a realistic user situation and a clear personalization idea. The prop
 - **User persona and prior history:** the background, preferences and experiences that matter to the task.
 - **Story outline:** what the user wants, what happens or changes, and what a good outcome looks like. Include a rough time span only if relevant.
 - **What makes this distinct and personal:** the central challenge or insight, why the person's context changes the right action, and what a generic assistant might miss.
+- **Rubric, hint and reference solution:** forbidden and expected rubric items with their evidence and checks, the full-pass rule, the exact hint text, and one reference timeline that earns a full score.
 - **Construction plan and effort:** persona/history/workspace construction, user rollout and scenario scripting, environment integration, rubrics/reference/hints, and agent rollouts with analysis. For each workstream, specify planned coverage, deliverables, quality checks and effort in person-days, plus owners, dependencies, milestone order and expected resources.
 
-After plan approval, task authors develop the executable scenario, precise timeline, context, rubrics and reference solution. Authors then run the required model evaluations themselves and submit traces, scores, configurations, hint-assisted results and failure analysis for implementation review.
+After plan approval, task authors develop the executable scenario, precise timeline, context, grader and replayable reference solution from the approved rubric. Authors then run the required model evaluations themselves and submit traces, scores, configurations, hint-assisted results and failure analysis for implementation review.
 
 The user rollout describes planned user interactions, responses and branches across the story. Specify the **number of sessions**, **simulated world time span**, and **estimated total tokens for one complete scenario across all sessions**, including the token estimate's scope (dialogue, prior context, tool outputs, etc.). The scenario script implements user behavior and world events. An agent rollout is an actual model execution against the script. Plan the work for both; allow multiple valid agent strategies.
 
