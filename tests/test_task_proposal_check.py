@@ -25,7 +25,7 @@ class TaskProposalCheckTests(unittest.TestCase):
         self.assertEqual(report.gaps, [])
         self.assertEqual(
             title,
-            "[Task Proposal] [Food & dining + Social & communities] Arrange catering for Lena’s autumn gathering",
+            "[Task Proposal] [Food & dining + Social & communities] Arrange catering for Lena’s spring gathering",
         )
 
     def test_empty_template_fails(self):
@@ -46,7 +46,7 @@ class TaskProposalCheckTests(unittest.TestCase):
         self.assertTrue(any("add up to 20" in e for e in self.gaps(wrong_total)))
 
     def test_rubric_items_need_evidence_and_reference_coverage(self):
-        no_evidence = self.example.replace("*Evidence:* Cedar Table’s update (Nov 12). *Checked from:* messages", "*Checked from:* messages")
+        no_evidence = self.example.replace("*Evidence:* Cedar Table’s update (Apr 16). *Checked from:* messages", "*Checked from:* messages")
         self.assertTrue(any("E4 has no" in e for e in self.gaps(no_evidence)))
         uncovered = self.example.replace("| E3, E4 |", "| E3 |")
         self.assertTrue(any("cites E4" in e for e in self.gaps(uncovered)))
@@ -56,7 +56,7 @@ class TaskProposalCheckTests(unittest.TestCase):
         self.assertTrue(any("primary domain" in e for e in self.gaps(bad_domain)))
         long_insight = self.example.replace("- **Personalization insight (required):** ", "- **Personalization insight (required):** " + "x" * 240)
         self.assertTrue(any("limit is 240" in e for e in self.gaps(long_insight)))
-        no_offset = self.example.replace("`2026-11-04T09:05:00-05:00`", "`2026-11-04T09:05:00`", 1)
+        no_offset = self.example.replace("`2026-04-08T09:05:00-04:00`", "`2026-04-08T09:05:00`", 1)
         self.assertTrue(any("no UTC offset" in e for e in self.gaps(no_offset)))
 
     def test_hint_warnings(self):

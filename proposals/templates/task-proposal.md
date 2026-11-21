@@ -106,7 +106,11 @@ Specify the work needed to turn the story into an executable, scoreable task. In
 
 Estimate token volume for **one complete scenario across all sessions** and state what is included, such as dialogue, prior context and tool outputs. The simulated time span is the time elapsed in the user's world; development duration is recorded below.
 
-On the simulated timeline, the first task session must start on or after `2026-11-01`, and all user-history records must be dated on or after `2025-01-01`.
+Apply these date bounds on the simulated timeline:
+
+- For tasks involving interaction with external platforms, the first session must start on or after `2026-01-01`.
+- Records of the user's interactions with external platforms must be dated on or after `2025-01-01`.
+- Text-only user history, such as personal background, past experiences, preferences and user–agent conversations, has no earliest-date restriction.
 
 - **Milestones, owners and dependencies (required):** `[Fill in: work order, responsible contributors, expected calendar duration and environment/infra dependencies; link related PRs]`
 - **Resources and total effort (required):** `[Fill in: total person-days, estimated model/API and generation costs, and compute needs; estimates or explained TBDs]`
