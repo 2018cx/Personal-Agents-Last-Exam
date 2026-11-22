@@ -1,0 +1,24 @@
+{
+  "scenario": {
+    "allow": [
+      "library.search",
+      "library.get",
+      "library.catalog_search",
+      "library.import",
+      "library.save_record",
+      "library.save_note"
+    ],
+    "constraints": {}
+  },
+  "sandbox": {
+    "allow": [
+      "library.search",
+      "library.get",
+      "library.catalog_search",
+      "library.import",
+      "library.save_record",
+      "library.save_note"
+    ],
+    "constraints": {}
+  }
+}
