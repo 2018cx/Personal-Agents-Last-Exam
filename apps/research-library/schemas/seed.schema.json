@@ -190,6 +190,115 @@
         "additionalProperties": false
       },
       "maxItems": 100
+    },
+    "collections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "library_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "member_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]{0,79}$"
+            },
+            "maxItems": 100,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "id",
+          "library_id",
+          "name",
+          "member_ids"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 100
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "library_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "record_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]{0,79}$"
+            },
+            "maxItems": 25,
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "bibtex": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384
+          }
+        },
+        "required": [
+          "id",
+          "library_id",
+          "record_ids",
+          "bibtex"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 8
+    },
+    "trash": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]{0,79}$"
+      },
+      "maxItems": 100,
+      "uniqueItems": true
+    },
+    "previews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]{0,79}$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          }
+        },
+        "required": [
+          "record_id",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 20
     }
   },
   "required": [
@@ -198,7 +307,11 @@
     "libraries",
     "records",
     "catalog",
-    "notes"
+    "notes",
+    "collections",
+    "exports",
+    "trash",
+    "previews"
   ],
   "additionalProperties": false
 }

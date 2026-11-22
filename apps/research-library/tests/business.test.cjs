@@ -49,3 +49,60 @@ test('permission change cannot be invoked by Agent and leaves other grants intac
  assert.deepEqual(d.libraries[1],initial);
  denied(()=>grant(d,{...event,payload:{...event.payload,principal_id:'missing'}}),'invalid_event');
 });
+test('collections are scoped and membership changes neither records nor private notes',()=>{
+ const d=s(), before=structuredClone(d);
+ assert.deepEqual(call(d,'list_collections',b).collections[0].member_ids,['paper-17']);
+ denied(()=>call(d,'create_collection',{...b,name:'Reading'}),'permission_denied');
+ assert.deepEqual(d,before); grant(d);
+ const created=call(d,'create_collection',{...b,name:' Reading 2 '}).collection;
+ assert.equal(created.name,'Reading 2');
+ denied(()=>call(d,'rename_collection',{...b,collection_id:created.id,name:'  '}),'invalid_arguments');
+ assert.equal(call(d,'rename_collection',{...b,collection_id:created.id,name:'Recent'}).collection.name,'Recent');
+ const member={...b,collection_id:created.id,record_id:'paper-17'};
+ denied(()=>call(d,'set_membership',{...member,record_id:'private-1',member:true}),'not_found');
+ assert.deepEqual(call(d,'set_membership',{...member,member:true}).collection.member_ids,['paper-17']);
+ assert.deepEqual(call(d,'set_membership',{...member,member:false}).collection.member_ids,[]);
+ assert.deepEqual(d.records,before.records);assert.deepEqual(d.notes,before.notes);
+});
+test('preview is read-only, BibTeX excludes private and unselected data, and overflow cannot create an artifact',()=>{
+ const d=s(), before=structuredClone(d);const chosen={...b,record_ids:['paper-17']};
+ const exact='@misc{paper-17,\n  title={Field Notes},\n  author={Avery Example},\n  year={2027}\n}\n';
+ assert.equal(call(d,'preview_citations',chosen).bibtex,exact);
+ assert.equal(call(d,'get',item).text_preview.status,'available');
+ denied(()=>call(d,'export_citations',chosen),'permission_denied');
+ denied(()=>call(d,'preview_citations',{...chosen,record_ids:['paper-17','private-1']}),'not_found');
+ assert.deepEqual(d,before); grant(d);
+ for(let n=0;n<8;n++) {
+  const artifact=call(d,'export_citations',chosen).export;
+  assert.deepEqual(call(d,'read_export',{...b,export_id:artifact.id}).export,artifact);
+  assert.equal(artifact.bibtex,exact);
+ }
+ denied(()=>call(d,'export_citations',chosen),'capacity_reached');
+ const tooBig=s();grant(tooBig);tooBig.records[0].title='😀'.repeat(200);
+ tooBig.records[0].authors=Array.from({length:20},()=> '😀'.repeat(200));
+ denied(()=>call(tooBig,'export_citations',chosen),'capacity_reached');assert.deepEqual(tooBig.exports,[]);
+});
+test('trash and restore the same revisioned record, author notes, and collection membership',()=>{
+ const d=s();grant(d);const notes=structuredClone(d.notes);
+ denied(()=>call(d,'trash_record',{...item,expected_record_revision:1}),'stale_record');
+ assert.equal(call(d,'trash_record',{...item,expected_record_revision:2}).record.revision,3);
+ assert.deepEqual(call(d,'search',b).records,[]);
+ assert.deepEqual(call(d,'list_collections',b).collections[0].member_ids,[]);
+ assert.equal(call(d,'list_trash',b).records[0].id,'paper-17');
+ denied(()=>call(d,'preview_citations',{...b,record_ids:['paper-17']}),'not_found');
+ assert.equal(call(d,'restore_record',{...item,expected_record_revision:3}).record.id,'paper-17');
+ assert.deepEqual(call(d,'list_collections',b).collections[0].member_ids,['paper-17']);
+ assert.deepEqual(d.notes,notes);
+});
+test('only Infra corrections change catalog-owned fields, preserving local annotations/membership',()=>{
+ const d=s(), before=structuredClone(d);
+ const e={event_id:'corr',at:event.at,operation:'library.catalog_correct',payload:{record_id:'paper-17',expected_revision:2,patch:{title:'Field Notes, Revised'}}};
+ denied(()=>applyEvent(c(),d,e),'invalid_event');
+ denied(()=>grant(d,{...e,payload:{...e.payload,patch:{tags:[]}}}),'invalid_event');
+ assert.deepEqual(d,before);
+ grant(d,e);
+ assert.equal(d.records[0].title,'Field Notes, Revised');
+ assert.equal(d.records[0].revision,3);
+ assert.deepEqual(d.collections,before.collections);assert.deepEqual(d.notes,before.notes);
+ denied(()=>grant(d,e),'invalid_event');
+});

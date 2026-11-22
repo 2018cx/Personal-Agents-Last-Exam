@@ -45,6 +45,56 @@
           "name": "library.save_note",
           "effect": "write",
           "caller": "agent"
+        },
+        {
+          "name": "library.list_collections",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "library.create_collection",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "library.rename_collection",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "library.set_membership",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "library.preview_citations",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "library.export_citations",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "library.read_export",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "library.list_trash",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "library.trash_record",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "library.restore_record",
+          "effect": "write",
+          "caller": "agent"
         }
       ]
     },
@@ -111,6 +161,11 @@
         "type": "library.permission_change",
         "schema_ref": "schemas/events.schema.json",
         "status": "implemented"
+      },
+      {
+        "type": "library.catalog_correct",
+        "schema_ref": "schemas/events.schema.json",
+        "status": "implemented"
       }
     ],
     "emits": [],
@@ -124,7 +179,7 @@
       "assets.catalog.json"
     ]
   },
-  "gui_ref": null,
+  "gui_ref": "gui.json",
   "notification_channels": [],
   "subscriptions": {
     "business_owner": "source_app",

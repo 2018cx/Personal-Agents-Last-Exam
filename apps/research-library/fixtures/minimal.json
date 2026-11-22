@@ -79,5 +79,23 @@
       "author": "a",
       "text": "Check method"
     }
+  ],
+  "collections": [
+    {
+      "id": "reading",
+      "library_id": "group-1",
+      "name": "Reading",
+      "member_ids": [
+        "paper-17"
+      ]
+    }
+  ],
+  "exports": [],
+  "trash": [],
+  "previews": [
+    {
+      "record_id": "paper-17",
+      "text": "Synthetic text preview for controlled comparison notes."
+    }
   ]
 }
