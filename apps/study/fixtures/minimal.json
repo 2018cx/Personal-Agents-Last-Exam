@@ -1,0 +1,67 @@
+{
+  "account_id": "study-local",
+  "owner_person_id": "learner-1",
+  "decks": [
+    {
+      "id": "D1",
+      "name": "Travel Spanish"
+    },
+    {
+      "id": "D2",
+      "name": "Everyday Spanish"
+    }
+  ],
+  "plan": {
+    "id": "P1",
+    "deck_ids": [
+      "D1",
+      "D2"
+    ],
+    "daily_limit": 3,
+    "new_limit": 1,
+    "target_day": 10
+  },
+  "cards": [
+    {
+      "id": "C1",
+      "deck_id": "D1",
+      "prompt": "Train station",
+      "answer": "estación de tren",
+      "reviewed": true,
+      "stage": 1,
+      "due_day": -1,
+      "card_version": 1
+    },
+    {
+      "id": "C2",
+      "deck_id": "D1",
+      "prompt": "Window seat",
+      "answer": "asiento de ventanilla",
+      "reviewed": false,
+      "stage": 0,
+      "due_day": 0,
+      "card_version": 1
+    },
+    {
+      "id": "C3",
+      "deck_id": "D2",
+      "prompt": "Notebook",
+      "answer": "cuaderno",
+      "reviewed": false,
+      "stage": 0,
+      "due_day": 0,
+      "card_version": 1
+    },
+    {
+      "id": "C4",
+      "deck_id": "D2",
+      "prompt": "Open today",
+      "answer": "abierto hoy",
+      "reviewed": true,
+      "stage": 2,
+      "due_day": 0,
+      "card_version": 1
+    }
+  ],
+  "history": []
+}

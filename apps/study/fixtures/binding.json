@@ -1,0 +1,26 @@
+{
+  "people": [
+    {
+      "person_id": "learner-1",
+      "name": "Synthetic learner"
+    }
+  ],
+  "accounts": [
+    {
+      "app_id": "study",
+      "account_id": "study-local",
+      "owner_person_id": "learner-1"
+    }
+  ],
+  "objects": {
+    "study": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "D1",
+      "D2",
+      "P1"
+    ]
+  }
+}
