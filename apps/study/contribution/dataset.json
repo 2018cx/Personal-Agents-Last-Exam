@@ -10,7 +10,7 @@
     {
       "source_id": "authored",
       "kind": "synthetic",
-      "description": "Four original synthetic Spanish phrase pairs and two fictional decks, hand-authored for deterministic tests; no Anki decks, downloads, external services, or real learner records.",
+      "description": "36 original synthetic Spanish phrase pairs across three fictional decks; no imported decks, downloads, external services, or real learner records.",
       "uri": null,
       "license": "MIT",
       "usage": "permitted",
@@ -28,7 +28,7 @@
     "Stable synthetic IDs, explicit UTC+08:00 clock and intentionally mixed due/new queue."
   ],
   "expected_counts": {
-    "records": 4,
+    "records": 36,
     "assets": 0
   },
   "quality_policy": {

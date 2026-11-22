@@ -22,7 +22,37 @@
           "caller": "agent"
         },
         {
+          "name": "study.get_card",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "study.save_card",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "study.set_suspension",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
           "name": "study.get_plan",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "study.preview_plan",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "study.save_plan",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "study.get_capacity",
           "effect": "read",
           "caller": "agent"
         },
@@ -32,17 +62,27 @@
           "caller": "agent"
         },
         {
-          "name": "study.get_history",
-          "effect": "read",
-          "caller": "agent"
-        },
-        {
           "name": "study.reveal",
           "effect": "read",
           "caller": "agent"
         },
         {
+          "name": "study.set_session",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
           "name": "study.record_review",
+          "effect": "write",
+          "caller": "agent"
+        },
+        {
+          "name": "study.get_history",
+          "effect": "read",
+          "caller": "agent"
+        },
+        {
+          "name": "study.undo_review",
           "effect": "write",
           "caller": "agent"
         }
@@ -106,7 +146,18 @@
     "outbox_atomic_with_business_state": "unsupported"
   },
   "events": {
-    "accepts": [],
+    "accepts": [
+      {
+        "type": "study.change_target",
+        "schema_ref": "schemas/events.schema.json",
+        "status": "implemented"
+      },
+      {
+        "type": "study.correct_card",
+        "schema_ref": "schemas/events.schema.json",
+        "status": "implemented"
+      }
+    ],
     "emits": [],
     "trigger_owner": "task_and_infra"
   },

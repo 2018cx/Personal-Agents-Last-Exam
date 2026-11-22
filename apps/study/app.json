@@ -21,7 +21,10 @@
     "policies": "fixtures/policies.json"
   },
   "dependencies": [],
-  "event_types": [],
+  "event_types": [
+    "study.change_target",
+    "study.correct_card"
+  ],
   "capabilities": {
     "modes": [
       "synthetic"
@@ -31,7 +34,7 @@
     "real_delivery": false
   },
   "limitations": [
-    "v1 only; no card or plan editing, pause/resume, undo, corrections, or incoming events"
+    "Synthetic only, no external App connectors or learner-proficiency claim"
   ],
   "dataset": "contribution/dataset.json",
   "contribution": "contribution/contribution.json"

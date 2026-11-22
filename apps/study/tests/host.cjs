@@ -21,7 +21,7 @@ async function run(){
   }
   assert.equal((await read('/fixtures/minimal.json')).status,404);
   const discovered=await (await read('/api/tools')).json();
-  assert.equal(discovered.tools.length,6);
+  assert.deepEqual(discovered.tools.map(t=>t.name),require('../tools.json').map(t=>t.name));
   assert.ok(discovered.tools.every(x=>x.name.startsWith('study.')));
   assert.equal((await post('/api/call',{name:'env.snapshot',arguments:{}},headers)).status,403);
   const call=async (name,args={})=>(await (await post('/api/call',{name:'study.'+name,arguments:args},headers)).json());

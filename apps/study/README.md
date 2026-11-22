@@ -1,44 +1,49 @@
-# Language Study Workspace v1
+# Language Study Workspace: complete standalone candidate
 
-A local, synthetic flashcard workspace for PALE proposal #51. This first runnable slice includes seeded decks/cards and fixed plan, due-before-new queue, explicit answer reveal and learner-selected Again/Good, and persisted review history. No external accounts, model/API dependencies, live notifications, or third-party deck content. User/Agent callers must provide an actual learner or scenario-supplied rating; this test App does not attest human origin.
+A synthetic PALE environment for [PR #51](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/51). Three decks and 36 original text cards exercise card editing and suspension, plan preview/save, a persistent review cursor, explicit learner ratings, auditable undo, and changes to a card answer or deadline. Implementation and ongoing maintenance: **Xiao Cui (@2018cx)**.
 
-Implementation and ongoing maintenance: **Xiao Cui (@2018cx)**.
+## Reproduce
 
-## Run and reproduce
+Use Node 18 or 22 and the public PALE Runtime 1.6.0 / Core 1.2.0 from upstream commit `61b637164e4abddf81536bb48935cdb688a69ff1`. The original design was approved at `126502f9972740e2b9d9777d300825a547e9d83f`. This candidate follows the on-time v1 `f5653d8a5a58edd22691ea60bcf82d70d63d1348`, without changing the approved proposal or vendoring the runtime. Start with a **fresh synthetic run** because the expanded seed schema changes fields; do not use existing v1 run data here.
 
-Use Node 18+ and the PALE public reference runtime 1.6.0/Core 1.2.0 at upstream commit `61b637164e4abddf81536bb48935cdb688a69ff1`, separately from the approved #51 base `126502f9972740e2b9d9777d300825a547e9d83f`. The fork baseline does not include runtime files. Do not overwrite the approved proposal or vendor the runtime into this package. These are local tests, not remote CI.
-
-From this directory, with the upstream checkout at `$UPSTREAM`:
+From this App directory, with the pinned upstream checkout at `$UPSTREAM`:
 
 ```sh
-npm test
 export PALE_RUNTIME_ROOT="$UPSTREAM/runtime"
+npm test
 node "$PALE_RUNTIME_ROOT/cli.cjs" verify --app "$PWD" --output /tmp/study-verification.json
 node tests/core.cjs
+node tests/full-core.cjs
 node tests/host.cjs
-# Optional with Playwright installed and a supported Chromium environment:
-node tests/web.cjs
+node tests/host-full.cjs
+# Optional automated equivalent on an executor with the pinned upstream Playwright and launchable Chromium:
+PALE_PLAYWRIGHT_MODULE="$UPSTREAM/node_modules/playwright" node tests/web.cjs
 ```
 
-Set `CHROMIUM_PATH` to use an installed Chromium. The real-browser test needs an environment that permits Chromium to launch; the HTTP Host test needs no third-party dependencies. The verifier's `event-example` stage runs a standalone read illustration; it is not evidence of incoming events. The App deliberately declares none in v1.
-
-### v1 validation status
-
-- **Passed:** 3 business tests; 32 pinned public verifier checks; independent real Core stdio walkthrough (seed, ordered queue, reveal, committed rating, persisted ledger, retry, conflict/stale/denial, virtual time, isolated run, two resets); real Web Host HTTP → Agent MCP walkthrough; browser controller syntax.
-- **Passed on actual Chromium (S1 interaction smoke):** Decks and Plan; answer hidden until Reveal; explicit Good rating; C1 persisted after reload; a second Agent caller wrote C2 while the first browser form was open; the stale write was rejected and did not add a ledger entry; the independently written rating appeared on reload and Refresh; the restricted session revealed the answer without offering rating buttons. The separate Agent read-back showed exactly C1/Good and C2/Again. This was a live loopback Web Host run in the managed desktop browser of the same pinned runtime; it does not establish full GUI parity or use the automated script's browser-launch wrapper.
-
-For a manual local browser walkthrough, copy this package to `apps/study` in a disposable pinned upstream checkout, then run from its root:
+The optional browser wrapper starts Chromium with its sandbox enabled. Manually driving an already-running Chromium through the actual pinned Web Host is a separate test route. To reproduce manually, place the App at `apps/study` in a disposable pinned upstream checkout and run from that checkout's root:
 
 ```sh
 printf '%s\n' '{"schema_version":1,"initial_time":"2027-01-08T00:00:00+08:00","apps":[{"app_id":"study","version":"1.0.0","path":"apps/study"}]}' > study-local.registry.json
 node runtime/web/server.cjs --app study --registry study-local.registry.json --run study-preview --profile sandbox --state-dir /tmp/study-preview-state
 ```
 
-Open the printed loopback link, visit Decks and Plan, return to Queue, reveal “Train station,” and explicitly choose Good. History should show card C1 reviewed on day 0 with due day 3. Callers using Infra must keep its connection separate from the editor/Agent connection. A fresh `scenario` run is read-only, including in the GUI.
+Open the printed loopback link. Use a second `scenario` profile run for observer tests and a separate Agent connection to establish authoritative read-back. Only separate Infra may load history, advance time, apply the two events or reset. Follow the [browser test checklist](tests/FULL_GUI_VALIDATION.md) and the [Core evidence and six scenarios](BACKEND-VALIDATION.md). A second fixture contains two seeded historical reviews.
 
-## v1 behavior and limits
+## Local results, by mode
 
-- The App publishes business tools with the `study.` prefix because Core requires tool prefix and App ID to agree. The repository package path is `apps/study`.
-- The clock is the fixed UTC+08:00 date beginning 2027-01-08. Eligible due cards precede eligible new ones; ties use IDs. Again resets to stage 0 and defers until tomorrow; Good advances to at most 3 and uses delays 1/3/7 days. One review per card/day, enforced against daily and new-card limits.
-- Agent reads do not advance time. Core handles optimistic concurrency and exact retries. Reveal returns a card version and study day; the GUI retains the Core version when submitting. Core reset restores the loaded business state and virtual clock, not the old receipts or epoch.
-- Tests cover the seeded standalone loop only. Card/plan edits, suspension, persistent pause/resume cursor, correction/undo, injected events/capacity scenarios, official deployment and complete parity are deferred. Core's read-only scenario is a simulated policy, not a production authentication claim. Original package code and synthetic fixtures are licensed MIT (see `LICENSE`). Reused upstream launcher/contracts retain the notice in `UPSTREAM-NOTICE`. The four phrase pairs are original synthetic examples; no Anki code or deck data is bundled.
+| Mode | Result |
+| --- | --- |
+| App business / public verifier | Passed six Node business tests and all 42 pinned public verifier checks and its two runnable stages. |
+| Core stdio and HTTP Web Host | Passed isolated synthetic runs, approved card/plan/session/undo/target scenarios, seeded history load, receipt and replay, independent read-back, management route denial and repeat reset. |
+| Real Chromium, editor and observer | Passed the actual loopback Web Host interaction path below, including reload and denied changes. This was not an automated CI run; no separate launcher success, production authentication or model-driven study is claimed. |
+| Official independent review and CI | Not established by local evidence. Review the exact PR commit and required checks separately. |
+
+**Observed browser trace.** Discard a card edit, save a new prompt for C1, suspend and restore it; the queue hides it only while suspended. Preview a changed target; editing the draft invalidates the old save control, and discard retains day 10. Save day 8, then a concurrent Agent saves day 9 while a day‑7 draft is open; the old form is refused and reload shows day 9. Close a revealed answer without rating. Pause C1, refresh to observe the same paused cursor, resume and explicitly select Good. History records C1 due day 3. Cancel undo once, then undo; the sole row is preserved as Undone and the review slot is restored.
+
+An Infra versioned correction changes the C1 answer while its older browser form is open. That form is rejected; after refresh the corrected answer appears and the ledger remains unchanged. A deadline event changes P1 to day −1, shows three missing slots and a source notice, and leaves caps 3/1 and the audit ledger unchanged. Create a separate synthetic card and read it back. The distinct observer run can reveal but does not offer rating, editing or plan-save actions. Two Infra resets restore original business data and clock, with another run unchanged. Backend tests cover same-request replay; deliberately dropping a browser network reply was not performed in this manual sequence.
+
+## Behavior, provenance and limits
+
+The fixed UTC+08 calendar starts 2027-01-08. Eligible due cards precede eligible new cards. Again resets to stage 0; Good advances up to stage 3, and delays are 1/3/7 study days. One effective review per card and day, subject to daily and new-card limits. Undo reverses only the current day's latest effective review and retains its audit record. Capacity estimates one next needed review per relevant card by the inclusive target, not proficiency. The App does not infer a rating or authenticate human origin; a user or task must supply it explicitly.
+
+No real accounts, live notification, media, external runtime service, or third-party deck content is included. Original source and synthetic fixtures are released under [MIT](LICENSE); reuse notices are in [UPSTREAM-NOTICE](UPSTREAM-NOTICE). Anki is a public interaction reference only. No production deployment or final maintainer acceptance claimed.
