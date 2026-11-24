@@ -8,5 +8,5 @@ assert.deepEqual(handleTool(ctx,d,'home-repair-slots.list_slots',{}).result.slot
 applyEvent({...ctx,role:'infra',virtual_now:event.at},d,event);
 assert.equal(d.reservations[0].status,'invalidated');
 assert.throws(()=>handleTool(ctx,d,'home-repair-slots.confirm_reservation',{reservation_id:'R0'}),{code:'slot_unavailable'});
-assert.equal(d.bookings.length,4);
+assert.equal(d.bookings.length,8);
 console.log('Synthetic competing event invalidates the preview; no booking was created.');

@@ -82,6 +82,38 @@
       "end": "2027-01-11T17:00:00+08:00",
       "estimate_minor": 8000,
       "taken": false
+    },
+    {
+      "id": "PH2025A",
+      "provider_id": "P2",
+      "start": "2025-01-03T14:00:00+08:00",
+      "end": "2025-01-03T15:00:00+08:00",
+      "estimate_minor": 8000,
+      "taken": false
+    },
+    {
+      "id": "PH2025B",
+      "provider_id": "P1",
+      "start": "2025-07-15T14:00:00+08:00",
+      "end": "2025-07-15T15:00:00+08:00",
+      "estimate_minor": 9500,
+      "taken": false
+    },
+    {
+      "id": "PH2026A",
+      "provider_id": "P2",
+      "start": "2026-01-14T14:00:00+08:00",
+      "end": "2026-01-14T15:00:00+08:00",
+      "estimate_minor": 10500,
+      "taken": false
+    },
+    {
+      "id": "PH2026B",
+      "provider_id": "P1",
+      "start": "2026-10-23T14:00:00+08:00",
+      "end": "2026-10-23T15:00:00+08:00",
+      "estimate_minor": 11000,
+      "taken": false
     }
   ],
   "reservations": [
@@ -115,7 +147,80 @@
       "slot_id": "S8",
       "status": "cancelled",
       "origin": "seed-B4"
+    },
+    {
+      "id": "BH2025A",
+      "slot_id": "PH2025A",
+      "status": "cancelled",
+      "origin": "seed-BH2025A"
+    },
+    {
+      "id": "BH2025B",
+      "slot_id": "PH2025B",
+      "status": "cancelled",
+      "origin": "seed-BH2025B"
+    },
+    {
+      "id": "BH2026A",
+      "slot_id": "PH2026A",
+      "status": "cancelled",
+      "origin": "seed-BH2026A"
+    },
+    {
+      "id": "BH2026B",
+      "slot_id": "PH2026B",
+      "status": "cancelled",
+      "origin": "seed-BH2026B"
     }
   ],
-  "history": []
+  "history": [
+    {
+      "operation": "confirm_reservation",
+      "object_id": "BH2025A",
+      "slot_id": "PH2025A",
+      "at": "2025-01-01T10:00:00+08:00"
+    },
+    {
+      "operation": "cancel_booking",
+      "object_id": "BH2025A",
+      "slot_id": "PH2025A",
+      "at": "2025-01-02T10:00:00+08:00"
+    },
+    {
+      "operation": "confirm_reservation",
+      "object_id": "BH2025B",
+      "slot_id": "PH2025B",
+      "at": "2025-07-10T10:00:00+08:00"
+    },
+    {
+      "operation": "cancel_booking",
+      "object_id": "BH2025B",
+      "slot_id": "PH2025B",
+      "at": "2025-07-14T10:00:00+08:00"
+    },
+    {
+      "operation": "confirm_reservation",
+      "object_id": "BH2026A",
+      "slot_id": "PH2026A",
+      "at": "2026-01-10T10:00:00+08:00"
+    },
+    {
+      "operation": "cancel_booking",
+      "object_id": "BH2026A",
+      "slot_id": "PH2026A",
+      "at": "2026-01-11T10:00:00+08:00"
+    },
+    {
+      "operation": "confirm_reservation",
+      "object_id": "BH2026B",
+      "slot_id": "PH2026B",
+      "at": "2026-10-20T10:00:00+08:00"
+    },
+    {
+      "operation": "cancel_booking",
+      "object_id": "BH2026B",
+      "slot_id": "PH2026B",
+      "at": "2026-10-21T10:00:00+08:00"
+    }
+  ]
 }

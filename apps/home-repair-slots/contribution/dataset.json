@@ -25,10 +25,11 @@
     }
   ],
   "transformations": [
-    "Deterministic IDs, fixed synthetic minor-unit prices and offset timestamps."
+    "Deterministic IDs, fixed synthetic minor-unit prices and offset timestamps.",
+    "Authored booking confirmation/cancellation history spans 2025\u20132026; task clock and active slots are independent."
   ],
   "expected_counts": {
-    "records": 12,
+    "records": 20,
     "assets": 0
   },
   "quality_policy": {

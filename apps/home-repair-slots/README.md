@@ -76,3 +76,41 @@ and S1 still unavailable. Two successful resets returned exact seed data and
 revision zero in new epochs; both browser replays recreated R1, discarded it
 and left identical synthetic business state. These are local browser results,
 not GitHub CI or final acceptance.
+
+### Implementation review regression
+
+In a full PALE checkout, run these commands from this App directory with
+`PALE_RUNTIME_ROOT` unset. The service discovers the enclosing public runtime;
+the standalone package can instead point that environment variable at a
+trusted runtime.
+
+```sh
+npm test
+node examples/run.cjs
+node tests/core.cjs
+node ../../runtime/cli.cjs verify --app "$PWD" --output /tmp/home-repair-review.json
+```
+
+To replay the browser checks, install Playwright 1.62.1 outside the App and
+make its module available through `PALE_PLAYWRIGHT_MODULE` (or ordinary Node
+module resolution). With matching Chromium installed by Playwright, run
+`node tests/browser.cjs`. For an existing compatible Chromium use
+`CHROMIUM_PATH=/path/to/chromium node tests/browser.cjs`. The test keeps the
+Chromium sandbox on and uses only the local Web Host and synthetic Core
+state. It asserts that normal reservation review has no literal “null”,
+clicks through the competing-slot rejection, booking, reschedule, cancel,
+historical lookup and reset/replay, and checks committed records via separate
+MCP sessions.
+
+Four fictional cancelled bookings add paired confirmation/cancellation history
+from 2025-01-01 through 2026-10-21 (UTC+08:00). The first task session is still
+2027-01-12; historical slots are excluded from availability and do not change
+the S1/S2/S4 scenario or the first generated booking ID B5.
+
+Review regression on 2026-11-24: six business tests and the example passed;
+the public verifier passed 37 checks and both local stages. The Core test
+from the App directory passed without an environment override and started
+an independent Infra session using the App launcher. The browser replay
+passed on Chromium Headless Shell 156.0.8078.79 with its sandbox enabled,
+Playwright 1.62.1, and Node 24.22.3, with no page JavaScript errors. The pinned
+proposal baseline and upstream main have identical `runtime/` trees.

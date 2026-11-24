@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs'),os=require('node:os');
-const dir=path.resolve(process.env.PALE_RUNTIME_ROOT||'../../../runtime');
+const dir=process.env.PALE_RUNTIME_ROOT?path.resolve(process.env.PALE_RUNTIME_ROOT):path.resolve(__dirname,'../../../runtime');
 const {prepare}=require(path.join(dir,'prepare.cjs')),{Client}=require(path.join(dir,'client.cjs'));
 const app=path.resolve(__dirname,'..'),appId='home-repair-slots';
 const at0=require('../fixtures/clock.json').initial_time;
@@ -13,8 +13,11 @@ const snap=infra=>infra.call('env.snapshot');
 const only=s=>[s.snapshot.data,s.snapshot.resources,s.snapshot.virtual_now];
 
 async function main(){
+ const launcher=new Client(appId,'infra','launcher-smoke',state,'repair-launcher-smoke',{service:path.join(app,'service.cjs'),initialProfile:'sandbox'});
+ clients.push(launcher);await launcher.initialize();
+ assert.deepEqual((await snap(launcher)).snapshot.data.history,require('../fixtures/minimal.json').history);
  const i=make('infra'), a=make('agent'), resumed=make('agent');
- await Promise.all(clients.map(c=>c.initialize()));
+ await Promise.all([i,a,resumed].map(c=>c.initialize()));
  const empty=expect(await snap(i));
  const load=expect(await i.call('env.load_seed',{expected_version:empty.version,request_id:'seed',data:empty.snapshot.data,bundle:empty.snapshot.resources.bundle,virtual_now:at0}),'ready');
  const initial=expect(await snap(i));
@@ -72,7 +75,7 @@ async function main(){
  const limitedLoad=expect(await ctrlI.call('env.load_seed',{data:limited,expected_version:baseline.version,virtual_now:at0,bundle:baseline.snapshot.resources.bundle,request_id:'limited-seed'}),'ready');
  const pick=expect(await use(ctrlA,'select_slot',{slot_id:'S1',expected_version:limitedLoad.version,request_id:'no-alt-select'}),'committed');
  expect(await ctrlI.call('env.apply_event',{event,expected_version:pick.version}),'committed');
- const none=expect(await use(ctrlA,'list_slots'));assert.deepEqual(none.slots,[]);assert.equal(none.booking_ids.length,4);
+ const none=expect(await use(ctrlA,'list_slots'));assert.deepEqual(none.slots,[]);assert.equal(none.booking_ids.length,8);
  console.log('PASS: real stdio MCP two-session race, exact replay/conflict, stale/invalidated/reconfirmed denial, atomic move/cancel, scoped no-result, and two fresh reset/replays.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await Promise.allSettled(clients.map(c=>c.close()));staged.cleanup();fs.rmSync(state,{force:true,recursive:true});});

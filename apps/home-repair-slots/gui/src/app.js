@@ -19,7 +19,7 @@ async function call(name,args={}){
  if(!['ok','committed'].includes(r.status))throw Object.assign(Error(r.message||r.status),{code:r.status});
  return r;
 }
-const end=(token,title,...nodes)=>{if(token===turn){stage.replaceChildren(title,...nodes);msg('Workspace state loaded.');}};
+const end=(token,title,...nodes)=>{if(token===turn){stage.replaceChildren(title,...nodes.filter(node=>node!=null));msg('Workspace state loaded.');}};
 function write(area,label,tool,args,version,token,done){
  if(!can(tool))return;
  let sending=false,complete=false,pending;

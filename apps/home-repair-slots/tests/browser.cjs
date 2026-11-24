@@ -1,0 +1,70 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const app=path.resolve(__dirname,'..'),id='home-repair-slots';
+const runtime=process.env.PALE_RUNTIME_ROOT?path.resolve(process.env.PALE_RUNTIME_ROOT):path.resolve(app,'../../runtime');
+const {prepare}=require(path.join(runtime,'prepare.cjs')),{Client}=require(path.join(runtime,'client.cjs')),{start}=require(path.join(runtime,'web/server.cjs'));
+const {chromium}=require(process.env.PALE_PLAYWRIGHT_MODULE||'playwright');
+const event=require('../examples/scenario.json');
+const initialFixture=require('../fixtures/minimal.json');
+
+(async ()=>{
+ const staged=prepare(app),stateDir=fs.mkdtempSync(path.join(os.tmpdir(),'pale-repair-chromium-')),run='review-browser';
+ const cfg={registry:staged.registry};
+ const infra=new Client(id,'infra',run,stateDir,'browser-infra',{...cfg,initialProfile:'sandbox'});
+ const agent=new Client(id,'agent',run,stateDir,'browser-read',cfg);
+ let host,browser;
+ try{
+  await Promise.all([infra.initialize(),agent.initialize()]);
+  host=await start({app:id,registry:staged.registry,profile:'sandbox',run,stateDir});
+  browser=await chromium.launch({headless:true,chromiumSandbox:true,...(process.env.CHROMIUM_PATH?{executablePath:process.env.CHROMIUM_PATH}:{})});
+  const page=await browser.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  const click=name=>page.getByRole('button',{name,exact:true}).click();
+  const text=(name)=>page.getByText(name,{exact:false}).first().waitFor();
+  const stage=page.getByRole('article',{name:'Synthetic booking workspace'});
+  const ready=name=>stage.getByRole('heading',{name,exact:true}).waitFor();
+  const noNull=async()=>assert.doesNotMatch(await stage.innerText(),/\bnull\b/);
+  const snap=()=>infra.call('env.snapshot');
+  const call=(n,a={})=>agent.call(id+'.'+n,a);
+  const booking=(n)=>call('get_booking',{booking_id:n});
+  const list=()=>call('list_slots');
+  const slotIds=async()=>(await list()).slots.map(x=>x.id);
+  const original=(await snap()).snapshot.data;
+  assert.deepEqual(original.history,initialFixture.history);
+  assert.equal(original.history[0].at.slice(0,10),'2025-01-01');
+  await page.goto(host.accessUrl);
+  await ready('Slots');assert.deepEqual(await slotIds(),['S1','S2','S4']);
+  // Existing seeded reservation and newly created review both exercise the null child.
+  await click('Review reservation');await text('Reservation R0');await noNull();
+  await click('Slots');await click('Select S1');await ready('Review reservation');await text('· open');await noNull();
+  await click('Discard reservation');await text('Reservation discarded. No booking created.');
+  assert.equal((await list()).reservation_id,null);
+  assert.deepEqual((await snap()).snapshot.data.bookings,original.bookings);
+  await click('Slots');await click('Select S1');await ready('Review reservation');await noNull();
+  const beforeEvent=await snap(),applied=await infra.call('env.apply_event',{event,expected_version:beforeEvent.version});
+  assert.equal(applied.status,'committed');
+  await click('Confirm reservation');await text('stale');
+  assert.deepEqual((await snap()).snapshot.data.bookings,original.bookings);
+  await click('Refresh');await text('This slot was taken before confirmation.');await noNull();
+  await click('Slots');await click('Select S2');await ready('Review reservation');await noNull();
+  await click('Confirm reservation');await text('Synthetic booking confirmed: B5');
+  assert.equal((await booking('B5')).booking.slot_id,'S2');
+  await click('Change or cancel B5');await click('Reschedule to S4');await click('Confirm reschedule');await text('Booking B5 rescheduled to S4.');
+  assert.equal((await booking('B5')).booking.slot_id,'S4');assert.deepEqual(await slotIds(),['S2']);await noNull();
+  await click('Change or cancel B5');await click('Cancel booking');await click('Confirm cancellation');await text('Booking B5 cancelled.');
+  assert.equal((await booking('B5')).booking.status,'cancelled');assert.deepEqual(await slotIds(),['S2','S4']);
+  await click('Open BH2025A');await text('Booking BH2025A · cancelled');await text('2025-01-03');await noNull();
+  assert.equal((await booking('BH2025A')).booking.status,'cancelled');
+  const beforeReset=await snap();
+  const reset=await infra.call('env.reset',{expected_version:beforeReset.version});assert.equal(reset.status,'ready');
+  assert.deepEqual((await snap()).snapshot.data,original);
+  await page.reload();await ready('Slots');await click('Select S1');await ready('Review reservation');await noNull();
+  await click('Confirm reservation');await text('Synthetic booking confirmed: B5');
+  assert.equal((await booking('B5')).booking.slot_id,'S1');
+  assert.deepEqual(errors,[]);
+  console.log('PASS: Chromium '+browser.version()+' actual clicks, no literal null, independent Core state/readback, stale race, reschedule/cancel, historical lookup and reset/replay.');
+ }finally{
+  await browser?.close();await agent.close();await infra.close();await host?.close();
+  staged.cleanup();fs.rmSync(stateDir,{recursive:true,force:true});
+ }
+})().catch(e=>{console.error(e);process.exitCode=1;});

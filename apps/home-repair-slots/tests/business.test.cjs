@@ -19,12 +19,33 @@ test('browse respects seed budget, date, borrowed capacity and exact clock bound
  for(const id of ['S3','S6'])fail(()=>tool(s,'select_slot',{slot_id:id}),'outside_constraints');
  assert.deepEqual(s,b);
 });
+test('seed contains dated prior booking activity without shifting the task clock or availability',()=>{
+ const s=d(),initial=Date.parse(seedClock);
+ assert.ok(initial>=Date.parse('2026-01-01T00:00:00+08:00'));
+ assert.equal(s.history[0].at.slice(0,10),'2025-01-01');
+ assert.deepEqual([...new Set(s.history.map(h=>h.at.slice(0,4)))],['2025','2026']);
+ const state=structuredClone(s);
+ for(let n=0;n<s.history.length;n+=2){
+  const [confirmed,cancelled]=s.history.slice(n,n+2);
+  const {booking,slot}=tool(s,'get_booking',{booking_id:confirmed.object_id});
+  assert.equal(confirmed.operation,'confirm_reservation');assert.equal(cancelled.operation,'cancel_booking');
+  assert.equal(cancelled.object_id,confirmed.object_id);
+  assert.equal(slot.id,confirmed.slot_id);assert.equal(slot.id,cancelled.slot_id);
+  assert.equal(booking.status,'cancelled');
+  assert.ok(Date.parse(confirmed.at)<Date.parse(cancelled.at));
+  assert.ok(Date.parse(cancelled.at)<Date.parse(slot.start));
+  assert.ok(Date.parse(slot.start)<initial);
+  fail(()=>tool(s,'select_slot',{slot_id:slot.id}),'slot_unavailable');
+ }
+ assert.deepEqual(list(s),['S1','S2','S4']);
+ assert.deepEqual(s,state);
+});
 test('preview replacement and discard never hold a slot or create a booking',()=>{
  const s=d(),r=tool(s,'select_slot',{slot_id:'S1'}).reservation;
  assert.equal(r.id,'R1');assert.equal(s.reservations[0].status,'discarded');
  assert.deepEqual(list(s),['S1','S2','S4']);
  assert.equal(tool(s,'discard_reservation',{reservation_id:r.id}).reservation.status,'discarded');
- assert.equal(s.bookings.length,4);
+ assert.equal(s.bookings.length,8);
  fail(()=>tool(s,'confirm_reservation',{reservation_id:r.id}),'not_open');
 });
 test('race invalidates a preview without booking; non-Infra, no-open, booked and past guards are atomic',()=>{
@@ -34,7 +55,7 @@ test('race invalidates a preview without booking; non-Infra, no-open, booked and
  ap(s);
  assert.equal(tool(s,'get_reservation',{reservation_id:r.id}).reservation.status,'invalidated');
  fail(()=>tool(s,'confirm_reservation',{reservation_id:r.id}),'slot_unavailable');
- assert.deepEqual(list(s),['S2','S4']);assert.equal(s.bookings.length,4);
+ assert.deepEqual(list(s),['S2','S4']);assert.equal(s.bookings.length,8);
  const taken=structuredClone(s);fail(()=>ap(s),'invalid_event');assert.deepEqual(s,taken);
  const booked=d();booked.reservations[0].slot_id='S5';
  const bBooked=structuredClone(booked);fail(()=>ap(booked),'invalid_event');assert.deepEqual(booked,bBooked);
@@ -62,5 +83,5 @@ test('no suitable alternative can be reported without changing constraints or bu
  const r=tool(s,'select_slot',{slot_id:'S1'}).reservation;ap(s);
  const prior=structuredClone(s);
  assert.deepEqual(list(s),[]);assert.deepEqual(s,prior);
- fail(()=>tool(s,'confirm_reservation',{reservation_id:r.id}),'slot_unavailable');assert.equal(s.bookings.length,4);
+ fail(()=>tool(s,'confirm_reservation',{reservation_id:r.id}),'slot_unavailable');assert.equal(s.bookings.length,8);
 });
