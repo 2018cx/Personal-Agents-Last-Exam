@@ -13,7 +13,8 @@ function validateSeed(ctx,d){
  if(new Set(objects(d)).size!==objects(d).length)fail('invalid_seed','Object IDs must be unique.');
  if(!(FLOOR<=start&&start<=now&&start<end&&(d.phase?end<=next:end<next)))fail('invalid_seed','Period dates must be ordered and current period must have started.');
  const ended=millis(d.ended_at);
- if(d.status==='free' ? !(d.phase===1&&ended===end&&ended<=now) : d.ended_at!==null)fail('invalid_seed','Entitlement date and phase do not agree.');
+ const notYetSubscribed=d.status==='free'&&d.phase===0&&d.ended_at===null&&now<end&&records(d).length===0;
+ if(d.status==='free' ? !notYetSubscribed&&!(d.phase===1&&ended===end&&ended<=now) : d.ended_at!==null)fail('invalid_seed','Entitlement date and phase do not agree.');
  if(d.saved.concat(d.history).some(r=>!(FLOOR<=millis(r.at||r.saved_at)&&millis(r.at||r.saved_at)<=now)))fail('invalid_seed','History and saved entries must be within the past of the scenario.');
  if(d.previews.some(p=>!(FLOOR<=millis(p.created_at)&&millis(p.created_at)<=now)||p.phase>d.phase||p.decision_revision>d.decision_revision))fail('invalid_seed','Invalid preview history.');
  const receiptIds=new Set();
@@ -42,6 +43,7 @@ function handleTool(ctx,stored,name,a){
  if(a.account_id!==undefined&&a.account_id!==stored.account_id)fail('not_found','Account not found.');
  const clock=utc(ctx.virtual_now), d=projection(stored,clock), entitlement=()=>view(d), op=name.slice(APP.length+1);
  // Runtime copies inputs. Return original stored data for every read, including a projected status.
+ const account_name=ctx.binding.people.find(p=>p.person_id===ctx.binding.accounts.find(a=>a.app_id===APP&&a.account_id===d.account_id).owner_person_id).name;
  const output=(x,data=stored)=>({data,result:{virtual_now:clock,...x}});
  const allowed=action=>{
   if(d.status==='free')fail('free_account','Paid access has ended. Re-subscription is not part of this scenario.');
@@ -52,8 +54,8 @@ function handleTool(ctx,stored,name,a){
  const current=p=>p.phase===d.phase&&p.decision_revision===d.decision_revision&&d.status!=='free'&&(!d.phase||millis(clock)<millis(d.period_end));
  const getPreview=()=>stored.previews.find(p=>p.id===a.preview_id)||fail('not_found','Preview not found.');
  switch(op){
-  case 'read_plan':return output({plan:PLAN,entitlement:entitlement()});
-  case 'read_status':return output({entitlement:entitlement(),history:stored.history,open_previews:stored.previews.filter(p=>p.status==='open'&&current(p)),receipts:stored.action_receipts});
+  case 'read_plan':return output({plan:PLAN,account_name,entitlement:entitlement()});
+  case 'read_status':return output({plan:PLAN,account_name,entitlement:entitlement(),history:stored.history,open_previews:stored.previews.filter(p=>p.status==='open'&&current(p)),receipts:stored.action_receipts});
   case 'read_receipt':{
    const receipt=stored.action_receipts.find(r=>r.id===a.receipt_id)||fail('not_found','Receipt not found.');
    return output({receipt,entitlement:entitlement()});

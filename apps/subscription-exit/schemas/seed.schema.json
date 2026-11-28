@@ -77,8 +77,8 @@
         ],
         "additionalProperties": false
       },
-      "maxItems": 3,
-      "minItems": 3
+      "maxItems": 18,
+      "minItems": 0
     },
     "history": {
       "type": "array",
@@ -101,7 +101,8 @@
               "period_started",
               "cancellation_scheduled",
               "cancellation_revoked",
-              "paid_access_ended"
+              "paid_access_ended",
+              "plan_reviewed"
             ]
           }
         },
@@ -112,8 +113,8 @@
         ],
         "additionalProperties": false
       },
-      "maxItems": 16,
-      "minItems": 1
+      "maxItems": 96,
+      "minItems": 0
     },
     "previews": {
       "type": "array",

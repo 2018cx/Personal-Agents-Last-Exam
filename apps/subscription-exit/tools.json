@@ -184,8 +184,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -200,6 +200,11 @@
             "saved"
           ],
           "additionalProperties": false
+        },
+        "account_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
         }
       },
       "required": [
@@ -208,7 +213,8 @@
         "version",
         "virtual_now",
         "plan",
-        "entitlement"
+        "entitlement",
+        "account_name"
       ],
       "additionalProperties": false
     }
@@ -360,8 +366,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -398,7 +404,8 @@
                   "period_started",
                   "cancellation_scheduled",
                   "cancellation_revoked",
-                  "paid_access_ended"
+                  "paid_access_ended",
+                  "plan_reviewed"
                 ]
               }
             },
@@ -409,8 +416,8 @@
             ],
             "additionalProperties": false
           },
-          "maxItems": 16,
-          "minItems": 1
+          "maxItems": 96,
+          "minItems": 0
         },
         "open_previews": {
           "type": "array",
@@ -516,6 +523,49 @@
           },
           "maxItems": 128,
           "minItems": 0
+        },
+        "account_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "plan": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+            },
+            "service": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string",
+              "enum": [
+                "CNY"
+              ]
+            },
+            "renewal_minor": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 999999
+            },
+            "charge_simulated": {
+              "const": false
+            }
+          },
+          "required": [
+            "id",
+            "service",
+            "name",
+            "currency",
+            "renewal_minor",
+            "charge_simulated"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -526,7 +576,9 @@
         "entitlement",
         "history",
         "open_previews",
-        "receipts"
+        "receipts",
+        "account_name",
+        "plan"
       ],
       "additionalProperties": false
     }
@@ -731,8 +783,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -982,8 +1034,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -1233,8 +1285,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -1488,8 +1540,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [
@@ -1744,8 +1796,8 @@
                 ],
                 "additionalProperties": false
               },
-              "maxItems": 3,
-              "minItems": 3
+              "maxItems": 18,
+              "minItems": 0
             }
           },
           "required": [

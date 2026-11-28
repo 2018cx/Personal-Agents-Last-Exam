@@ -60,13 +60,11 @@ async function main(){
 
  // Load and observe every delivered evaluation partition as a distinct bound account.
  const expectedEntitlements=['paid_active','free','cancellation_scheduled','paid_active','free','paid_active','free'];
- const cohorts=require('../evaluation/accounts-v1.json');
+ const cohorts=require('../evaluation/accounts-v1.json'),{at,withBundle}=require('../evaluation/build.cjs');
  const partitions=[...cohorts.accounts,{seed:require('../fixtures/free.json'),binding:require('../fixtures/binding.json'),virtual_now:end}];
  for(const [j,row] of partitions.entries()){
   const ci=make('infra','cohort-'+j),cg=make('agent','cohort-'+j);await Promise.all([ci.initialize(),cg.initialize()]);
-  const s=await snap(ci), bundle=s.snapshot.resources.bundle;
-  bundle.dataset.expected_counts.records=row.seed.saved.length+row.seed.history.length+row.seed.previews.length+row.seed.action_receipts.length;
-  expect(await ci.call('env.load_seed',{expected_version:s.version,data:row.seed,binding:row.binding,bundle,virtual_now:row.virtual_now,request_id:'load-cohort'}),'ready');
+  expect(await ci.call('env.load_seed',withBundle(row,await snap(ci),'load-cohort')),'ready');
   const found=expect(await cg.call(app+'.read_status',{}));
   const expected=expectedEntitlements[j], free=expected==='free';
   a.equal(found.entitlement.entitlement,expected);
@@ -100,6 +98,33 @@ async function main(){
   a.deepEqual((await snap(ci)).snapshot.data,row.seed);
  }
 
+ // Verify four cutoff dates across all six accounts using the serialized CLI load
+ // arguments for one date and the same production module for the others.
+ const ji=make('infra','runtime-cutoffs'),jg=make('agent','runtime-cutoffs');
+ await Promise.all([ji.initialize(),jg.initialize()]);
+ const cutoffs=['2025-01-01T00:00:00Z','2026-01-01T00:00:00Z','2026-02-19T16:06:00Z','2026-11-20T12:00:00Z','2026-12-31T23:59:59.999Z'];
+ const expected=[
+  ['paid_active','free','free','free','free','free'],
+  ['paid_active','cancellation_scheduled','paid_active','free','free','free'],
+  ['paid_active','free','free','paid_active','free','free'],
+  ['paid_active','free','free','paid_active','free','paid_active'],
+  ['paid_active','free','free','paid_active','free','paid_active']
+ ];
+ const fs=require('node:fs'),temp=path.join(p.root,'cutoff-snapshot.json'),cli=path.join(__dirname,'../evaluation/build.cjs');
+ for(const [k,clock] of cutoffs.entries())for(let n=1;n<=6;n++){
+  const acct='listener-cohort-'+n,row=at(acct,clock),snapshot=await snap(ji),request_id='cutoff-'+k+'-'+n;
+  fs.writeFileSync(temp,JSON.stringify(snapshot));
+  const args=JSON.parse(require('node:child_process').execFileSync(process.execPath,[cli,'--until',clock,'--account',acct,'--snapshot',temp,'--request-id',request_id],{encoding:'utf8'}));
+  a.deepEqual(args,withBundle(row,snapshot,request_id));
+  expect(await ji.call('env.load_seed',args),'ready');
+  const r=expect(await jg.call(app+'.read_status',{}));
+  a.equal(r.account_name,row.label);a.equal(r.entitlement.entitlement,expected[k][n-1]);
+  a.deepEqual(r.history,row.seed.history);a.deepEqual(r.entitlement.saved,row.seed.saved);a.deepEqual(r.receipts,row.seed.action_receipts);
+  a.ok([...r.history.map(x=>x.at),...r.entitlement.saved.map(x=>x.saved_at),...r.receipts.map(x=>x.confirmed_at),...row.seed.previews.map(x=>x.created_at)].every(x=>Date.parse(x)<=Date.parse(clock)));
+  const operation=r.entitlement.entitlement==='cancellation_scheduled'?'prepare_revocation':'prepare_cancellation';
+  expect(await jg.call(app+'.'+operation,{expected_version:r.version,request_id:'action-'+request_id}),r.entitlement.access==='paid'?'committed':'free_account');
+ }
+
  const ro=make('infra','read-only'),observer=make('agent','read-only');await Promise.all([ro,observer].map(c=>c.initialize()));
  const baseline=await snap(ro),policies=structuredClone(baseline.snapshot.policies);policies.scenario=policies['read-only'];
  const loaded=expect(await ro.call('env.load_seed',{expected_version:baseline.version,data:baseline.snapshot.data,bundle:baseline.snapshot.resources.bundle,policies,request_id:'observer-seed'}),'ready');
@@ -107,6 +132,6 @@ async function main(){
  expect(await write(observer,'prepare_cancellation',{},loaded.version,'forbidden'),'permission_denied');
  a.deepEqual((await snap(ro)).snapshot.data,baseline.snapshot.data);
  a.equal(known.status,'ready');
- console.log('PASS: two independent MCP sessions, custom seed, exact boundary, stale revision and preview, receipt replay/conflict, observer denial and reset/replay, same-instant previews, renewed cancellation, six evaluation loads and corrected Free seed.');
+ console.log('PASS: two independent MCP sessions, custom seed, exact boundary, stale revision and preview, receipt replay/conflict, observer denial and reset/replay, same-instant previews, renewed cancellation, six evaluation loads, 30 CLI runtime-cutoff loads and corrected Free seed.');
 }
 main().catch(e=>{console.error(e,clients.map(c=>c.errors));process.exitCode=1;}).finally(async()=>{await Promise.allSettled(clients.map(c=>c.close()));p.cleanup();});
