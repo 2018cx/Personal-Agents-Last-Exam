@@ -2,7 +2,7 @@
   "schema_version": "pale.dataset.v1",
   "dataset_id": "home-repair-slots-v1",
   "version": "0.1.0",
-  "description": "Fictional local providers, slots, estimates, and booking history.",
+  "description": "Small hand-authored fictional smoke fixture; the separate, full-window evaluation package is in evaluation/.",
   "record_source_ids": [
     "authored"
   ],
@@ -26,7 +26,7 @@
   ],
   "transformations": [
     "Deterministic IDs, fixed synthetic minor-unit prices and offset timestamps.",
-    "Authored booking confirmation/cancellation history spans 2025\u20132026; task clock and active slots are independent."
+    "Authored booking confirmation/cancellation history spans 2025–2026; task clock and active slots are independent."
   ],
   "expected_counts": {
     "records": 20,
@@ -40,6 +40,6 @@
   "review": {
     "status": "pending",
     "reviewer": null,
-    "notes": "Human provenance and license review remains pending."
+    "notes": "The App fixtures are independently authored synthetic records. Xiao Cui (@2018cx) is responsible for human provenance and license review; no reviewer acceptance is claimed."
   }
 }

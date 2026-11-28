@@ -1,0 +1,271 @@
+{
+  "schema": "home-repair-slots.coverage.v1",
+  "source": "synthetic-evaluation-v1",
+  "counting_zone": "Asia/Shanghai",
+  "counted_fields": {
+    "activity": "history[].at"
+  },
+  "requested_window": [
+    "2025-01-01",
+    "2026-12-31"
+  ],
+  "observed_window": [
+    "2025-01-01",
+    "2026-12-31"
+  ],
+  "real": 0,
+  "synthetic": 68,
+  "distinct_dates": 68,
+  "missing_months": [],
+  "operation_totals": {
+    "select_slot": 24,
+    "confirm_reservation": 24,
+    "cancel_booking": 16,
+    "reschedule_booking": 4
+  },
+  "monthly": {
+    "2025-01": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2025-02": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-03": {
+      "real": 0,
+      "synthetic": 4,
+      "days": 4,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "reschedule_booking": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-04": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2025-05": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-06": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-07": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2025-08": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-09": {
+      "real": 0,
+      "synthetic": 4,
+      "days": 4,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "reschedule_booking": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-10": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2025-11": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2025-12": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-01": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2026-02": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-03": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-04": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "reschedule_booking": 1
+      }
+    },
+    "2026-05": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-06": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-07": {
+      "real": 0,
+      "synthetic": 2,
+      "days": 2,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1
+      }
+    },
+    "2026-08": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-09": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-10": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "reschedule_booking": 1
+      }
+    },
+    "2026-11": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    },
+    "2026-12": {
+      "real": 0,
+      "synthetic": 3,
+      "days": 3,
+      "operations": {
+        "select_slot": 1,
+        "confirm_reservation": 1,
+        "cancel_booking": 1
+      }
+    }
+  },
+  "core_records": {
+    "slots": 30,
+    "bookings": 24,
+    "reservations": 24
+  },
+  "excluded": "Counts actual booking activity timestamps only. Slots are scheduled times, not activity. Future scenario offers, account and provider configuration are not counted.",
+  "seed_sha256": "fce99350c72461342dad3b46df3d18c86d2b6c04fe7e0a743e178f682a27ed7a"
+}

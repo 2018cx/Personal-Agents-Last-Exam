@@ -114,3 +114,8 @@ an independent Infra session using the App launcher. The browser replay
 passed on Chromium Headless Shell 156.0.8078.79 with its sandbox enabled,
 Playwright 1.62.1, and Node 24.22.3, with no page JavaScript errors. The pinned
 proposal baseline and upstream main have identical `runtime/` trees.
+
+### Full-window evaluation delivery
+The eight dated actions above describe the original small smoke fixture. A separate, versioned [evaluation package](evaluation/README.md) now delivers 68 synthetic booking actions across all 24 months from 2025-01-01 to 2026-12-31. The package includes deterministic provenance, machine-readable monthly/source counts, and an independent Core load/query/reset test. The original smoke bytes and approved proposal are unchanged.
+
+See the [evaluation and GUI evidence index](evidence/README.md) for links, commands, baseline mapping and separate browser versus MCP results.

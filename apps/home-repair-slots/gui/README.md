@@ -1,0 +1,2 @@
+# Home Repair Slots Web Host
+See the [App README](../README.md) for setup and the [evidence index](../evidence/README.md) for the real Chromium interaction and independent MCP checks. The shared Web Host uses a bound Agent MCP connection over the same Core data. Scenario events, seed import and reset stay on the separate Infra interface. Nothing is sent to a provider; the UI has no real booking, payment or chat.
