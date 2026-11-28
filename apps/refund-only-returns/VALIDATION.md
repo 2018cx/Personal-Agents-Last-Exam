@@ -13,6 +13,8 @@ node tests/core.cjs
 node tests/web-http.cjs
 # Optional driver only; CHROMIUM_PATH may point to a sandbox-capable Chromium executable.
 PLAYWRIGHT_MODULE=/absolute/path/to/playwright PALE_EVIDENCE_DIR=/tmp/refund-evidence node tests/browser.cjs
+# The same browser suite can also exercise tablet/mobile widths (768 or 390).
+PALE_BROWSER_WIDTH=390 PLAYWRIGHT_MODULE=/absolute/path/to/playwright PALE_EVIDENCE_DIR=/tmp/refund-mobile node tests/browser.cjs
 ```
 From the full checkout root:
 ```sh

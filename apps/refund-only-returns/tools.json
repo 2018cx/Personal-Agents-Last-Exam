@@ -10,7 +10,8 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$",
+          "description": "Exact stable order ID or the order number shown to the shopper; a leading # is optional for a numeric order number."
         }
       },
       "required": [
@@ -153,7 +154,8 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$",
+          "description": "Exact stable order ID or the order number shown to the shopper; a leading # is optional for a numeric order number."
         }
       },
       "required": [
@@ -390,7 +392,8 @@
       "properties": {
         "refund_request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Stable refund request ID returned by the preview or order read; do not use the order ID."
         }
       },
       "required": [
@@ -577,7 +580,8 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$",
+          "description": "Exact stable order ID or the order number shown to the shopper; a leading # is optional for a numeric order number."
         },
         "expected_version": {
           "type": "object",
@@ -597,11 +601,13 @@
             "epoch",
             "revision"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Copy both epoch and revision from a recent read. On stale_version, read again and re-check the action before preparing a new write."
         },
         "request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Choose a fresh unique idempotency key for each new write. Reuse the same key and identical arguments only when retrying an unacknowledged submission."
         }
       },
       "required": [
@@ -790,7 +796,8 @@
       "properties": {
         "refund_request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Stable refund request ID returned by the preview or order read; do not use the order ID."
         },
         "expected_version": {
           "type": "object",
@@ -810,11 +817,13 @@
             "epoch",
             "revision"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Copy both epoch and revision from a recent read. On stale_version, read again and re-check the action before preparing a new write."
         },
         "request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Choose a fresh unique idempotency key for each new write. Reuse the same key and identical arguments only when retrying an unacknowledged submission."
         }
       },
       "required": [
@@ -1003,7 +1012,8 @@
       "properties": {
         "refund_request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Stable refund request ID returned by the preview or order read; do not use the order ID."
         },
         "expected_version": {
           "type": "object",
@@ -1023,11 +1033,13 @@
             "epoch",
             "revision"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Copy both epoch and revision from a recent read. On stale_version, read again and re-check the action before preparing a new write."
         },
         "request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Choose a fresh unique idempotency key for each new write. Reuse the same key and identical arguments only when retrying an unacknowledged submission."
         }
       },
       "required": [
@@ -1216,7 +1228,8 @@
       "properties": {
         "refund_request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Stable refund request ID returned by the preview or order read; do not use the order ID."
         },
         "expected_version": {
           "type": "object",
@@ -1236,11 +1249,13 @@
             "epoch",
             "revision"
           ],
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Copy both epoch and revision from a recent read. On stale_version, read again and re-check the action before preparing a new write."
         },
         "request_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$",
+          "description": "Choose a fresh unique idempotency key for each new write. Reuse the same key and identical arguments only when retrying an unacknowledged submission."
         }
       },
       "required": [

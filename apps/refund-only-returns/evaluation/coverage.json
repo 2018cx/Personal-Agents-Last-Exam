@@ -15,16 +15,16 @@
     "2026-12-31"
   ],
   "real": 0,
-  "synthetic": 78,
-  "distinct_dates": 78,
+  "synthetic": 81,
+  "distinct_dates": 81,
   "missing_months": [],
   "monthly": {
     "2025-01": {
       "orders": 3,
-      "requests": 2,
+      "requests": 3,
       "real": 0,
-      "synthetic": 5,
-      "days": 5
+      "synthetic": 6,
+      "days": 6
     },
     "2025-02": {
       "orders": 1,
@@ -63,10 +63,10 @@
     },
     "2025-07": {
       "orders": 2,
-      "requests": 1,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 4,
+      "days": 4
     },
     "2025-08": {
       "orders": 3,
@@ -98,10 +98,10 @@
     },
     "2025-12": {
       "orders": 5,
-      "requests": 2,
+      "requests": 3,
       "real": 0,
-      "synthetic": 7,
-      "days": 7
+      "synthetic": 8,
+      "days": 8
     },
     "2026-01": {
       "orders": 2,
@@ -188,5 +188,5 @@
       "days": 7
     }
   },
-  "seed_sha256": "ed6c039d262b07fc020b06d9808d6fbb0443bfbfdf6795fea0fba2e7a1997fb9"
+  "seed_sha256": "767822d1bdccef0ec9671047adf9dab3a9d3761beeaa751f8f3f9e993023f6c4"
 }

@@ -40,7 +40,9 @@ function generatedTimeline(){
   const seasonal=m%12===10||m%12===11?[8,9,10,1,4,7,16,5]:m%12===7||m%12===8?[0,1,2,3,6,12,16,4]:[0,0,4,7,11,13,14,15,17,3,2,16];
   const [,item_name,amount]=products[seasonal[pick(seasonal.length)]];
   const when=Date.UTC(2025,m,d,[0,3,6,10,11,12,13,14,15][pick(9)],pick(60),pick(60));
-  const windowDays=(model||pick(6)!==0)?[14,21,30][pick(3)]:7;
+  // Keep the pre-v2.1 draw positions for dates, prices and initial request timing.
+  if(model||pick(6)!==0)pick(3);
+  const windowDays=30;
   const priceDeltas=[0,0,0,0,-150,-300,120,80];
   const o={id:'history-'+idx,item_id:'history-item-'+idx,item_name,policy_id:smoke.policy.id,
    ordered_at:new Date(when).toISOString(),return_deadline:new Date(when+windowDays*day).toISOString(),
@@ -54,6 +56,18 @@ function generatedTimeline(){
     submitted_at:new Date(submitted).toISOString(),resolved_at:new Date(submitted+outcomeHours*hour+(1+pick(41))*minute).toISOString(),outcome});
   }
  }
+ // Some shoppers retry after cancellation while still within the same policy window.
+ const retries=[['history-3',2,8],['history-11',4,13],['history-23',6,6]];
+ for(const [orderId,lagDays,lagHours] of retries){
+  const initial=episodes.find(e=>e.order_id===orderId&&e.outcome==='cancelled');
+  a.ok(initial,'Retry requires an earlier cancelled request: '+orderId);
+  const submitted=Date.parse(initial.resolved_at)+lagDays*day+lagHours*hour+19*minute;
+  a.ok(submitted<=Date.parse(orders.find(o=>o.id===orderId).return_deadline));
+  episodes.push({id:initial.id+'-retry',order_id:orderId,attempt:2,
+   created_at:new Date(submitted-7*minute).toISOString(),submitted_at:new Date(submitted).toISOString(),
+   resolved_at:new Date(submitted+30*hour+11*minute).toISOString(),outcome:'dispatched'});
+ }
+ episodes.sort((a,b)=>a.submitted_at.localeCompare(b.submitted_at,'en'));
  return {schema:'refund-only-returns.timeline.v2',source:'synthetic-evaluation',timezone:'UTC',orders,episodes};
 }
 function profileAt(until=fullClock,timeline=generatedTimeline()){
@@ -66,15 +80,15 @@ function profileAt(until=fullClock,timeline=generatedTimeline()){
  // A request is visible only once it was actually submitted. No historical discarded drafts.
  const requests=timeline.episodes.filter(e=>ids.has(e.order_id)&&Date.parse(e.submitted_at)<=cut).map(({resolved_at,outcome,...e})=>
   ({...e,status:Date.parse(resolved_at)<=cut?outcome:'confirmed'}));
- const data={...smoke,orders,requests};
+ const data={...smoke,policy:{...smoke.policy,version:'1.1',summary:'Eligible items: 30 days from purchase, including the deadline. Cancel before dispatch. Policy-excluded items are not refundable.'},orders,requests};
  const dataset={
-  schema_version:'pale.dataset.v1',dataset_id:'refund-only-returns-evaluation-v2',version:'2.0.0',
+  schema_version:'pale.dataset.v1',dataset_id:'refund-only-returns-evaluation-v2',version:'2.1.0',
   description:'Synthetic evaluation history materialized as of '+virtual_now+'.',
   record_source_ids:['synthetic-evaluation'],sources:[{
    source_id:'synthetic-evaluation',kind:'synthetic',description:'Original fictional product names, prices, and order/request episodes. No external records or media.',
    uri:null,license:'MIT',usage:'permitted',collection:null,generation:{
-    method:'deterministic_rule_based',tool:'evaluation/recount.cjs',tool_version:'2.0.0',
-    seed:'0x2b8d9061',parameters:{counting_zone:'UTC',as_of:virtual_now}
+    method:'deterministic_rule_based',tool:'evaluation/recount.cjs',tool_version:'2.1.0',
+    seed:'0x2b8d9061',parameters:{counting_zone:'UTC',return_window_days:30,as_of:virtual_now}
    }}],
   transformations:['Cutoff filters future orders and submissions, then projects each submitted request to the latest known status.'],
   expected_counts:{records:orders.length+requests.length,assets:0},

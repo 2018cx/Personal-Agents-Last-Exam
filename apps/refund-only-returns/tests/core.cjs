@@ -77,7 +77,7 @@ async function main(){
  a.ok(Math.max(...Object.values(coverage.monthly).map(m=>m.orders))>=4);
  const e=timeline.episodes.find(e=>e.outcome==='dispatched');
  const profiles=[['full-window',fullClock],['task-start','2026-11-20T09:00:00Z'],
-  ['during-pending',e.submitted_at],['after-resolution',e.resolved_at],['empty-start','2025-01-01T00:00:00Z']];
+  ['useful-sept','2026-09-07T09:00:00Z'],['useful-dec','2026-12-11T09:00:00Z'],['during-pending',e.submitted_at],['after-resolution',e.resolved_at],['empty-start','2025-01-01T00:00:00Z']];
  for(const [run,cut] of profiles){
   const ev=make('infra',run),ea=make('agent',run);await Promise.all([ev.initialize(),ea.initialize()]);
   const pre=await snap(ev),{data,dataset,virtual_now}=profileAt(cut,timeline);
@@ -97,6 +97,12 @@ async function main(){
    a.deepEqual(data,require('../evaluation/seed.json'));a.deepEqual(dataset,require('../evaluation/dataset.json'));
    a.equal(data.orders[0].ordered_at.slice(0,10),'2025-01-01');a.equal(data.orders.at(-1).ordered_at.slice(0,10),'2026-12-31');
    a.deepEqual([...new Set(data.requests.map(q=>q.status))].sort(),['cancelled','dispatched']);
+   a.ok(data.orders.every(x=>Date.parse(x.return_deadline)-Date.parse(x.ordered_at)===30*86400000));
+   const repeat=data.requests.filter(q=>q.attempt===2);a.equal(repeat.length,3);
+   for(const row of repeat){
+    const previous=data.requests.find(q=>q.order_id===row.order_id&&q.attempt===1);
+    a.equal(previous.status,'cancelled');a.ok(Date.parse(previous.submitted_at)<Date.parse(row.submitted_at));
+   }
    for(const qv of data.requests){
     a.equal(exp(await call(ea,'read_request',q(qv.id))).request.submitted_at,qv.submitted_at);
    }
@@ -105,6 +111,12 @@ async function main(){
    const someday=timeline.orders.find(x=>Date.parse(x.ordered_at)>Date.parse(cut));
    exp(await call(ea,'read_order',o('#'+someday.order_number)),'not_found');
    a.ok(data.requests.every(x=>Date.parse(x.submitted_at)<=Date.parse(cut)));
+   a.equal(exp(await call(ea,'read_order',o('#20048'))).order.eligibility,'eligible');
+  }
+  if(run==='useful-sept'||run==='useful-dec'){
+   const [orderNumber,requestId]=run==='useful-sept'?['#20041','history-request-43']:['#20052','history-request-53'];
+   a.equal(exp(await call(ea,'read_order',o(orderNumber))).order.eligibility,'eligible');
+   a.equal(exp(await call(ea,'read_request',q(requestId))).request.status,'confirmed');
   }
   if(run==='during-pending'||run==='after-resolution')a.equal(exp(await call(ea,'read_request',q(e.id))).request.status,run==='during-pending'?'confirmed':'dispatched');
   exp(await ev.call('env.reset',{expected_version:current.version}),'ready');
