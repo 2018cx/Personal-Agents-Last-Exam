@@ -7,10 +7,16 @@ const owner=(ctx,d)=>ctx.binding?.accounts?.find(x=>x.app_id===APP&&x.account_id
 const current=(d)=>d.reservations.find(x=>x.status==='open');
 const conflict=(d,id)=>d.bookings.some(x=>x.slot_id===id&&x.status==='confirmed');
 const publicSlot=({taken,...s})=>s;
-const dateAt=s=>new Date(Date.parse(s)+8*3600000).toISOString().slice(0,10);
+const dateFormatters=new Map();
+function dateAt(s, timeZone){
+ let fmt=dateFormatters.get(timeZone);
+ if(!fmt){fmt=new Intl.DateTimeFormat('en',{timeZone,year:'numeric',month:'2-digit',day:'2-digit'});dateFormatters.set(timeZone,fmt);}
+ const parts=Object.fromEntries(fmt.formatToParts(new Date(s)).map(x=>[x.type,x.value]));
+ return [parts.year,parts.month,parts.day].join('-');
+}
 const isDate=s=>{const t=Date.parse(s);return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===s;};
 const future=(slot,now)=>Date.parse(slot.start)>Date.parse(now);
-const allowed=(d,slot)=>{const c=d.constraints;return slot.estimate_minor<=c.budget_minor&&dateAt(slot.start)>=c.from_date&&dateAt(slot.end)<=c.through_date;};
+const allowed=(d,slot)=>{const c=d.constraints;return slot.estimate_minor<=c.budget_minor&&dateAt(slot.start,c.timezone)>=c.from_date&&dateAt(slot.end,c.timezone)<=c.through_date;};
 function unique(xs,label){
  if(new Set(xs).size!==xs.length)fail('invalid_seed','Duplicate '+label+'.');
 }
@@ -70,7 +76,12 @@ function handleTool(ctx,d,name,a){
    providers:d.providers,constraints:d.constraints,service:d.service,reservation_id:(current(d)||(d.reservations.at(-1)?.status==='invalidated'?d.reservations.at(-1):null))?.id||null,booking_ids:d.bookings.map(x=>x.id)
   });
   case 'get_reservation':return wrap(details('reservation',openRecord(d,a.reservation_id,'reservation')));
-  case 'get_booking':return wrap(details('booking',openRecord(d,a.booking_id,'booking')));
+  case 'get_booking':{
+   const b=openRecord(d,a.booking_id,'booking');
+   // Project only this bound account's booking events. No changes to stored seeds or write receipts.
+   const history=d.history.filter(h=>h.object_id===b.id&&['confirm_reservation','reschedule_booking','cancel_booking'].includes(h.operation));
+   return wrap({...details('booking',b),history});
+  }
   case 'select_slot':{
    const s=candidate(d,a.slot_id,ctx.virtual_now);
    if(d.reservations.length>=100)fail('capacity_reached','Local reservation limit reached.');

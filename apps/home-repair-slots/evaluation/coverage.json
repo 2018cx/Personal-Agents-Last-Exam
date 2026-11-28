@@ -1,10 +1,6 @@
 {
-  "schema": "home-repair-slots.coverage.v1",
-  "source": "synthetic-evaluation-v1",
+  "schema": "home-repair-slots.coverage.v2",
   "counting_zone": "Asia/Shanghai",
-  "counted_fields": {
-    "activity": "history[].at"
-  },
   "requested_window": [
     "2025-01-01",
     "2026-12-31"
@@ -13,259 +9,350 @@
     "2025-01-01",
     "2026-12-31"
   ],
+  "distinct_dates": 44,
+  "missing_months": [],
   "real": 0,
   "synthetic": 68,
-  "distinct_dates": 68,
-  "missing_months": [],
-  "operation_totals": {
-    "select_slot": 24,
-    "confirm_reservation": 24,
-    "cancel_booking": 16,
-    "reschedule_booking": 4
-  },
+  "unoccupied_days": 686,
+  "exclusions": "Appointment windows, snapshot time and non-dated metadata are not activity.",
+  "sources": [
+    {
+      "id": "willow",
+      "file": "seed.json",
+      "sha256": "06c5216843370bcb54b2388088f03a9f71b469e1026175cf5834509b413014dc",
+      "date_field": "history[].at",
+      "synthetic": 23,
+      "real": 0,
+      "distinct_dates": 15,
+      "observed_window": [
+        "2025-01-01",
+        "2026-11-24"
+      ],
+      "monthly": {
+        "2025-01": 3,
+        "2025-02": 2,
+        "2025-06": 3,
+        "2025-10": 2,
+        "2026-01": 2,
+        "2026-02": 3,
+        "2026-06": 3,
+        "2026-09": 2,
+        "2026-11": 3
+      },
+      "missing_months": [
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-07",
+        "2025-08",
+        "2025-09",
+        "2025-11",
+        "2025-12",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-07",
+        "2026-08",
+        "2026-10",
+        "2026-12"
+      ],
+      "operations": {
+        "select_slot": 9,
+        "confirm_reservation": 9,
+        "cancel_booking": 3,
+        "reschedule_booking": 2
+      }
+    },
+    {
+      "id": "cedar",
+      "file": "cedar.seed.json",
+      "sha256": "15d61826d9a960c8e4193a0745e6d4f8efdaf98ef049afe40907861294c62b47",
+      "date_field": "history[].at",
+      "synthetic": 22,
+      "real": 0,
+      "distinct_dates": 14,
+      "observed_window": [
+        "2025-03-11",
+        "2026-11-23"
+      ],
+      "monthly": {
+        "2025-03": 2,
+        "2025-04": 3,
+        "2025-05": 3,
+        "2025-09": 2,
+        "2025-11": 2,
+        "2026-03": 2,
+        "2026-05": 3,
+        "2026-10": 3,
+        "2026-11": 2
+      },
+      "missing_months": [
+        "2025-01",
+        "2025-02",
+        "2025-06",
+        "2025-07",
+        "2025-08",
+        "2025-10",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-04",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-12"
+      ],
+      "operations": {
+        "select_slot": 9,
+        "confirm_reservation": 9,
+        "cancel_booking": 2,
+        "reschedule_booking": 2
+      }
+    },
+    {
+      "id": "fern",
+      "file": "fern.seed.json",
+      "sha256": "569ea6a697f711425e25c990cb3bea3b260467bced0eab59a074590a74ff32ef",
+      "date_field": "history[].at",
+      "synthetic": 23,
+      "real": 0,
+      "distinct_dates": 17,
+      "observed_window": [
+        "2025-06-09",
+        "2026-12-31"
+      ],
+      "monthly": {
+        "2025-06": 2,
+        "2025-07": 2,
+        "2025-08": 3,
+        "2025-12": 3,
+        "2026-04": 2,
+        "2026-07": 3,
+        "2026-08": 3,
+        "2026-10": 2,
+        "2026-12": 3
+      },
+      "missing_months": [
+        "2025-01",
+        "2025-02",
+        "2025-03",
+        "2025-04",
+        "2025-05",
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-05",
+        "2026-06",
+        "2026-09",
+        "2026-11"
+      ],
+      "operations": {
+        "select_slot": 9,
+        "confirm_reservation": 9,
+        "cancel_booking": 3,
+        "reschedule_booking": 2
+      }
+    }
+  ],
   "monthly": {
     "2025-01": {
+      "synthetic": 3,
       "real": 0,
-      "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "dates": 2,
+      "by_source": {
+        "willow": 3
       }
     },
     "2025-02": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "willow": 2
       }
     },
     "2025-03": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 4,
-      "days": 4,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "reschedule_booking": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "cedar": 2
       }
     },
     "2025-04": {
+      "synthetic": 3,
       "real": 0,
-      "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "dates": 2,
+      "by_source": {
+        "cedar": 3
       }
     },
     "2025-05": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 3,
+      "by_source": {
+        "cedar": 3
       }
     },
     "2025-06": {
+      "synthetic": 5,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 3,
+      "by_source": {
+        "willow": 3,
+        "fern": 2
       }
     },
     "2025-07": {
-      "real": 0,
       "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "real": 0,
+      "dates": 1,
+      "by_source": {
+        "fern": 2
       }
     },
     "2025-08": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 3,
+      "by_source": {
+        "fern": 3
       }
     },
     "2025-09": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 4,
-      "days": 4,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "reschedule_booking": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "cedar": 2
       }
     },
     "2025-10": {
-      "real": 0,
       "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "real": 0,
+      "dates": 1,
+      "by_source": {
+        "willow": 2
       }
     },
     "2025-11": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "cedar": 2
       }
     },
     "2025-12": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 2,
+      "by_source": {
+        "fern": 3
       }
     },
     "2026-01": {
-      "real": 0,
       "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "real": 0,
+      "dates": 1,
+      "by_source": {
+        "willow": 2
       }
     },
     "2026-02": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 2,
+      "by_source": {
+        "willow": 3
       }
     },
     "2026-03": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "cedar": 2
       }
     },
     "2026-04": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "reschedule_booking": 1
+      "dates": 1,
+      "by_source": {
+        "fern": 2
       }
     },
     "2026-05": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 2,
+      "by_source": {
+        "cedar": 3
       }
     },
     "2026-06": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 2,
+      "by_source": {
+        "willow": 3
       }
     },
     "2026-07": {
+      "synthetic": 3,
       "real": 0,
-      "synthetic": 2,
-      "days": 2,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1
+      "dates": 3,
+      "by_source": {
+        "fern": 3
       }
     },
     "2026-08": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 2,
+      "by_source": {
+        "fern": 3
       }
     },
     "2026-09": {
+      "synthetic": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 1,
+      "by_source": {
+        "willow": 2
       }
     },
     "2026-10": {
+      "synthetic": 5,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "reschedule_booking": 1
+      "dates": 3,
+      "by_source": {
+        "cedar": 3,
+        "fern": 2
       }
     },
     "2026-11": {
+      "synthetic": 5,
       "real": 0,
-      "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "dates": 2,
+      "by_source": {
+        "willow": 3,
+        "cedar": 2
       }
     },
     "2026-12": {
-      "real": 0,
       "synthetic": 3,
-      "days": 3,
-      "operations": {
-        "select_slot": 1,
-        "confirm_reservation": 1,
-        "cancel_booking": 1
+      "real": 0,
+      "dates": 3,
+      "by_source": {
+        "fern": 3
       }
     }
-  },
-  "core_records": {
-    "slots": 30,
-    "bookings": 24,
-    "reservations": 24
-  },
-  "excluded": "Counts actual booking activity timestamps only. Slots are scheduled times, not activity. Future scenario offers, account and provider configuration are not counted.",
-  "seed_sha256": "fce99350c72461342dad3b46df3d18c86d2b6c04fe7e0a743e178f682a27ed7a"
+  }
 }

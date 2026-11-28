@@ -1,38 +1,41 @@
 {
   "schema_version": "pale.dataset.v1",
-  "dataset_id": "home-repair-slots-evaluation-v1",
-  "version": "1.0.0",
-  "description": "Versioned independently generated synthetic cabinet-hinge appointment and cancellation records, January 2025 through December 2026.",
+  "dataset_id": "home-repair-slots-eval-willow",
+  "version": "2.0.0",
+  "description": "Original synthetic cabinet-hinge service activity; one binding and household per seed.",
   "record_source_ids": [
-    "synthetic-evaluation-v1"
+    "synthetic-repair-willow"
   ],
   "sources": [
     {
-      "source_id": "synthetic-evaluation-v1",
+      "source_id": "synthetic-repair-willow",
       "kind": "synthetic",
-      "description": "Fictional repair history; no private account/service records, real addresses, provider listings, scraped data, or media.",
-      "uri": null,
+      "description": "Deterministically authored fictional service history; no external account records.",
+      "uri": "https://github.com/2018cx/Personal-Agents-Last-Exam/blob/propose-home-repair-slots/apps/home-repair-slots/evaluation/seed.json",
       "license": "MIT",
       "usage": "permitted",
-      "collection": null,
+      "collection": {
+        "method": "Original local synthetic generation, not external collection",
+        "collected_at": "2026-11-28T09:22:00Z"
+      },
       "generation": {
         "method": "deterministic_rule_based",
         "tool": "evaluation/recount.cjs",
-        "tool_version": "1.0.0",
-        "seed": "fixed-2025-2026",
+        "tool_version": "2.0.0",
+        "seed": "willow",
         "parameters": {
-          "months": 24,
-          "events": "select, confirm, optional reschedule, optional cancel",
+          "sha256": "06c5216843370bcb54b2388088f03a9f71b469e1026175cf5834509b413014dc",
+          "authoritative_date_field": "history[].at",
           "counting_zone": "Asia/Shanghai"
         }
       }
     }
   ],
   "transformations": [
-    "Distinct stable IDs and linked reservations, bookings and slots. Explicit UTC+08:00 source timestamps. Report activity dates using Asia/Shanghai; do not count scheduled slot dates or run metadata."
+    "Canonical JSON and stable linked object IDs; count observed booking activity only, not scheduled service dates."
   ],
   "expected_counts": {
-    "records": 54,
+    "records": 22,
     "assets": 0
   },
   "quality_policy": {
@@ -43,6 +46,6 @@
   "review": {
     "status": "pending",
     "reviewer": null,
-    "notes": "The App fixtures are independently authored synthetic records. Xiao Cui (@2018cx) is responsible for human provenance and license review; no reviewer acceptance is claimed."
+    "notes": "Xiao Cui (@2018cx) is responsible for provenance. All data is independently authored and synthetic; no independent acceptance is asserted."
   }
 }

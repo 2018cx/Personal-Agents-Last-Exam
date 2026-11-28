@@ -1,6 +1,6 @@
 {
   "schema_version": "pale.gui.v1",
-  "status": "declared",
+  "status": "implemented",
   "surface_id": "home-repair-slots",
   "audience": [
     "reviewer"
@@ -47,5 +47,9 @@
         "status": "implemented"
       }
     }
-  ]
+  ],
+  "entrypoint": {
+    "kind": "local_web",
+    "location": "#example"
+  }
 }

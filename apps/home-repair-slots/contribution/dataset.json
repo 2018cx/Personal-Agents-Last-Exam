@@ -11,22 +11,29 @@
       "source_id": "authored",
       "kind": "synthetic",
       "description": "Invented offline provider and booking data, no Taskrabbit listings, no personal records.",
-      "uri": null,
+      "uri": "https://github.com/2018cx/Personal-Agents-Last-Exam/blob/propose-home-repair-slots/apps/home-repair-slots/fixtures/minimal.json",
       "license": "MIT",
       "usage": "permitted",
-      "collection": null,
+      "collection": {
+        "method": "Manual synthetic authoring, not external collection",
+        "collected_at": "2026-11-28T09:22:00Z"
+      },
       "generation": {
         "method": "manual",
         "tool": "Manual fixture authoring",
         "tool_version": "1.0.0",
         "seed": null,
-        "parameters": {}
+        "parameters": {
+          "sha256": "ce1c69fd9c4072f2d3b2a8aca5ec7db3c2f10b4e588ef3046adf02ecbd1e12e3",
+          "authoritative_date_field": "history[].at",
+          "counting_zone": "Asia/Shanghai"
+        }
       }
     }
   ],
   "transformations": [
     "Deterministic IDs, fixed synthetic minor-unit prices and offset timestamps.",
-    "Authored booking confirmation/cancellation history spans 2025–2026; task clock and active slots are independent."
+    "Authored booking confirmation/cancellation history spans 2025\u20132026; task clock and active slots are independent."
   ],
   "expected_counts": {
     "records": 20,

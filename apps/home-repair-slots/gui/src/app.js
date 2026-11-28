@@ -1,12 +1,20 @@
 import {el} from '/shared/client.js';
 const root=document.querySelector('#app'),nav=el('nav',{'aria-label':'Home Repair navigation'});
 const live=el('p',{role:'status','aria-live':'polite'},'Opening synthetic workspace…');
-const stage=el('article',{class:'detail','aria-label':'Synthetic booking workspace'});
-root.replaceChildren(el('h1',{},'Home Repair Slots'),el('p',{},'Synthetic cabinet-hinge adjustment only. No payment, provider contact or real booking.'),nav,live,stage);
+const stage=el('article',{'aria-label':'Synthetic booking workspace'});
+live.id='status';
+const count=el('small',{},'');
+root.className='app-shell';
+root.replaceChildren(
+ el('aside',{class:'sidebar'},el('div',{class:'brand'},el('h1',{},'Home Repair Slots')),nav,
+  el('div',{class:'sidebar-foot'},el('small',{},'Fictional service · No payment or provider contact'))),
+ el('section',{class:'app-main','aria-label':'Booking workspace'},live,el('div',{class:'detail'},stage)));
 let csrf,tools=new Set(),screen='Slots',selectedReservation=null,selectedBooking=null,turn=0;
 const msg=t=>{live.textContent=t;};
 const can=n=>tools.has('home-repair-slots.'+n);
-const parcel=(res,more=[])=>el('ul',{},[...res,...more].map(text=>el('li',{},text)));
+const field=(label,value)=>el('div',{class:'metadata-line'},el('dt',{},label),el('dd',{},value));
+const badge=text=>el('span',{class:'tag'},text);
+const record=(label,fields)=>el('section',{'aria-label':label},el('h3',{class:'section-title'},label),el('dl',{class:'fields'},fields));
 const actions=(...children)=>el('div',{class:'actions'},...children);
 const button=(label,act,token)=>el('button',{type:'button',onclick:()=>Promise.resolve().then(act).catch(e=>{if(token==null||token===turn)msg(e.message);})},label);
 async function request(route,method='GET',payload){
@@ -45,9 +53,15 @@ function write(area,label,tool,args,version,token,done){
  area.append(go);
 }
 const amount=(s,c)=>new Intl.NumberFormat('en',{style:'currency',currency:c.currency,currencyDisplay:'code'}).format(s/100);
-function slotLine(s,state){
- const p=state.providers.find(x=>x.id===s.provider_id);
- return s.id+' · '+p?.name+' · '+s.start+' to '+s.end+' · '+amount(s.estimate_minor,state.constraints)+' all-inclusive';
+const provider=(s,state)=>state.providers.find(x=>x.id===s.provider_id)?.name??'Synthetic provider';
+function time(instant,state,format={dateStyle:'medium',timeStyle:'short'}){
+ return new Intl.DateTimeFormat('en',{timeZone:state.constraints.timezone,...format}).format(new Date(instant));
+}
+const windowText=(s,state)=>time(s.start,state)+' to '+time(s.end,state,{timeStyle:'short'});
+const slotFields=(s,state)=>[field('Provider',provider(s,state)),field('Appointment window',windowText(s,state)),field('All-inclusive estimate',amount(s.estimate_minor,state.constraints))];
+const historyLabels={confirm_reservation:'Confirmed',reschedule_booking:'Rescheduled',cancel_booking:'Cancelled'};
+function table(label,headers,rows){
+ return el('table',{'aria-label':label},el('thead',{},el('tr',{},headers.map(h=>el('th',{scope:'col'},h)))),el('tbody',{},rows));
 }
 const saved=(next,label)=>show(next,label);
 async function show(next=screen,outcome){
@@ -60,7 +74,8 @@ async function show(next=screen,outcome){
  const title=el('h2',{},next);
  try{
   const state=await call('list_slots');if(token!==turn)return;
-  const notice=el('p',{},'Requested dates '+state.constraints.from_date+' through '+state.constraints.through_date+' · '+state.constraints.timezone+' · Budget '+amount(state.constraints.budget_minor,state.constraints));
+  count.textContent=String(state.booking_ids.length);
+  const notice=el('p',{class:'muted'},'Requested dates '+state.constraints.from_date+' through '+state.constraints.through_date+' · '+state.constraints.timezone+' · Budget '+amount(state.constraints.budget_minor,state.constraints));
   if(next==='Slots'){
    selectedReservation=state.reservation_id;
    const rows=state.slots.map(s=>{
@@ -68,9 +83,9 @@ async function show(next=screen,outcome){
     write(bar,'Select '+s.id,'select_slot',{slot_id:s.id},state.version,token,r=>{
      selectedReservation=r.reservation.id;return saved('Review reservation','Temporary preview saved. This slot is not held.');
     });
-    return el('li',{},slotLine(s,state),bar);
+    return el('tr',{},el('th',{scope:'row'},provider(s,state)),el('td',{},windowText(s,state)),el('td',{},amount(s.estimate_minor,state.constraints)),el('td',{},bar));
    });
-   end(token,title,notice,rows.length?el('ul',{},rows):el('p',{},'No suitable available slots within the requested dates and budget.'));
+   end(token,title,notice,rows.length?table('Available appointment offers',['Provider','Appointment window','Price','Action'],rows):el('p',{},'No suitable available slots within the requested dates and budget.'));
   }else if(next==='Review reservation'){
    selectedReservation=state.reservation_id||selectedReservation;
    if(!selectedReservation){end(token,title,notice,el('p',{},'No temporary reservation. Choose a suitable slot first.'));return;}
@@ -83,14 +98,15 @@ async function show(next=screen,outcome){
     return saved('Review reservation','Reservation discarded. No booking created.');
    });
    bar.append(button('Back to available slots',()=>show('Slots'),token));
-   end(token,title,notice,parcel(['Reservation '+r.reservation.id+' · '+status,slotLine(r.slot,state)]),
+   end(token,title,notice,record('Reservation '+r.reservation.id,[field('Status',badge(status)),...slotFields(r.slot,state)]),
     status==='invalidated'?el('p',{},'This slot was taken before confirmation. Check alternatives or discard the reservation.'):null,bar);
   }else{
    const links=actions(...state.booking_ids.map(id=>button('Open '+id,()=>{selectedBooking=id;return show(next);},token)));
    if(!state.booking_ids.includes(selectedBooking))selectedBooking=null;
    if(!selectedBooking){end(token,title,notice,links,el('p',{},'Choose a booking.'));return;}
    const r=await call('get_booking',{booking_id:selectedBooking});if(token!==turn)return;
-   const info=parcel(['Booking '+r.booking.id+' · '+r.booking.status,slotLine(r.slot,state)]);
+   const info=record('Booking '+r.booking.id,[field('Status',badge(r.booking.status)),...slotFields(r.slot,state)]);
+   const timeline=r.history.length?record('Booking activity',r.history.map(h=>field(historyLabels[h.operation],el('time',{datetime:h.at},time(h.at,state))))):null;
    const bar=actions();
    if(next==='Bookings'&&r.booking.status==='confirmed'){
     bar.append(button('Change or cancel '+r.booking.id,()=>show('Change or cancel'),token));
@@ -101,7 +117,7 @@ async function show(next=screen,outcome){
       bar.append(button('Reschedule to '+s.id,()=>{
        const confirm=actions(button('Keep existing booking',()=>show('Change or cancel'),token));
        write(confirm,'Confirm reschedule','reschedule_booking',{booking_id:r.booking.id,slot_id:s.id},r.version,token,()=>saved('Bookings','Booking '+r.booking.id+' rescheduled to '+s.id+'.'));
-       bar.replaceChildren(el('p',{},slotLine(s,state)),confirm);
+       bar.replaceChildren(record('Proposed new appointment',slotFields(s,state)),confirm);
       },token));
      }
     }
@@ -111,7 +127,7 @@ async function show(next=screen,outcome){
      bar.replaceChildren(el('p',{},'Cancel booking '+r.booking.id+'? No external message is sent.'),confirm);
     },token));
    }
-   end(token,title,notice,links,info,bar);
+   end(token,title,notice,links,info,timeline,bar);
   }
   if(token===turn&&outcome)msg(outcome);
  }catch(e){if(token===turn){stage.replaceChildren(title);msg(e.message);}}
@@ -122,7 +138,7 @@ async function init(){
  else ({csrf}=await request('/session'));
  tools=new Set((await request('/api/tools')).tools.map(t=>t.name));
  nav.replaceChildren(...['Slots','Review reservation','Bookings','Change or cancel'].map(n=>{
-  const b=button(n,()=>show(n));b.dataset.screen=n;return b;
+  const b=button(n,()=>show(n));b.dataset.screen=n;if(n==='Bookings')b.append(count);return b;
  }),button('Refresh',()=>show()));
  await show();
 }

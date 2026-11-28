@@ -9,7 +9,7 @@ both business operations and the one incoming event.
 Use Node 18+ and the public PALE reference runtime 1.6.0 / Core API 1.2.0.
 The proposal API baseline was `61b637164e4abddf81536bb48935cdb688a69ff1`;
 the candidate also targets the same APIs on upstream main
-`a4bce023953061483c41de5a287ba5e43f4a5648`. From this App directory:
+`25d559778696dff849bb88fcca03f325185f2599`. From this App directory:
 
 ```sh
 export PALE_RUNTIME_ROOT=/absolute/path/to/public-pale/runtime
@@ -91,16 +91,13 @@ node tests/core.cjs
 node ../../runtime/cli.cjs verify --app "$PWD" --output /tmp/home-repair-review.json
 ```
 
-To replay the browser checks, install Playwright 1.62.1 outside the App and
-make its module available through `PALE_PLAYWRIGHT_MODULE` (or ordinary Node
-module resolution). With matching Chromium installed by Playwright, run
-`node tests/browser.cjs`. For an existing compatible Chromium use
-`CHROMIUM_PATH=/path/to/chromium node tests/browser.cjs`. The test keeps the
-Chromium sandbox on and uses only the local Web Host and synthetic Core
-state. It asserts that normal reservation review has no literal “null”,
-clicks through the competing-slot rejection, booking, reschedule, cancel,
-historical lookup and reset/replay, and checks committed records via separate
-MCP sessions.
+To replay browser checks, use the repository-pinned Playwright **1.56.1** from
+the full checkout, or provide its installed module via
+`PALE_PLAYWRIGHT_MODULE`. Provide an already installed, sandbox-capable
+Chromium using `CHROMIUM_PATH`. No installation or public network is used
+during the browser test. The [evidence index](evidence/README.md) describes
+offline prerequisites and the Node 18/22 browser matrix. The App does not
+ship a test browser or add a production dependency.
 
 Four fictional cancelled bookings add paired confirmation/cancellation history
 from 2025-01-01 through 2026-10-21 (UTC+08:00). The first task session is still
@@ -116,6 +113,6 @@ Playwright 1.62.1, and Node 24.22.3, with no page JavaScript errors. The pinned
 proposal baseline and upstream main have identical `runtime/` trees.
 
 ### Full-window evaluation delivery
-The eight dated actions above describe the original small smoke fixture. A separate, versioned [evaluation package](evaluation/README.md) now delivers 68 synthetic booking actions across all 24 months from 2025-01-01 to 2026-12-31. The package includes deterministic provenance, machine-readable monthly/source counts, and an independent Core load/query/reset test. The original smoke bytes and approved proposal are unchanged.
+The eight dated actions above describe the original small smoke fixture. A separate, versioned [evaluation package](evaluation/README.md) now delivers 68 synthetic booking actions on 44 distinct dates across all 24 months, with three separately bound households from 2025-01-01 to 2026-12-31. The package includes deterministic provenance, machine-readable monthly/source counts, and an independent Core load/query/reset test. The original smoke bytes and approved proposal are unchanged.
 
 See the [evaluation and GUI evidence index](evidence/README.md) for links, commands, baseline mapping and separate browser versus MCP results.

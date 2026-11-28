@@ -1,945 +1,427 @@
 {
-  "account_id": "repair-local",
-  "service": "Cabinet-hinge adjustment",
-  "constraints": {
-    "from_date": "2027-01-12",
-    "through_date": "2027-01-14",
-    "timezone": "Asia/Shanghai",
-    "currency": "CNY",
-    "budget_minor": 13000
+  "binding": {
+    "people": [
+      {
+        "person_id": "customer-willow",
+        "name": "Willow household"
+      }
+    ],
+    "accounts": [
+      {
+        "app_id": "home-repair-slots",
+        "account_id": "repair-willow",
+        "owner_person_id": "customer-willow"
+      }
+    ],
+    "objects": {
+      "home-repair-slots": [
+        "P1",
+        "P2",
+        "S1",
+        "S2",
+        "ES-willow-1",
+        "ES-willow-2",
+        "ES-willow-3",
+        "EP-willow-3",
+        "ES-willow-4",
+        "ES-willow-5",
+        "ES-willow-6",
+        "ES-willow-7",
+        "EP-willow-7",
+        "ES-willow-8",
+        "ES-willow-9",
+        "ER-willow-1",
+        "ER-willow-2",
+        "ER-willow-3",
+        "ER-willow-4",
+        "ER-willow-5",
+        "ER-willow-6",
+        "ER-willow-7",
+        "ER-willow-8",
+        "ER-willow-9",
+        "EB-willow-1",
+        "EB-willow-2",
+        "EB-willow-3",
+        "EB-willow-4",
+        "EB-willow-5",
+        "EB-willow-6",
+        "EB-willow-7",
+        "EB-willow-8",
+        "EB-willow-9"
+      ]
+    }
   },
-  "providers": [
-    {
-      "id": "P1",
-      "name": "Example Cabinet Care"
-    },
-    {
-      "id": "P2",
-      "name": "Fixture Hinge Service"
-    }
-  ],
-  "slots": [
-    {
-      "id": "S1",
-      "provider_id": "P1",
-      "start": "2027-01-12T10:00:00+08:00",
-      "end": "2027-01-12T11:00:00+08:00",
-      "estimate_minor": 10000,
-      "taken": false
-    },
-    {
-      "id": "S2",
-      "provider_id": "P2",
-      "start": "2027-01-12T12:00:00+08:00",
-      "end": "2027-01-12T13:00:00+08:00",
-      "estimate_minor": 12000,
-      "taken": false
-    },
-    {
-      "id": "ES202501",
-      "provider_id": "P1",
-      "start": "2025-01-10T09:00:00+08:00",
-      "end": "2025-01-10T10:00:00+08:00",
-      "estimate_minor": 8200,
-      "taken": false
-    },
-    {
-      "id": "ES202502",
-      "provider_id": "P2",
-      "start": "2025-02-14T12:30:00+08:00",
-      "end": "2025-02-14T13:30:00+08:00",
-      "estimate_minor": 8475,
-      "taken": false
-    },
-    {
-      "id": "ES202503",
-      "provider_id": "P1",
-      "start": "2025-03-15T15:00:00+08:00",
-      "end": "2025-03-15T16:00:00+08:00",
-      "estimate_minor": 8750,
-      "taken": false
-    },
-    {
-      "id": "EP202503",
-      "provider_id": "P1",
-      "start": "2025-03-13T15:00:00+08:00",
-      "end": "2025-03-13T16:00:00+08:00",
-      "estimate_minor": 8950,
-      "taken": false
-    },
-    {
-      "id": "ES202504",
-      "provider_id": "P2",
-      "start": "2025-04-16T11:30:00+08:00",
-      "end": "2025-04-16T12:30:00+08:00",
-      "estimate_minor": 9025,
-      "taken": false
-    },
-    {
-      "id": "ES202505",
-      "provider_id": "P1",
-      "start": "2025-05-17T14:00:00+08:00",
-      "end": "2025-05-17T15:00:00+08:00",
-      "estimate_minor": 9300,
-      "taken": false
-    },
-    {
-      "id": "ES202506",
-      "provider_id": "P2",
-      "start": "2025-06-18T10:30:00+08:00",
-      "end": "2025-06-18T11:30:00+08:00",
-      "estimate_minor": 9575,
-      "taken": false
-    },
-    {
-      "id": "ES202507",
-      "provider_id": "P1",
-      "start": "2025-07-19T13:00:00+08:00",
-      "end": "2025-07-19T14:00:00+08:00",
-      "estimate_minor": 9850,
-      "taken": false
-    },
-    {
-      "id": "ES202508",
-      "provider_id": "P2",
-      "start": "2025-08-20T09:30:00+08:00",
-      "end": "2025-08-20T10:30:00+08:00",
-      "estimate_minor": 10125,
-      "taken": false
-    },
-    {
-      "id": "ES202509",
-      "provider_id": "P1",
-      "start": "2025-09-21T12:00:00+08:00",
-      "end": "2025-09-21T13:00:00+08:00",
-      "estimate_minor": 10400,
-      "taken": false
-    },
-    {
-      "id": "EP202509",
-      "provider_id": "P1",
-      "start": "2025-09-19T12:00:00+08:00",
-      "end": "2025-09-19T13:00:00+08:00",
-      "estimate_minor": 10600,
-      "taken": false
-    },
-    {
-      "id": "ES202510",
-      "provider_id": "P2",
-      "start": "2025-10-22T15:30:00+08:00",
-      "end": "2025-10-22T16:30:00+08:00",
-      "estimate_minor": 10675,
-      "taken": false
-    },
-    {
-      "id": "ES202511",
-      "provider_id": "P1",
-      "start": "2025-11-23T11:00:00+08:00",
-      "end": "2025-11-23T12:00:00+08:00",
-      "estimate_minor": 10950,
-      "taken": false
-    },
-    {
-      "id": "ES202512",
-      "provider_id": "P2",
-      "start": "2025-12-13T14:30:00+08:00",
-      "end": "2025-12-13T15:30:00+08:00",
-      "estimate_minor": 11225,
-      "taken": false
-    },
-    {
-      "id": "ES202601",
-      "provider_id": "P1",
-      "start": "2026-01-14T10:00:00+08:00",
-      "end": "2026-01-14T11:00:00+08:00",
-      "estimate_minor": 11500,
-      "taken": false
-    },
-    {
-      "id": "ES202602",
-      "provider_id": "P2",
-      "start": "2026-02-15T13:30:00+08:00",
-      "end": "2026-02-15T14:30:00+08:00",
-      "estimate_minor": 11775,
-      "taken": false
-    },
-    {
-      "id": "ES202603",
-      "provider_id": "P1",
-      "start": "2026-03-16T09:00:00+08:00",
-      "end": "2026-03-16T10:00:00+08:00",
-      "estimate_minor": 12050,
-      "taken": false
-    },
-    {
-      "id": "ES202604",
-      "provider_id": "P2",
-      "start": "2026-04-17T12:30:00+08:00",
-      "end": "2026-04-17T13:30:00+08:00",
-      "estimate_minor": 12325,
-      "taken": false
-    },
-    {
-      "id": "EP202604",
-      "provider_id": "P2",
-      "start": "2026-04-15T12:30:00+08:00",
-      "end": "2026-04-15T13:30:00+08:00",
-      "estimate_minor": 12525,
-      "taken": false
-    },
-    {
-      "id": "ES202605",
-      "provider_id": "P1",
-      "start": "2026-05-18T15:00:00+08:00",
-      "end": "2026-05-18T16:00:00+08:00",
-      "estimate_minor": 12600,
-      "taken": false
-    },
-    {
-      "id": "ES202606",
-      "provider_id": "P2",
-      "start": "2026-06-19T11:30:00+08:00",
-      "end": "2026-06-19T12:30:00+08:00",
-      "estimate_minor": 8275,
-      "taken": false
-    },
-    {
-      "id": "ES202607",
-      "provider_id": "P1",
-      "start": "2026-07-20T14:00:00+08:00",
-      "end": "2026-07-20T15:00:00+08:00",
-      "estimate_minor": 8550,
-      "taken": false
-    },
-    {
-      "id": "ES202608",
-      "provider_id": "P2",
-      "start": "2026-08-21T10:30:00+08:00",
-      "end": "2026-08-21T11:30:00+08:00",
-      "estimate_minor": 8825,
-      "taken": false
-    },
-    {
-      "id": "ES202609",
-      "provider_id": "P1",
-      "start": "2026-09-22T13:00:00+08:00",
-      "end": "2026-09-22T14:00:00+08:00",
-      "estimate_minor": 9100,
-      "taken": false
-    },
-    {
-      "id": "ES202610",
-      "provider_id": "P2",
-      "start": "2026-10-23T09:30:00+08:00",
-      "end": "2026-10-23T10:30:00+08:00",
-      "estimate_minor": 9375,
-      "taken": false
-    },
-    {
-      "id": "EP202610",
-      "provider_id": "P2",
-      "start": "2026-10-21T09:30:00+08:00",
-      "end": "2026-10-21T10:30:00+08:00",
-      "estimate_minor": 9575,
-      "taken": false
-    },
-    {
-      "id": "ES202611",
-      "provider_id": "P1",
-      "start": "2026-11-13T12:00:00+08:00",
-      "end": "2026-11-13T13:00:00+08:00",
-      "estimate_minor": 9650,
-      "taken": false
-    },
-    {
-      "id": "ES202612",
-      "provider_id": "P2",
-      "start": "2026-12-31T15:30:00+08:00",
-      "end": "2026-12-31T16:30:00+08:00",
-      "estimate_minor": 9925,
-      "taken": false
-    }
-  ],
-  "reservations": [
-    {
-      "id": "ER202501",
-      "slot_id": "ES202501",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202502",
-      "slot_id": "ES202502",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202503",
-      "slot_id": "EP202503",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202504",
-      "slot_id": "ES202504",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202505",
-      "slot_id": "ES202505",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202506",
-      "slot_id": "ES202506",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202507",
-      "slot_id": "ES202507",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202508",
-      "slot_id": "ES202508",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202509",
-      "slot_id": "EP202509",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202510",
-      "slot_id": "ES202510",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202511",
-      "slot_id": "ES202511",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202512",
-      "slot_id": "ES202512",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202601",
-      "slot_id": "ES202601",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202602",
-      "slot_id": "ES202602",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202603",
-      "slot_id": "ES202603",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202604",
-      "slot_id": "EP202604",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202605",
-      "slot_id": "ES202605",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202606",
-      "slot_id": "ES202606",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202607",
-      "slot_id": "ES202607",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202608",
-      "slot_id": "ES202608",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202609",
-      "slot_id": "ES202609",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202610",
-      "slot_id": "EP202610",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202611",
-      "slot_id": "ES202611",
-      "status": "confirmed"
-    },
-    {
-      "id": "ER202612",
-      "slot_id": "ES202612",
-      "status": "confirmed"
-    }
-  ],
-  "bookings": [
-    {
-      "id": "EB202501",
-      "slot_id": "ES202501",
-      "status": "confirmed",
-      "origin": "ER202501"
-    },
-    {
-      "id": "EB202502",
-      "slot_id": "ES202502",
-      "status": "cancelled",
-      "origin": "ER202502"
-    },
-    {
-      "id": "EB202503",
-      "slot_id": "ES202503",
-      "status": "cancelled",
-      "origin": "ER202503"
-    },
-    {
-      "id": "EB202504",
-      "slot_id": "ES202504",
-      "status": "confirmed",
-      "origin": "ER202504"
-    },
-    {
-      "id": "EB202505",
-      "slot_id": "ES202505",
-      "status": "cancelled",
-      "origin": "ER202505"
-    },
-    {
-      "id": "EB202506",
-      "slot_id": "ES202506",
-      "status": "cancelled",
-      "origin": "ER202506"
-    },
-    {
-      "id": "EB202507",
-      "slot_id": "ES202507",
-      "status": "confirmed",
-      "origin": "ER202507"
-    },
-    {
-      "id": "EB202508",
-      "slot_id": "ES202508",
-      "status": "cancelled",
-      "origin": "ER202508"
-    },
-    {
-      "id": "EB202509",
-      "slot_id": "ES202509",
-      "status": "cancelled",
-      "origin": "ER202509"
-    },
-    {
-      "id": "EB202510",
-      "slot_id": "ES202510",
-      "status": "confirmed",
-      "origin": "ER202510"
-    },
-    {
-      "id": "EB202511",
-      "slot_id": "ES202511",
-      "status": "cancelled",
-      "origin": "ER202511"
-    },
-    {
-      "id": "EB202512",
-      "slot_id": "ES202512",
-      "status": "cancelled",
-      "origin": "ER202512"
-    },
-    {
-      "id": "EB202601",
-      "slot_id": "ES202601",
-      "status": "confirmed",
-      "origin": "ER202601"
-    },
-    {
-      "id": "EB202602",
-      "slot_id": "ES202602",
-      "status": "cancelled",
-      "origin": "ER202602"
-    },
-    {
-      "id": "EB202603",
-      "slot_id": "ES202603",
-      "status": "cancelled",
-      "origin": "ER202603"
-    },
-    {
-      "id": "EB202604",
-      "slot_id": "ES202604",
-      "status": "confirmed",
-      "origin": "ER202604"
-    },
-    {
-      "id": "EB202605",
-      "slot_id": "ES202605",
-      "status": "cancelled",
-      "origin": "ER202605"
-    },
-    {
-      "id": "EB202606",
-      "slot_id": "ES202606",
-      "status": "cancelled",
-      "origin": "ER202606"
-    },
-    {
-      "id": "EB202607",
-      "slot_id": "ES202607",
-      "status": "confirmed",
-      "origin": "ER202607"
-    },
-    {
-      "id": "EB202608",
-      "slot_id": "ES202608",
-      "status": "cancelled",
-      "origin": "ER202608"
-    },
-    {
-      "id": "EB202609",
-      "slot_id": "ES202609",
-      "status": "cancelled",
-      "origin": "ER202609"
-    },
-    {
-      "id": "EB202610",
-      "slot_id": "ES202610",
-      "status": "confirmed",
-      "origin": "ER202610"
-    },
-    {
-      "id": "EB202611",
-      "slot_id": "ES202611",
-      "status": "cancelled",
-      "origin": "ER202611"
-    },
-    {
-      "id": "EB202612",
-      "slot_id": "ES202612",
-      "status": "cancelled",
-      "origin": "ER202612"
-    }
-  ],
-  "history": [
-    {
-      "operation": "select_slot",
-      "object_id": "ER202501",
-      "slot_id": "ES202501",
-      "at": "2025-01-01T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202501",
-      "slot_id": "ES202501",
-      "at": "2025-01-02T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202502",
-      "slot_id": "ES202502",
-      "at": "2025-02-05T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202502",
-      "slot_id": "ES202502",
-      "at": "2025-02-06T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202502",
-      "slot_id": "ES202502",
-      "at": "2025-02-10T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202503",
-      "slot_id": "EP202503",
-      "at": "2025-03-06T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202503",
-      "slot_id": "EP202503",
-      "at": "2025-03-07T08:15:00+08:00"
-    },
-    {
-      "operation": "reschedule_booking",
-      "object_id": "EB202503",
-      "slot_id": "ES202503",
-      "prior_slot_id": "EP202503",
-      "at": "2025-03-09T12:25:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202503",
-      "slot_id": "ES202503",
-      "at": "2025-03-11T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202504",
-      "slot_id": "ES202504",
-      "at": "2025-04-07T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202504",
-      "slot_id": "ES202504",
-      "at": "2025-04-08T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202505",
-      "slot_id": "ES202505",
-      "at": "2025-05-08T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202505",
-      "slot_id": "ES202505",
-      "at": "2025-05-09T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202505",
-      "slot_id": "ES202505",
-      "at": "2025-05-13T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202506",
-      "slot_id": "ES202506",
-      "at": "2025-06-09T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202506",
-      "slot_id": "ES202506",
-      "at": "2025-06-10T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202506",
-      "slot_id": "ES202506",
-      "at": "2025-06-14T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202507",
-      "slot_id": "ES202507",
-      "at": "2025-07-10T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202507",
-      "slot_id": "ES202507",
-      "at": "2025-07-11T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202508",
-      "slot_id": "ES202508",
-      "at": "2025-08-11T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202508",
-      "slot_id": "ES202508",
-      "at": "2025-08-12T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202508",
-      "slot_id": "ES202508",
-      "at": "2025-08-16T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202509",
-      "slot_id": "EP202509",
-      "at": "2025-09-12T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202509",
-      "slot_id": "EP202509",
-      "at": "2025-09-13T08:15:00+08:00"
-    },
-    {
-      "operation": "reschedule_booking",
-      "object_id": "EB202509",
-      "slot_id": "ES202509",
-      "prior_slot_id": "EP202509",
-      "at": "2025-09-15T12:25:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202509",
-      "slot_id": "ES202509",
-      "at": "2025-09-17T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202510",
-      "slot_id": "ES202510",
-      "at": "2025-10-13T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202510",
-      "slot_id": "ES202510",
-      "at": "2025-10-14T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202511",
-      "slot_id": "ES202511",
-      "at": "2025-11-14T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202511",
-      "slot_id": "ES202511",
-      "at": "2025-11-15T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202511",
-      "slot_id": "ES202511",
-      "at": "2025-11-19T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202512",
-      "slot_id": "ES202512",
-      "at": "2025-12-04T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202512",
-      "slot_id": "ES202512",
-      "at": "2025-12-05T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202512",
-      "slot_id": "ES202512",
-      "at": "2025-12-09T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202601",
-      "slot_id": "ES202601",
-      "at": "2026-01-05T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202601",
-      "slot_id": "ES202601",
-      "at": "2026-01-06T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202602",
-      "slot_id": "ES202602",
-      "at": "2026-02-06T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202602",
-      "slot_id": "ES202602",
-      "at": "2026-02-07T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202602",
-      "slot_id": "ES202602",
-      "at": "2026-02-11T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202603",
-      "slot_id": "ES202603",
-      "at": "2026-03-07T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202603",
-      "slot_id": "ES202603",
-      "at": "2026-03-08T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202603",
-      "slot_id": "ES202603",
-      "at": "2026-03-12T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202604",
-      "slot_id": "EP202604",
-      "at": "2026-04-08T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202604",
-      "slot_id": "EP202604",
-      "at": "2026-04-09T08:15:00+08:00"
-    },
-    {
-      "operation": "reschedule_booking",
-      "object_id": "EB202604",
-      "slot_id": "ES202604",
-      "prior_slot_id": "EP202604",
-      "at": "2026-04-11T12:25:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202605",
-      "slot_id": "ES202605",
-      "at": "2026-05-09T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202605",
-      "slot_id": "ES202605",
-      "at": "2026-05-10T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202605",
-      "slot_id": "ES202605",
-      "at": "2026-05-14T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202606",
-      "slot_id": "ES202606",
-      "at": "2026-06-10T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202606",
-      "slot_id": "ES202606",
-      "at": "2026-06-11T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202606",
-      "slot_id": "ES202606",
-      "at": "2026-06-15T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202607",
-      "slot_id": "ES202607",
-      "at": "2026-07-11T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202607",
-      "slot_id": "ES202607",
-      "at": "2026-07-12T08:15:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202608",
-      "slot_id": "ES202608",
-      "at": "2026-08-12T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202608",
-      "slot_id": "ES202608",
-      "at": "2026-08-13T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202608",
-      "slot_id": "ES202608",
-      "at": "2026-08-17T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202609",
-      "slot_id": "ES202609",
-      "at": "2026-09-13T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202609",
-      "slot_id": "ES202609",
-      "at": "2026-09-14T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202609",
-      "slot_id": "ES202609",
-      "at": "2026-09-18T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202610",
-      "slot_id": "EP202610",
-      "at": "2026-10-14T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202610",
-      "slot_id": "EP202610",
-      "at": "2026-10-15T08:15:00+08:00"
-    },
-    {
-      "operation": "reschedule_booking",
-      "object_id": "EB202610",
-      "slot_id": "ES202610",
-      "prior_slot_id": "EP202610",
-      "at": "2026-10-17T12:25:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202611",
-      "slot_id": "ES202611",
-      "at": "2026-11-04T18:10:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202611",
-      "slot_id": "ES202611",
-      "at": "2026-11-05T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202611",
-      "slot_id": "ES202611",
-      "at": "2026-11-09T16:35:00+08:00"
-    },
-    {
-      "operation": "select_slot",
-      "object_id": "ER202612",
-      "slot_id": "ES202612",
-      "at": "2026-12-20T18:25:00+08:00"
-    },
-    {
-      "operation": "confirm_reservation",
-      "object_id": "EB202612",
-      "slot_id": "ES202612",
-      "at": "2026-12-21T08:15:00+08:00"
-    },
-    {
-      "operation": "cancel_booking",
-      "object_id": "EB202612",
-      "slot_id": "ES202612",
-      "at": "2026-12-31T08:05:00+08:00"
-    }
-  ]
+  "virtual_now": "2027-01-12T09:00:00+08:00",
+  "data": {
+    "account_id": "repair-willow",
+    "service": "Cabinet-hinge adjustment",
+    "constraints": {
+      "from_date": "2027-01-12",
+      "through_date": "2027-01-14",
+      "timezone": "Asia/Shanghai",
+      "currency": "CNY",
+      "budget_minor": 13000
+    },
+    "providers": [
+      {
+        "id": "P1",
+        "name": "Example Cabinet Care"
+      },
+      {
+        "id": "P2",
+        "name": "Fixture Hinge Service"
+      }
+    ],
+    "slots": [
+      {
+        "id": "S1",
+        "provider_id": "P1",
+        "start": "2027-01-12T10:00:00+08:00",
+        "end": "2027-01-12T11:00:00+08:00",
+        "estimate_minor": 10000,
+        "taken": false
+      },
+      {
+        "id": "S2",
+        "provider_id": "P2",
+        "start": "2027-01-12T12:00:00+08:00",
+        "end": "2027-01-12T13:00:00+08:00",
+        "estimate_minor": 12000,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-1",
+        "provider_id": "P2",
+        "start": "2025-01-08T14:15:00+08:00",
+        "end": "2025-01-08T15:15:00+08:00",
+        "estimate_minor": 8713,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-2",
+        "provider_id": "P1",
+        "start": "2025-02-18T13:45:00+08:00",
+        "end": "2025-02-18T14:45:00+08:00",
+        "estimate_minor": 9453,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-3",
+        "provider_id": "P2",
+        "start": "2025-06-23T09:00:00+08:00",
+        "end": "2025-06-23T10:00:00+08:00",
+        "estimate_minor": 10574,
+        "taken": false
+      },
+      {
+        "id": "EP-willow-3",
+        "provider_id": "P2",
+        "start": "2025-06-21T09:00:00+08:00",
+        "end": "2025-06-21T10:00:00+08:00",
+        "estimate_minor": 10749,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-4",
+        "provider_id": "P1",
+        "start": "2025-10-27T11:15:00+08:00",
+        "end": "2025-10-27T12:15:00+08:00",
+        "estimate_minor": 11695,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-5",
+        "provider_id": "P2",
+        "start": "2026-01-13T15:15:00+08:00",
+        "end": "2026-01-13T16:15:00+08:00",
+        "estimate_minor": 12689,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-6",
+        "provider_id": "P1",
+        "start": "2026-02-23T13:45:00+08:00",
+        "end": "2026-02-23T14:45:00+08:00",
+        "estimate_minor": 8729,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-7",
+        "provider_id": "P2",
+        "start": "2026-06-16T13:00:00+08:00",
+        "end": "2026-06-16T14:00:00+08:00",
+        "estimate_minor": 9850,
+        "taken": false
+      },
+      {
+        "id": "EP-willow-7",
+        "provider_id": "P2",
+        "start": "2026-06-14T13:00:00+08:00",
+        "end": "2026-06-14T14:00:00+08:00",
+        "estimate_minor": 10025,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-8",
+        "provider_id": "P1",
+        "start": "2026-09-27T09:00:00+08:00",
+        "end": "2026-09-27T10:00:00+08:00",
+        "estimate_minor": 10844,
+        "taken": false
+      },
+      {
+        "id": "ES-willow-9",
+        "provider_id": "P2",
+        "start": "2026-11-24T14:45:00+08:00",
+        "end": "2026-11-24T15:45:00+08:00",
+        "estimate_minor": 11711,
+        "taken": false
+      }
+    ],
+    "reservations": [
+      {
+        "id": "ER-willow-1",
+        "slot_id": "ES-willow-1",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-2",
+        "slot_id": "ES-willow-2",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-3",
+        "slot_id": "EP-willow-3",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-4",
+        "slot_id": "ES-willow-4",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-5",
+        "slot_id": "ES-willow-5",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-6",
+        "slot_id": "ES-willow-6",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-7",
+        "slot_id": "EP-willow-7",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-8",
+        "slot_id": "ES-willow-8",
+        "status": "confirmed"
+      },
+      {
+        "id": "ER-willow-9",
+        "slot_id": "ES-willow-9",
+        "status": "confirmed"
+      }
+    ],
+    "bookings": [
+      {
+        "id": "EB-willow-1",
+        "slot_id": "ES-willow-1",
+        "status": "cancelled",
+        "origin": "ER-willow-1"
+      },
+      {
+        "id": "EB-willow-2",
+        "slot_id": "ES-willow-2",
+        "status": "confirmed",
+        "origin": "ER-willow-2"
+      },
+      {
+        "id": "EB-willow-3",
+        "slot_id": "ES-willow-3",
+        "status": "confirmed",
+        "origin": "ER-willow-3"
+      },
+      {
+        "id": "EB-willow-4",
+        "slot_id": "ES-willow-4",
+        "status": "confirmed",
+        "origin": "ER-willow-4"
+      },
+      {
+        "id": "EB-willow-5",
+        "slot_id": "ES-willow-5",
+        "status": "confirmed",
+        "origin": "ER-willow-5"
+      },
+      {
+        "id": "EB-willow-6",
+        "slot_id": "ES-willow-6",
+        "status": "cancelled",
+        "origin": "ER-willow-6"
+      },
+      {
+        "id": "EB-willow-7",
+        "slot_id": "ES-willow-7",
+        "status": "confirmed",
+        "origin": "ER-willow-7"
+      },
+      {
+        "id": "EB-willow-8",
+        "slot_id": "ES-willow-8",
+        "status": "confirmed",
+        "origin": "ER-willow-8"
+      },
+      {
+        "id": "EB-willow-9",
+        "slot_id": "ES-willow-9",
+        "status": "cancelled",
+        "origin": "ER-willow-9"
+      }
+    ],
+    "history": [
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-1",
+        "slot_id": "ES-willow-1",
+        "at": "2025-01-01T11:21:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-1",
+        "slot_id": "ES-willow-1",
+        "at": "2025-01-01T03:29:00.000Z"
+      },
+      {
+        "operation": "cancel_booking",
+        "object_id": "EB-willow-1",
+        "slot_id": "ES-willow-1",
+        "at": "2025-01-07T08:38:00+08:00"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-2",
+        "slot_id": "ES-willow-2",
+        "at": "2025-02-17T09:52:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-2",
+        "slot_id": "ES-willow-2",
+        "at": "2025-02-17T02:03:00.000Z"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-3",
+        "slot_id": "EP-willow-3",
+        "at": "2025-06-09T18:43:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-3",
+        "slot_id": "EP-willow-3",
+        "at": "2025-06-10T08:20:00+08:00"
+      },
+      {
+        "operation": "reschedule_booking",
+        "object_id": "EB-willow-3",
+        "slot_id": "ES-willow-3",
+        "prior_slot_id": "EP-willow-3",
+        "at": "2025-06-11T12:50:00+08:00"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-4",
+        "slot_id": "ES-willow-4",
+        "at": "2025-10-26T12:06:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-4",
+        "slot_id": "ES-willow-4",
+        "at": "2025-10-26T04:23:00.000Z"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-5",
+        "slot_id": "ES-willow-5",
+        "at": "2026-01-07T08:33:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-5",
+        "slot_id": "ES-willow-5",
+        "at": "2026-01-07T00:53:00.000Z"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-6",
+        "slot_id": "ES-willow-6",
+        "at": "2026-02-21T19:12:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-6",
+        "slot_id": "ES-willow-6",
+        "at": "2026-02-21T11:35:00.000Z"
+      },
+      {
+        "operation": "cancel_booking",
+        "object_id": "EB-willow-6",
+        "slot_id": "ES-willow-6",
+        "at": "2026-02-22T07:29:00+08:00"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-7",
+        "slot_id": "EP-willow-7",
+        "at": "2026-06-02T11:39:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-7",
+        "slot_id": "EP-willow-7",
+        "at": "2026-06-02T04:05:00.000Z"
+      },
+      {
+        "operation": "reschedule_booking",
+        "object_id": "EB-willow-7",
+        "slot_id": "ES-willow-7",
+        "prior_slot_id": "EP-willow-7",
+        "at": "2026-06-05T12:46:00+08:00"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-8",
+        "slot_id": "ES-willow-8",
+        "at": "2026-09-18T20:44:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-8",
+        "slot_id": "ES-willow-8",
+        "at": "2026-09-18T13:13:00.000Z"
+      },
+      {
+        "operation": "select_slot",
+        "object_id": "ER-willow-9",
+        "slot_id": "ES-willow-9",
+        "at": "2026-11-23T17:09:00+08:00"
+      },
+      {
+        "operation": "confirm_reservation",
+        "object_id": "EB-willow-9",
+        "slot_id": "ES-willow-9",
+        "at": "2026-11-23T09:41:00.000Z"
+      },
+      {
+        "operation": "cancel_booking",
+        "object_id": "EB-willow-9",
+        "slot_id": "ES-willow-9",
+        "at": "2026-11-24T08:26:00+08:00"
+      }
+    ]
+  }
 }
