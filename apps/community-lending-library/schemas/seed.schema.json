@@ -17,6 +17,11 @@
           "id": {
             "type": "string",
             "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,149}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
           }
         },
         "required": [
@@ -171,6 +176,10 @@
                 "type": "null"
               }
             ]
+          },
+          "renewed_at": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
@@ -329,6 +338,51 @@
     "materialized_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "queue_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,149}$"
+          },
+          "member_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,149}$"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "outcome": {
+            "enum": [
+              "promoted",
+              "left"
+            ]
+          }
+        },
+        "required": [
+          "item_id",
+          "member_id",
+          "sequence",
+          "joined_at",
+          "ended_at",
+          "outcome"
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 1000
     }
   },
   "required": [

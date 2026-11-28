@@ -3,16 +3,20 @@
   "member_id": "M1",
   "members": [
     {
-      "id": "M1"
+      "id": "M1",
+      "name": "Mei Lin"
     },
     {
-      "id": "M2"
+      "id": "M2",
+      "name": "Arun Patel"
     },
     {
-      "id": "M3"
+      "id": "M3",
+      "name": "Carmen Vega"
     },
     {
-      "id": "M4"
+      "id": "M4",
+      "name": "Theo Martin"
     }
   ],
   "items": [
@@ -136,8 +140,8 @@
       "id": "H1",
       "member_id": "M1",
       "copy_id": "C4",
-      "created_at": "2027-01-10T09:00:00+08:00",
-      "expires_at": "2027-01-11T01:00:00.000Z",
+      "created_at": "2026-12-10T09:00:00+08:00",
+      "expires_at": "2026-12-11T01:00:00.000Z",
       "status": "open"
     }
   ],
@@ -146,8 +150,8 @@
       "id": "L1",
       "member_id": "M2",
       "copy_id": "C3",
-      "checked_out_at": "2027-01-09T09:00:00+08:00",
-      "due_at": "2027-01-16T09:00:00+08:00",
+      "checked_out_at": "2026-12-09T09:00:00+08:00",
+      "due_at": "2026-12-16T09:00:00+08:00",
       "renewed": false,
       "returned_at": null
     }
@@ -161,16 +165,16 @@
       "copy_id": "C4",
       "attempt": 1,
       "reference_id": "H1",
-      "requested_at": "2027-01-10T09:00:00+08:00",
+      "requested_at": "2026-12-10T09:00:00+08:00",
       "status": "cancelled",
       "event_id": null,
-      "resolved_at": "2027-01-10T09:00:00+08:00"
+      "resolved_at": "2026-12-10T09:00:00+08:00"
     }
   ],
   "next_sequence": 12,
   "next_hold": 2,
   "next_loan": 2,
   "next_attempt": 2,
-  "seed_at": "2027-01-10T09:00:00+08:00",
-  "materialized_at": "2027-01-10T09:00:00+08:00"
+  "seed_at": "2026-12-10T09:00:00+08:00",
+  "materialized_at": "2026-12-10T09:00:00+08:00"
 }

@@ -1,12 +1,12 @@
 'use strict';
-const APP='community-lending-library', DAY=86400000, MIN=Date.parse('2026-01-01T00:00:00Z');
+const APP='community-lending-library', DAY=86400000, MIN=Date.parse('2025-01-01T00:00:00+08:00');
 const epoch=Date.parse, iso=ms=>new Date(ms).toISOString();
 const fail=(code,text)=>{throw Object.assign(Error(text),{code});};
 const lookup=(xs,id)=>xs.find(x=>x.id===id);
 const key=(o)=>[o.operation,o.member_id,o.copy_id,o.attempt].join('/');
 const tuple=(o)=>[o.operation,o.member_id,o.copy_id].join('/');
 const own=(x,m)=>x?.member_id===m;
-const publicRow=({member_id,...attrs})=>attrs;
+const publicRow=({member_id,renewed_at,...attrs})=>attrs;
 const order=(a,b)=>a.sequence-b.sequence;
 const current=(l)=>l.returned_at===null;
 const open=(h)=>h.status==='open';
@@ -20,17 +20,19 @@ function validateSeed(ctx,d){
  if(actor(ctx,d)!==d.member_id||!lookup(d.members,d.member_id))fail('invalid_seed','The bound account must match the run member.');
  for(const k of ['members','items','copies','holds','loans','attempts'])unique(d[k].map(x=>x.id),k+' ID');
  unique(d.queue.map(q=>q.item_id+'/'+q.member_id),'item/member queue entry');
- unique(d.queue.map(q=>q.sequence),'FIFO sequence');
+ unique([...d.queue,...(d.queue_history||[])].map(q=>q.sequence),'FIFO sequence');
  unique(d.attempts.map(key),'exact desk attempt');
  unique(d.attempts.filter(pending).map(tuple),'pending desk transition');
  unique(d.attempts.filter(r=>r.event_id).map(r=>r.event_id),'applied desk event');
  unique([...d.holds.filter(open),...d.loans.filter(current)].map(x=>x.copy_id),'live custody claim');
- const dates=[d.seed_at,d.materialized_at,...d.holds.flatMap(x=>[x.created_at,x.expires_at]),...d.loans.flatMap(x=>[x.checked_out_at,x.due_at,x.returned_at].filter(Boolean)),...d.queue.map(x=>x.joined_at),...d.attempts.flatMap(x=>[x.requested_at,x.resolved_at].filter(Boolean))];
- if(dates.some(x=>!atLeast(x))||epoch(d.materialized_at)<epoch(d.seed_at))fail('invalid_seed','Use valid offset timestamps no earlier than 2026-01-01.');
- if(d.queue.some(q=>q.sequence>=d.next_sequence||!lookup(d.items,q.item_id)||!lookup(d.members,q.member_id)))fail('invalid_seed','Invalid queue entry or sequence counter.');
+ const dates=[d.seed_at,d.materialized_at,...d.holds.flatMap(x=>[x.created_at,x.expires_at]),...d.loans.flatMap(x=>[x.checked_out_at,x.due_at,x.returned_at,x.renewed_at].filter(Boolean)),...d.queue.map(x=>x.joined_at),...(d.queue_history||[]).flatMap(x=>[x.joined_at,x.ended_at]),...d.attempts.flatMap(x=>[x.requested_at,x.resolved_at].filter(Boolean))];
+ if(dates.some(x=>!atLeast(x))||epoch(d.materialized_at)<epoch(d.seed_at))fail('invalid_seed','Use valid offset timestamps no earlier than January 1, 2025 (library time).');
+ const observed=[...d.holds.map(x=>x.created_at),...d.loans.flatMap(x=>[x.checked_out_at,x.returned_at,x.renewed_at].filter(Boolean)),...[...d.queue,...(d.queue_history||[])].flatMap(x=>[x.joined_at,x.ended_at].filter(Boolean)),...d.attempts.flatMap(x=>[x.requested_at,x.resolved_at].filter(Boolean))];
+ if(observed.some(x=>epoch(x)>epoch(d.materialized_at)))fail('invalid_seed','Observed history cannot be later than the materialized clock.');
+ if([...d.queue,...(d.queue_history||[])].some(q=>q.sequence>=d.next_sequence||!lookup(d.items,q.item_id)||!lookup(d.members,q.member_id)||(q.ended_at&&epoch(q.ended_at)<epoch(q.joined_at))))fail('invalid_seed','Invalid queue entry or sequence counter.');
  const hasRefs=r=>lookup(d.members,r.member_id)&&lookup(d.copies,r.copy_id);
  if(d.copies.some(c=>!lookup(d.items,c.item_id))||[...d.holds,...d.loans,...d.attempts].some(r=>!hasRefs(r)))fail('invalid_seed','Unresolved item, member or copy reference.');
- if(d.holds.some(h=>epoch(h.expires_at)-epoch(h.created_at)!==DAY)||d.loans.some(l=>epoch(l.due_at)-epoch(l.checked_out_at)!==(l.renewed?10:7)*DAY||l.returned_at&&epoch(l.returned_at)<epoch(l.checked_out_at)))fail('invalid_seed','Invalid lending dates.');
+ if(d.holds.some(h=>epoch(h.expires_at)-epoch(h.created_at)!==DAY)||d.loans.some(l=>epoch(l.due_at)-epoch(l.checked_out_at)!==(l.renewed?10:7)*DAY||l.returned_at&&epoch(l.returned_at)<epoch(l.checked_out_at)||l.renewed_at&&(!l.renewed||epoch(l.renewed_at)<epoch(l.checked_out_at)||epoch(l.renewed_at)>=epoch(l.checked_out_at)+7*DAY||l.returned_at&&epoch(l.renewed_at)>epoch(l.returned_at))))fail('invalid_seed','Invalid lending dates.');
  if([...d.holds.filter(open),...d.loans.filter(current)].some(r=>lookup(d.copies,r.copy_id).maintenance))fail('invalid_seed','Maintenance copies cannot belong to live holds or loans.');
  if(d.members.some(m=>uses(d,m.id)>2))fail('invalid_seed','A member holds or borrows too many copies.');
  for(const r of d.attempts){
@@ -66,12 +68,17 @@ function makeHold(d,m,c,t){
 }
 function finishAttempt(r,status,t,event_id=null){r.status=status;r.event_id=event_id;r.resolved_at=iso(t);return r;}
 function clearCheckout(d,h,t){for(const r of d.attempts)if(pending(r)&&r.operation==='checkout'&&r.reference_id===h.id)finishAttempt(r,'cancelled',t);}
+function closeQueue(d,q,t,outcome){
+ if((d.queue_history?.length||0)>=1000)fail('capacity_reached','Local queue history limit reached.');
+ (d.queue_history??=[]).push({...q,ended_at:iso(t),outcome});
+ d.queue=d.queue.filter(y=>y!==q);
+}
 function promote(d,t){
  for(const item of d.items){
   for(const c of available(d,item.id)){
    const q=forItem(d,item.id).find(x=>uses(d,x.member_id)<2&&!hasOverdue(d,x.member_id,t));
    if(!q)break;
-   d.queue=d.queue.filter(y=>y!==q);makeHold(d,q.member_id,c.id,t);
+   closeQueue(d,q,t,'promoted');makeHold(d,q.member_id,c.id,t);
   }
  }
 }
@@ -171,8 +178,9 @@ function handleTool(ctx,orig,name,a){
    addQueue(d,m,a.item_id,t);
    return write({item:summary(d,a.item_id,m)});
   case 'leave_queue':{
-   if(!d.queue.some(q=>q.item_id===a.item_id&&own(q,m)))fail('not_queued','You are not on that queue.');
-   d.queue=d.queue.filter(q=>q.item_id!==a.item_id||!own(q,m));return write({item:summary(d,a.item_id,m)});
+   const q=d.queue.find(q=>q.item_id===a.item_id&&own(q,m));
+   if(!q)fail('not_queued','You are not on that queue.');
+   closeQueue(d,q,t,'left');return write({item:summary(d,a.item_id,m)});
   }
   case 'request_checkout':{
    const h=mine(d.holds,a.hold_id);
@@ -191,7 +199,7 @@ function handleTool(ctx,orig,name,a){
   case 'confirm_renewal':{
    const l=mine(d.loans,a.loan_id), approval=renewal(d,l,t);
    if(!approval.eligible)fail(approval.reason,'Renewal no longer eligible; original due date preserved.');
-   l.due_at=approval.proposed_due_at;l.renewed=true;return write({loan:publicRow(l)});
+   l.due_at=approval.proposed_due_at;l.renewed=true;l.renewed_at=now;return write({loan:publicRow(l)});
   }
   default:fail('invalid_arguments','Unknown lending tool.');
  }

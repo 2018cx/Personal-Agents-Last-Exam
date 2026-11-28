@@ -1,7 +1,8 @@
 import {el} from '/shared/client.js';
 const app='community-lending-library.', root=document.querySelector('#app');
-const nav=el('nav',{'aria-label':'Lending views'}),status=el('p',{role:'status','aria-live':'polite'},'Connecting…'),stage=el('article',{class:'detail','aria-label':'Lending workspace'});
-root.replaceChildren(el('h1',{},'Community Lending Library'),el('p',{},'Fictional single-location cooperative. No fees, shipping, or real handovers.'),nav,status,stage);
+const nav=el('nav',{'aria-label':'Lending views'}),status=el('p',{id:'status',role:'status','aria-live':'polite'},'Connecting…'),stage=el('article',{'aria-label':'Lending workspace'});
+const brand=el('div',{class:'brand'},el('span',{class:'brand-mark','aria-hidden':'true'},'L'),el('h1',{},'Lending Library'));
+root.replaceChildren(el('aside',{class:'sidebar'},brand,nav,el('div',{class:'sidebar-foot'},el('small',{},'Community Lending Library · fictional account'))),el('main',{class:'app-main'},status,el('div',{class:'detail'},stage)));
 const pages=['Catalog','Item','Holds and queue','Current loans','Activity and receipts'];
 let csrf, tools=new Set(), page='Catalog', selection=null, serial=0;
 const say=text=>{status.textContent=text;};
@@ -9,7 +10,20 @@ const supported=n=>tools.has(app+n);
 const p=text=>el('p',{},text);
 const button=(label,fn,t)=>el('button',{type:'button',onclick:()=>Promise.resolve().then(fn).catch(e=>{if(t==null||t===serial)say(e.message);})},label);
 const panel=(heading,...children)=>el('section',{},el('h3',{},heading),...children);
-const rows=(items,empty)=>items.length?el('ul',{},items.map(item=>el('li',{},item))):p(empty);
+const rows=(items,empty)=>items.length?el('div',{class:'fields'},...items):el('p',{class:'empty'},empty);
+const badge=text=>el('span',{class:'tag'},text);
+const card=(...nodes)=>el('div',{class:'attachment-card fields'},...nodes);
+const desc=text=>el('small',{},text);
+const dateFmt=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',dateStyle:'medium',timeStyle:'short'});
+const when=t=>dateFmt.format(new Date(t))+' (library time)';
+const nice=s=>({on_loan:'On loan',available:'Available',held:'Held',maintenance:'Maintenance',checked_out:'Checked out',cancelled:'Cancelled',expired:'Expired',open:'Open',pending:'Pending',accepted:'Accepted',rejected:'Desk rejected',member_waiting:'another member is waiting',overdue:'a loan is overdue',return_pending:'a return is pending',already_renewed:'already renewed',loan_closed:'this loan is closed'})[s]||s;
+const titleRow=(name,label)=>el('div',{class:'row-top'},el('h3',{},name),badge(label));
+async function catalog(){
+ const {items}=await call('search_items');
+ const details=await Promise.all(items.map(x=>call('get_item',{item_id:x.id})));
+ return {byItem:new Map(items.map(i=>[i.id,i.name])),byCopy:new Map(details.flatMap(d=>d.copies.map((c,i)=>[c.id,{name:d.item.name,label:'Copy '+(i+1)}])))};
+}
+const identity=(catalog,id)=>catalog.byCopy.get(id)||{name:'Catalog copy',label:'Copy'};
 async function request(path,body){
  const post=body!==undefined;
  const response=await fetch(path,{method:post?'POST':'GET',headers:post?{'Content-Type':'application/json','X-Pale-CSRF':csrf}:{},...(post?{body:JSON.stringify(body)}:{})});
@@ -26,6 +40,7 @@ async function call(name,args={}){
 function action(target,label,name,args,version,t,message){
  if(!supported(name))return;
  let sending=false,done=false,attempt;
+ const error=el('p',{class:'form-error',role:'alert'});
  const go=button(label,async()=>{
   if(t!==serial||!target.isConnected||sending||done)return;
   attempt??={...args,expected_version:version,request_id:crypto.randomUUID()};
@@ -37,7 +52,7 @@ function action(target,label,name,args,version,t,message){
    await call(name,attempt);done=true;
    if(t===serial&&target.isConnected)await show(page,message);
   }catch(e){
-   if(e.code){done=true;if(t===serial)say(e.message);}
+   if(e.code){done=true;if(t===serial){error.textContent=e.code==='stale_version'?'State changed since this preview. Refresh and make a new selection.':e.message;say('Action not completed.');}}
    else if(t===serial){uncertain=true;go.textContent='Retry '+label;say('No receipt received. Retry the same request or refresh and verify before sending a new one.');}
   }finally{
    sending=false;
@@ -45,7 +60,7 @@ function action(target,label,name,args,version,t,message){
    else for(const b of locks){b.disabled=false;delete b.dataset.locked;}
    if(done)go.disabled=true;
   }
- },t);target.append(go);
+ },t);target.append(go,error);
 }
 function planned(target,start,label,explain,name,args,version,t,message){
  if(!supported(name))return;
@@ -58,54 +73,58 @@ function planned(target,start,label,explain,name,args,version,t,message){
 }
 function itemLine(i){return i.name+' · '+i.available+' available · '+i.queue_length+' waiting'+(i.your_position==null?'':' · your position '+i.your_position);}
 const pick=id=>{selection=id;return show('Item');};
-let query='';
+let query='',facet='all';
 async function show(next=page,message){
  page=next;const t=++serial;
  for(const b of nav.querySelectorAll('[data-page]')){
   if(b.dataset.page===next)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
  }
  const title=el('h2',{},page);stage.replaceChildren(title);say('Reading current lending state…');
- const mount=(...nodes)=>{if(t===serial){stage.replaceChildren(title,...nodes);say(message||'Lending state loaded.');}};
+ const mount=(...nodes)=>{if(t===serial){stage.replaceChildren(el('div',{class:'fields'},title,...nodes));say(message||'Lending state loaded.');}};
  try{
   if(page==='Catalog'){
    const data=await call('search_items',query.trim()?{query:query.trim()}:{});if(t!==serial)return;
-   const search=el('input',{type:'search','aria-label':'Search catalog',maxlength:160,value:query});
-   const form=el('form',{},search,el('button',{type:'submit'},'Search'));
-   form.addEventListener('submit',e=>{e.preventDefault();query=search.value;show('Catalog');});
-   mount(form,rows(data.items.map(i=>el('div',{},itemLine(i),' ',button('Open '+i.name,()=>pick(i.id),t))),'No matching items.'));
+   const search=el('input',{type:'search','aria-label':'Search catalog',placeholder:'Search by item name',maxlength:160,value:query});
+   const filter=el('select',{'aria-label':'Availability'},...['all','available','unavailable'].map((v,i)=>el('option',{value:v},['All items','Available now','Not available now'][i])));filter.value=facet;
+   const form=el('form',{class:'fields'},search,filter,el('div',{class:'actions'},el('button',{type:'submit',class:'primary'},'Search')));
+   form.addEventListener('submit',e=>{e.preventDefault();query=search.value;facet=filter.value;show('Catalog');});
+   const items=data.items.filter(i=>facet==='all'||(facet==='available'?i.available>0:i.available===0));
+   mount(p('Search the cooperative catalog. No fees, delivery or real handovers.'),form,items.length?el('div',{class:'attachment-grid'},...items.map(i=>card(titleRow(i.name,i.available?'Available now':'Check availability'),desc(i.available+' available · '+i.queue_length+' waiting'),button('Open '+i.name,()=>pick(i.id),t)))):p('No matching items.'));
   } else if(page==='Item'){
    if(!selection){mount(p('Open an item from Catalog.'));return;}
    const d=await call('get_item',{item_id:selection});if(t!==serial)return;
    const i=d.item, operations=el('div',{class:'actions'});
    if(!i.available&&i.your_position==null)action(operations,'Join waitlist','join_queue',{item_id:i.id},d.version,t,'Your queue entry was recorded.');
    if(i.your_position!==null)action(operations,'Leave waitlist','leave_queue',{item_id:i.id},d.version,t,'You left this item’s waitlist.');
-   const copies=d.copies.map(c=>{
-    const view=el('div',{},c.id+' · '+c.status.replace('_',' '));
+   const copies=d.copies.map((c,idx)=>{
+    const view=card(titleRow('Copy '+(idx+1),nice(c.status)),desc('Catalog ID '+c.id));
     if(c.status==='available')planned(view,'Preview hold '+c.id,'Confirm hold','Hold only '+i.name+' copy '+c.id+' for one simulated day.','confirm_hold',{item_id:i.id,copy_id:c.id},d.version,t,'Hold confirmed. Checkout still needs a simulated desk receipt.');
     return view;
    });
    mount(panel(i.name,p(itemLine(i)),p('At most two copies; one-day holds; seven-day loans; one three-day renewal if eligible and nobody else is waiting.'),rows(copies,'There are no copies of this item.'),operations));
   } else if(page==='Holds and queue'){
-   const d=await call('list_holds');if(t!==serial)return;
+   const [d,names]=await Promise.all([call('list_holds'),catalog()]);if(t!==serial)return;
    const entries=d.holds.map(h=>{
-    const view=el('div',{},h.id+' · '+h.copy_id+' · '+h.status+' · expires '+h.expires_at);
+    const {name,label}=identity(names,h.copy_id);
+    const view=card(titleRow(name,nice(h.status)),p(label+' · expires '+when(h.expires_at)),desc('Hold '+h.id+' · Catalog ID '+h.copy_id));
     if(h.status==='open'){
       action(view,'Request checkout '+h.id,'request_checkout',{hold_id:h.id},d.version,t,'Checkout requested. Custody is unchanged until an accepted desk receipt.');
       planned(view,'Cancel hold '+h.id,'Confirm cancellation','Cancel this hold and its pending checkout.','cancel_hold',{hold_id:h.id},d.version,t,'Hold cancelled; pending checkout cannot be accepted.');
     }
     return view;
    });
-   const queues=d.queue.map(q=>{const view=el('div',{},q.item_id+' · position '+q.position+' of '+q.length);action(view,'Leave waitlist '+q.item_id,'leave_queue',{item_id:q.item_id},d.version,t,'You left this item’s waitlist.');return view;});
+   const queues=d.queue.map(q=>{const view=card(titleRow(names.byItem.get(q.item_id)||'Catalog item','Waiting'),p('Position '+q.position+' of '+q.length),desc('Item '+q.item_id));action(view,'Leave waitlist '+q.item_id,'leave_queue',{item_id:q.item_id},d.version,t,'You left this item’s waitlist.');return view;});
    mount(panel('Your holds',rows(entries,'No holds.')),panel('Your queue positions',rows(queues,'You are not waiting for any item.')));
   } else if(page==='Current loans'){
-   const d=await call('list_loans');if(t!==serial)return;
+   const [d,names]=await Promise.all([call('list_loans'),catalog()]);if(t!==serial)return;
    mount(rows(d.loans.map(l=>{
-    const view=el('div',{},l.id+' · '+l.copy_id+' · '+(l.returned_at?'returned '+l.returned_at:(l.overdue?'overdue':'open')+' · due '+l.due_at));
+    const {name,label}=identity(names,l.copy_id);
+    const view=card(titleRow(name,l.returned_at?'Returned':l.overdue?'Overdue':'On loan'),p(label+' · '+(l.returned_at?'returned '+when(l.returned_at):'due '+when(l.due_at))),desc('Loan '+l.id+' · Catalog ID '+l.copy_id));
     if(!l.returned_at){
      const rev=el('div',{});view.append(rev);
      rev.append(button('Preview renewal '+l.id,async()=>{
       const r=await call('preview_renewal',{loan_id:l.id});if(t!==serial||!rev.isConnected)return;
-      const review=el('div',{class:'actions'},p(r.eligible?'Proposed due: '+r.proposed_due_at:'Renewal unavailable: '+r.reason.replaceAll('_',' ')+'. Due date remains '+r.due_at));
+      const review=el('div',{class:'actions'},p(r.eligible?'Proposed due: '+when(r.proposed_due_at):'Renewal unavailable: '+nice(r.reason)+'. Due date remains '+when(r.due_at)));
       if(r.eligible)action(review,'Confirm renewal','confirm_renewal',{loan_id:l.id},r.version,t,'Renewal confirmed; current due date refreshed.');
       review.append(button('Discard preview',()=>{review.remove();say('Preview discarded; the due date was not changed.');},t));
       rev.querySelector('[data-preview]')?.remove();review.dataset.preview='';rev.append(review);
@@ -115,9 +134,10 @@ async function show(next=page,message){
     return view;
    }),'No loans on this member’s record.'));
   } else {
-   const d=await call('list_activity');if(t!==serial)return;
+   const [d,names]=await Promise.all([call('list_activity'),catalog()]);if(t!==serial)return;
    mount(rows(d.attempts.map(r=>{
-    const view=el('div',{},r.id+' · '+r.operation+' '+r.copy_id+' · attempt '+r.attempt+' · '+r.status+(r.event_id?' · desk receipt '+r.event_id:''));
+    const {name,label}=identity(names,r.copy_id);
+    const view=card(titleRow(name,nice(r.status)),p(label+' · '+r.operation+' attempt '+r.attempt),p('Requested '+when(r.requested_at)),desc('Request '+r.id+' · Catalog ID '+r.copy_id+(r.event_id?' · Desk receipt '+r.event_id:'')));
     if(r.status==='pending')planned(view,'Cancel request '+r.id,'Confirm cancellation','Invalidate this request before desk acceptance.','cancel_request',{attempt_id:r.id},d.version,t,'Request cancelled; no custody change.');
     return view;
    }),'No desk requests or receipts.'));

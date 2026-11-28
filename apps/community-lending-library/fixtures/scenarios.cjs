@@ -16,7 +16,7 @@ function build(name){
   data.next_attempt=3;
   binding.objects['community-lending-library'].push('R2');
  }
- const virtual_now=name==='overdue-maintenance'?'2027-01-16T09:00:00+08:00':data.materialized_at;
+ const virtual_now=name==='overdue-maintenance'?'2026-12-16T09:00:00+08:00':data.materialized_at;
  return {data,binding,policies,virtual_now,profile:name==='observer'?'scenario':'sandbox'};
 }
 module.exports={choices,build};

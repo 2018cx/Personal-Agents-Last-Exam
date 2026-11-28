@@ -1,16 +1,20 @@
 {
   "people": [
     {
-      "person_id": "M1"
+      "person_id": "M1",
+      "name": "Mei Lin"
     },
     {
-      "person_id": "M2"
+      "person_id": "M2",
+      "name": "Arun Patel"
     },
     {
-      "person_id": "M3"
+      "person_id": "M3",
+      "name": "Carmen Vega"
     },
     {
-      "person_id": "M4"
+      "person_id": "M4",
+      "name": "Theo Martin"
     }
   ],
   "accounts": [

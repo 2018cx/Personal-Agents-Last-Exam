@@ -1,19 +1,25 @@
-# Reproducing the first runnable version
+# Community Lending Library implementation validation
 
-Runtime API was exercised using public PALE Runtime 1.6.0 / Core API 1.2.0 at
-both the proposal compatibility baseline `61b637164e4abddf81536bb48935cdb688a69ff1`
-and upstream main `a4bce023953061483c41de5a287ba5e43f4a5648`. Follow the App
-README to set `PALE_RUNTIME_ROOT` and rerun business tests, official App
-verification, two-role MCP trace, and HTTP Host checks.
+Follow-up to [Chenngzz's implementation review of c11ce57](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/50#pullrequestreview-6094922236). The approved proposal and runtime are unchanged. See the [ordered GUI and reference evidence](evidence/README.md) and [evaluation dataset report](data/README.md).
 
-| Check | Verified result |
+| Check | Result |
 | --- | --- |
-| Local invariant tests | Borrower scope, maintenance exclusion, two-copy cap, exact checkout/return attempts and rejection, one renewal, cutoff-time handling, FIFO promotion and nonmutating reads, six fixture presets. |
-| Public App verifier | Manifest, schema, data/resource declarations, actual MCP bridge, event replay and isolated state/reset pass. The default read-only profile declares no mutation surface; the separate live trace tests full business tools with the sandbox profile. |
-| Live Core compatibility trace | Two Agent sessions share state. An old cancelled attempt cannot affect a newer one. Rejected checkout creates no loan; accepted checkout and return each change custody once, and exact accepted-event replay duplicates neither. A queue event invalidates a renewal preview; the old due date stays unchanged. A custom task seed demonstrates projected hold expiry and FIFO promotion at the exact historical expiry instant. Two resets restore the same seeded data and clock while clearing receipts. |
-| Official Web Host (HTTP) | The app and controller are served; authenticated local HTTP talks to the same Agent state as direct MCP, controller operations use the declared Tool surface, and Infra/fixture paths are not exposed. |
-| Chromium interaction script | `tests/browser.cjs` provides full click/read-back coverage for the five views. The local sandbox denied a Chromium singleton socket during launch; no browser pass is claimed here. Rerun with repo-supported Playwright and a sandbox-capable Chromium host: `node tests/browser.cjs`. |
+| App-only tests and example | Seven business tests cover custody, bindings, date floor, temporal histories and the six shifted fixture presets. The sample queue update shows counts without exposing other members. |
+| Official public verifier | Passes against Runtime 1.6.0 / Core API 1.2.0 at current main `25d559778696dff849bb88fcca03f325185f2599` and baseline `61b637164e4abddf81536bb48935cdb688a69ff1`. The evidence ZIP records the verified candidate tree/digests and reports. |
+| Independent live MCP | Exact desk receipt IDs, cancelled attempts, stale renewal, rejection/return, nonmutating reads, FIFO at expiry, and reset; full 24-month seed loads through Infra, reads through a separate bound Agent, and resets. |
+| Real local Web Host plus Chromium | 25 ordered screenshots across four sandbox runs, all five business views, including rejection, stale renewal, overdue/maintenance, cap and waitlist. Separate MCP verifies actual applied state. No page JS errors. |
 
-No real money, provider, payment, shipment, notification or account was used.
-Data quality and independent reviewer reproduction remain for delivery review.
-This evidence is not a final acceptance or merge approval.
+From the App directory, use an absolute public runtime path:
+
+```sh
+export PALE_RUNTIME_ROOT=/absolute/path/to/runtime
+npm test
+node examples/run.cjs
+npm run history
+npm run test:core
+node tests/host.cjs
+node "$PALE_RUNTIME_ROOT/cli.cjs" verify --app "$PWD" --output /tmp/lending-verify.json
+PALE_LENDING_SCREEN_DIR=/tmp/lending-screens npm run test:browser
+```
+
+`tests/browser.cjs` uses Playwright from `PALE_PLAYWRIGHT_MODULE` (or the standard `playwright` import) and optionally the Chromium/Headless Shell executable supplied in `CHROMIUM_PATH`. It enables Chromium's sandbox; do not disable it to work around unsupported host permissions. All browser and Core test activity involves synthetic local state. The reference comparison is to public myTurn materials only.

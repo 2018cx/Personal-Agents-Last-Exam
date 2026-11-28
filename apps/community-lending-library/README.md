@@ -23,7 +23,7 @@ For a local browser run, put this App at `apps/community-lending-library` in
 a disposable checkout of the public runtime. From its root run:
 
 ```sh
-printf '%s\n' '{"schema_version":1,"initial_time":"2027-01-10T09:00:00+08:00","apps":[{"app_id":"community-lending-library","version":"0.1.0","path":"apps/community-lending-library"}]}' > lending-local.registry.json
+printf '%s\n' '{"schema_version":1,"initial_time":"2026-12-10T09:00:00+08:00","apps":[{"app_id":"community-lending-library","version":"0.1.0","path":"apps/community-lending-library"}]}' > lending-local.registry.json
 node runtime/web/server.cjs --app community-lending-library --registry lending-local.registry.json --profile sandbox --run lending-demo --state-dir /tmp/lending-demo-state
 ```
 
@@ -52,7 +52,7 @@ data, and explicit `virtual_now` corresponding to the seed’s
 `materialized_at`. Task authors may supply custom fictional members,
 bindings, dated loans/holds and attempt histories under the checked schema.
 The default demo has eight ordinary item types, twelve copies, four members,
-and dated state from January 2027. M1 has hold H1 on C4; seeded attempt 1 was
+and dated state from December 2026. M1 has hold H1 on C4; seeded attempt 1 was
 cancelled, so the next checkout for M1 / C4 is attempt 2.
 
 Only Infra invokes `env.apply_event`, `env.advance_time`, `env.snapshot` or
@@ -90,3 +90,15 @@ The overdue variant intentionally starts its clock after several elapsed days
 so it can exercise the derived-state projection before any write.
 
 See [validation evidence](VALIDATION.md) for the checked cases and limits.
+
+## Full-window evaluation data
+
+Load the original fictional evaluation seed with the documented coverage and
+commands in [data/README.md](data/README.md). It is separate from the six smoke
+presets and covers January 2025 through December 2026. Member-facing views
+show item names, friendly copy labels and library-local dates; queue-history
+member IDs and renewal event timestamps remain available only through Infra.
+
+[GUI evidence and myTurn reference mapping](evidence/README.md) identify
+the scoped differences: no login, fixed one-day holds and simulated desk
+outcomes rather than live reservations or handovers.

@@ -39,6 +39,6 @@
   "review": {
     "status": "pending",
     "reviewer": null,
-    "notes": "Human data quality review remains pending."
+    "notes": "Author provenance check: all demo data are original fictional records; no myTurn data, media, identifiers or personal information was imported. MIT applies to original fixture bytes. Independent realism review remains open."
   }
 }

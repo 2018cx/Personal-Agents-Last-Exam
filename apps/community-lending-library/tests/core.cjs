@@ -62,14 +62,14 @@ async function main(){
  const fresh=c('infra','clock-and-seed');await fresh.initialize();const f0=await fresh.call('env.snapshot');
  const d=structuredClone(f0.snapshot.data);d.queue.push({item_id:'I2',member_id:'M3',sequence:12,joined_at:at0});d.next_sequence=13;
  const f1=ok(await fresh.call('env.load_seed',{data:d,bundle:f0.snapshot.resources.bundle,virtual_now:at0,expected_version:f0.version,request_id:'fixture-custom'}),'ready');
- const advanced=ok(await fresh.call('env.advance_time',{expected_version:f1.version,request_id:'cross-expiry',virtual_now:'2027-01-11T15:00:00+08:00'}),'committed');
+ const advanced=ok(await fresh.call('env.advance_time',{expected_version:f1.version,request_id:'cross-expiry',virtual_now:'2026-12-11T15:00:00+08:00'}),'committed');
  const fA=c('agent','clock-and-seed');await fA.initialize();
  assert.equal(ok(await fA.call(A+'.list_holds')).holds[0].status,'expired');
  const beforeWrite=await fresh.call('env.snapshot');assert.deepEqual(beforeWrite.snapshot.data,d);
  ok(await fA.call(A+'.confirm_hold',{item_id:'I1',copy_id:'C1',expected_version:advanced.version,request_id:'materialize'}),'committed');
  const fin=await fresh.call('env.snapshot');const promoted=fin.snapshot.data.holds.find(x=>x.member_id==='M3');
- assert.equal(promoted.created_at,'2027-01-11T01:00:00.000Z');
- assert.equal(promoted.expires_at,'2027-01-12T01:00:00.000Z');
+ assert.equal(promoted.created_at,'2026-12-11T01:00:00.000Z');
+ assert.equal(promoted.expires_at,'2026-12-12T01:00:00.000Z');
  console.log('PASS: exact varied attempts, terminal/no reroute, checkout/return receipts and replay, stale renewal, privacy, FIFO clock projection, custom seed and two reset/replays.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await Promise.allSettled(clients.map(x=>x.close()));p.cleanup();});
