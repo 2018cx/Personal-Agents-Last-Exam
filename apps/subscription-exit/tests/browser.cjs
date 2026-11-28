@@ -31,12 +31,18 @@ async function main(){
  const cancel=async()=>{await btn('Prepare cancellation').click();await visible('Preview prepared. No entitlement change.');await btn('Confirm cancellation').click();await visible('Confirmation recorded.');await visible('Paid until scheduled end');};
  const abandon=async()=>{await btn('Abandon preview').click();await visible('Preview abandoned. No entitlement change.');};
  await page.goto(h.accessUrl);
- await visible('Paid · active');a.equal(await page.getByLabel('Account ID').count(),0);
+ await visible('Paid · active');a.ok(await page.locator('.tag').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=12));a.equal(await page.getByLabel('Account ID').count(),0);
  a.ok((await page.locator('article').first().evaluate(e=>getComputedStyle(e).borderTopWidth))==='1px','plan card border renders');
  await capture('01-plan-start','Bound subscriber opens Plan without entering an account ID; paid card and saved titles are visible.');
  for(let j=0;j<2;j++){
   await btn('Overview').click();await btn('Prepare cancellation').click();await visible('Your paid access will continue until February 1, 2026. Your saved entries will stay in your library.');
-  if(j===0)await capture('02-cancel-preview','Cancellation preview explains the billing boundary; Core has no decision receipt.');
+  if(j===0){
+   const danger=btn('Confirm cancellation'),secondary=btn('Abandon preview');
+   const bg=button=>button.evaluate(e=>getComputedStyle(e).backgroundColor);
+   a.equal(await bg(danger),'rgb(163, 25, 48)');
+   a.notEqual(await bg(danger),await bg(secondary));
+   await capture('02-cancel-preview','Cancellation preview explains the billing boundary and visually distinguishes confirm from abandon; Core has no decision receipt.');
+  }
   await abandon();
  }
  let s=await snap();a.equal(s.snapshot.data.status,'paid_active');a.deepEqual(s.snapshot.data.previews.map(q=>q.status),['abandoned','abandoned']);a.equal(s.snapshot.data.action_receipts.length,0);
@@ -45,7 +51,7 @@ async function main(){
  s=await snap();a.equal(s.snapshot.data.status,'cancellation_scheduled');a.equal(s.snapshot.data.action_receipts[0].action,'cancel');
  await capture('04-cancel-confirmed','Confirmation schedules cancellation and displays a human-readable receipt.');
  await page.reload();await visible('Paid until scheduled end');await btn('Status and receipts').click();
- await btn('View receipt '+s.snapshot.data.action_receipts[0].id).click();await visible('Cancellation scheduled');
+ await page.getByRole('button',{name:/^View cancellation receipt ·/}).click();await visible('Cancellation scheduled');
  await capture('05-reload-receipt','Reload keeps scheduled entitlement; historical receipt remains retrievable.');
  await btn('Overview').click();await btn('Prepare revocation').click();await visible('Review withdrawal');
  const other=await ctx.newPage();await other.goto(page.url());
@@ -91,9 +97,29 @@ async function main(){
  await visible('The final modeled billing period has ended. This workspace does not simulate a later renewal or cancellation.');
  a.equal(await btn('Prepare cancellation').count(),0);
  await capture('15-no-further-period','With no cancellation, skipping to the renewed boundary does not create a third period or allow an unmodeled write.');
+ // Capture the reviewer’s active/scheduled cohort repro, plus an already-ended subscriber.
+ const cohorts=require('../evaluation/accounts-v1.json').accounts;
+ for(const [index,id,status,action,confirmation] of [
+  [0,'16-evaluation-active','Paid · active','Prepare cancellation','Review cancellation'],
+  [2,'17-evaluation-pending','Paid until scheduled end','Prepare revocation','Review withdrawal'],
+  [1,'18-evaluation-free','Free · paid access ended',null,null]
+ ]){
+  const row=cohorts[index], before=await snap(), bundle=structuredClone(before.snapshot.resources.bundle);
+  bundle.dataset.expected_counts.records=row.seed.saved.length+row.seed.history.length+row.seed.previews.length+row.seed.action_receipts.length;
+  expect(await i.call('env.load_seed',{expected_version:before.version,data:row.seed,binding:row.binding,
+   virtual_now:row.virtual_now,bundle,request_id:'evaluation-'+index}),'ready');
+  await btn('Overview').click();await visible(status);
+  for(const item of row.seed.saved)await visible(item.title);
+  if(action){await btn(action).click();await visible(confirmation);a.equal((await snap()).snapshot.data.previews.at(-1).status,'open');}
+  else{a.equal(await btn('Prepare cancellation').count(),0);a.equal(await btn('Prepare revocation').count(),0);}
+  const checked=await snap();
+  a.equal(checked.snapshot.data.status,row.seed.status);
+  a.deepEqual(checked.snapshot.data.action_receipts,row.seed.action_receipts);
+  await capture(id,status+(action?' · matching action opens its preview without changing entitlement or receipts.':' · no paid action; history and saved entries remain.'));
+ }
  a.deepEqual(errors,[]);
  const meta={browser:b.version(),playwright:require(path.join(require.resolve(process.env.PLAYWRIGHT_MODULE||'playwright'),'../package.json')).version,viewport:view,timezone:'UTC',run:h.run,trace};
  if(out)fs.writeFileSync(path.join(out,'browser-trace.json'),JSON.stringify(meta,null,2)+'\n');
- console.log('PASS: browser '+b.version()+', 1280x900 UTC, 16 ordered screenshot points; repeated abandons, two browser tabs, independent Agent MCP updates, renewed-period cancellation, stale exact-boundary denial, retained entries and reset/replays.');
+ console.log('PASS: browser '+b.version()+', 1280x900 UTC, 19 ordered screenshot points; repeated abandons, two browser tabs, independent Agent MCP updates, renewed-period cancellation, stale exact-boundary denial, retained entries and reset/replays.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await Promise.allSettled([b?.close(),i?.close(),agent?.close()]);await h?.close();p?.cleanup();});

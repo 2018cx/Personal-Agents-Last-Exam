@@ -1,11 +1,11 @@
 {
-  "dataset_id": "subscription-exit-evaluation-v1",
+  "dataset_id": "subscription-exit-evaluation-v2",
   "source": "original-deterministic-synthetic",
   "timezone": "UTC",
   "accounts": [
     {
       "label": "Theo Maren",
-      "virtual_now": "2026-01-01T01:00:00.000Z",
+      "virtual_now": "2026-01-14T07:18:00.000Z",
       "binding": {
         "people": [
           {
@@ -32,37 +32,40 @@
             "history-4",
             "history-5",
             "history-6",
-            "SE-P1",
-            "SE-P2",
-            "SE-R1",
-            "SE-R2"
+            "history-7",
+            "history-8",
+            "history-9",
+            "history-10",
+            "history-11",
+            "history-12",
+            "history-13"
           ]
         }
       },
       "seed": {
         "account_id": "listener-cohort-1",
         "status": "paid_active",
-        "period_start": "2025-04-01T00:00:00.000Z",
-        "period_end": "2025-05-01T00:00:00.000Z",
-        "next_period_end": "2025-06-01T00:00:00.000Z",
+        "period_start": "2026-01-01T00:00:00.000Z",
+        "period_end": "2026-02-01T00:00:00.000Z",
+        "next_period_end": "2026-03-01T00:00:00.000Z",
         "phase": 0,
-        "decision_revision": 2,
+        "decision_revision": 0,
         "ended_at": null,
         "saved": [
           {
             "id": "media-1",
             "title": "After the Ferry",
-            "saved_at": "2025-01-03T11:00:00.000Z"
+            "saved_at": "2025-01-08T20:14:00.000Z"
           },
           {
             "id": "media-2",
             "title": "Low-Tide Letters",
-            "saved_at": "2025-02-12T11:00:00.000Z"
+            "saved_at": "2025-03-02T06:51:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Kitchen Table Sessions",
-            "saved_at": "2025-04-19T11:00:00.000Z"
+            "saved_at": "2025-12-23T14:07:00.000Z"
           }
         ],
         "history": [
@@ -83,61 +86,62 @@
           },
           {
             "id": "history-4",
-            "kind": "cancellation_scheduled",
-            "at": "2025-03-08T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2025-04-01T00:00:00.000Z"
           },
           {
             "id": "history-5",
-            "kind": "cancellation_revoked",
-            "at": "2025-03-18T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2025-05-01T00:00:00.000Z"
           },
           {
             "id": "history-6",
             "kind": "period_started",
-            "at": "2025-04-01T00:00:00.000Z"
-          }
-        ],
-        "previews": [
-          {
-            "id": "SE-P1",
-            "action": "cancel",
-            "status": "confirmed",
-            "phase": 0,
-            "decision_revision": 0,
-            "created_at": "2025-03-08T14:00:00.000Z"
+            "at": "2025-06-01T00:00:00.000Z"
           },
           {
-            "id": "SE-P2",
-            "action": "revoke",
-            "status": "confirmed",
-            "phase": 0,
-            "decision_revision": 1,
-            "created_at": "2025-03-18T14:00:00.000Z"
-          }
-        ],
-        "action_receipts": [
-          {
-            "id": "SE-R1",
-            "preview_id": "SE-P1",
-            "action": "cancel",
-            "confirmed_at": "2025-03-08T15:00:00.000Z",
-            "resulting_status": "cancellation_scheduled",
-            "effective_at": "2025-04-01T00:00:00.000Z"
+            "id": "history-7",
+            "kind": "period_started",
+            "at": "2025-07-01T00:00:00.000Z"
           },
           {
-            "id": "SE-R2",
-            "preview_id": "SE-P2",
-            "action": "revoke",
-            "confirmed_at": "2025-03-18T15:00:00.000Z",
-            "resulting_status": "paid_active",
-            "effective_at": "2025-04-01T00:00:00.000Z"
+            "id": "history-8",
+            "kind": "period_started",
+            "at": "2025-08-01T00:00:00.000Z"
+          },
+          {
+            "id": "history-9",
+            "kind": "period_started",
+            "at": "2025-09-01T00:00:00.000Z"
+          },
+          {
+            "id": "history-10",
+            "kind": "period_started",
+            "at": "2025-10-01T00:00:00.000Z"
+          },
+          {
+            "id": "history-11",
+            "kind": "period_started",
+            "at": "2025-11-01T00:00:00.000Z"
+          },
+          {
+            "id": "history-12",
+            "kind": "period_started",
+            "at": "2025-12-01T00:00:00.000Z"
+          },
+          {
+            "id": "history-13",
+            "kind": "period_started",
+            "at": "2026-01-01T00:00:00.000Z"
           }
-        ]
+        ],
+        "previews": [],
+        "action_receipts": []
       }
     },
     {
       "label": "Ada Solberg",
-      "virtual_now": "2026-01-01T01:00:00.000Z",
+      "virtual_now": "2026-01-09T09:12:00.000Z",
       "binding": {
         "people": [
           {
@@ -163,62 +167,114 @@
             "history-3",
             "history-4",
             "history-5",
+            "history-6",
+            "history-7",
+            "history-8",
+            "history-9",
+            "history-10",
+            "history-11",
+            "history-12",
+            "history-13",
             "SE-P1",
-            "SE-R1"
+            "SE-P2",
+            "SE-P3",
+            "SE-R1",
+            "SE-R2",
+            "SE-R3"
           ]
         }
       },
       "seed": {
         "account_id": "listener-cohort-2",
-        "status": "cancellation_scheduled",
-        "period_start": "2025-08-01T00:00:00.000Z",
-        "period_end": "2025-09-01T00:00:00.000Z",
-        "next_period_end": "2025-10-01T00:00:00.000Z",
-        "phase": 0,
-        "decision_revision": 1,
-        "ended_at": null,
+        "status": "free",
+        "period_start": "2025-12-09T07:24:00.000Z",
+        "period_end": "2026-01-09T07:24:00.000Z",
+        "next_period_end": "2026-02-09T07:24:00.000Z",
+        "phase": 1,
+        "decision_revision": 3,
+        "ended_at": "2026-01-09T07:24:00.000Z",
         "saved": [
           {
             "id": "media-1",
             "title": "Glass Orchard",
-            "saved_at": "2025-05-03T11:00:00.000Z"
+            "saved_at": "2025-04-12T08:30:00.000Z"
           },
           {
             "id": "media-2",
             "title": "The Paper Observatory",
-            "saved_at": "2025-06-12T11:00:00.000Z"
+            "saved_at": "2025-05-25T21:05:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Four Lanterns",
-            "saved_at": "2025-08-19T11:00:00.000Z"
+            "saved_at": "2025-11-11T18:17:00.000Z"
           }
         ],
         "history": [
           {
             "id": "history-1",
             "kind": "subscription_started",
-            "at": "2025-05-01T00:00:00.000Z"
+            "at": "2025-04-09T07:24:00.000Z"
           },
           {
             "id": "history-2",
             "kind": "period_started",
-            "at": "2025-06-01T00:00:00.000Z"
+            "at": "2025-05-09T07:24:00.000Z"
           },
           {
             "id": "history-3",
             "kind": "period_started",
-            "at": "2025-07-01T00:00:00.000Z"
+            "at": "2025-06-09T07:24:00.000Z"
           },
           {
             "id": "history-4",
             "kind": "period_started",
-            "at": "2025-08-01T00:00:00.000Z"
+            "at": "2025-07-09T07:24:00.000Z"
           },
           {
             "id": "history-5",
+            "kind": "period_started",
+            "at": "2025-08-09T07:24:00.000Z"
+          },
+          {
+            "id": "history-6",
+            "kind": "period_started",
+            "at": "2025-09-09T07:24:00.000Z"
+          },
+          {
+            "id": "history-7",
+            "kind": "period_started",
+            "at": "2025-10-09T07:24:00.000Z"
+          },
+          {
+            "id": "history-8",
             "kind": "cancellation_scheduled",
-            "at": "2025-08-16T15:00:00.000Z"
+            "at": "2025-10-21T07:03:00.000Z"
+          },
+          {
+            "id": "history-9",
+            "kind": "cancellation_revoked",
+            "at": "2025-10-24T20:35:00.000Z"
+          },
+          {
+            "id": "history-10",
+            "kind": "period_started",
+            "at": "2025-11-09T07:24:00.000Z"
+          },
+          {
+            "id": "history-11",
+            "kind": "period_started",
+            "at": "2025-12-09T07:24:00.000Z"
+          },
+          {
+            "id": "history-12",
+            "kind": "cancellation_scheduled",
+            "at": "2025-12-29T09:27:00.000Z"
+          },
+          {
+            "id": "history-13",
+            "kind": "paid_access_ended",
+            "at": "2026-01-09T07:24:00.000Z"
           }
         ],
         "previews": [
@@ -228,7 +284,23 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 0,
-            "created_at": "2025-08-16T14:00:00.000Z"
+            "created_at": "2025-10-21T06:49:00.000Z"
+          },
+          {
+            "id": "SE-P2",
+            "action": "revoke",
+            "status": "confirmed",
+            "phase": 0,
+            "decision_revision": 1,
+            "created_at": "2025-10-24T16:21:00.000Z"
+          },
+          {
+            "id": "SE-P3",
+            "action": "cancel",
+            "status": "confirmed",
+            "phase": 0,
+            "decision_revision": 2,
+            "created_at": "2025-12-28T18:41:00.000Z"
           }
         ],
         "action_receipts": [
@@ -236,16 +308,32 @@
             "id": "SE-R1",
             "preview_id": "SE-P1",
             "action": "cancel",
-            "confirmed_at": "2025-08-16T15:00:00.000Z",
+            "confirmed_at": "2025-10-21T07:03:00.000Z",
             "resulting_status": "cancellation_scheduled",
-            "effective_at": "2025-09-01T00:00:00.000Z"
+            "effective_at": "2025-11-09T07:24:00.000Z"
+          },
+          {
+            "id": "SE-R2",
+            "preview_id": "SE-P2",
+            "action": "revoke",
+            "confirmed_at": "2025-10-24T20:35:00.000Z",
+            "resulting_status": "paid_active",
+            "effective_at": "2025-11-09T07:24:00.000Z"
+          },
+          {
+            "id": "SE-R3",
+            "preview_id": "SE-P3",
+            "action": "cancel",
+            "confirmed_at": "2025-12-29T09:27:00.000Z",
+            "resulting_status": "cancellation_scheduled",
+            "effective_at": "2026-01-09T07:24:00.000Z"
           }
         ]
       }
     },
     {
       "label": "Ivo Calder",
-      "virtual_now": "2026-01-01T01:00:00.000Z",
+      "virtual_now": "2026-01-31T18:03:00.000Z",
       "binding": {
         "people": [
           {
@@ -270,8 +358,6 @@
             "history-2",
             "history-3",
             "history-4",
-            "history-5",
-            "history-6",
             "SE-P1",
             "SE-R1"
           ]
@@ -279,60 +365,50 @@
       },
       "seed": {
         "account_id": "listener-cohort-3",
-        "status": "free",
-        "period_start": "2025-12-01T00:00:00.000Z",
-        "period_end": "2026-01-01T00:00:00.000Z",
-        "next_period_end": "2026-02-01T00:00:00.000Z",
-        "phase": 1,
+        "status": "cancellation_scheduled",
+        "period_start": "2026-01-19T16:06:00.000Z",
+        "period_end": "2026-02-19T16:06:00.000Z",
+        "next_period_end": "2026-03-19T16:06:00.000Z",
+        "phase": 0,
         "decision_revision": 1,
-        "ended_at": "2026-01-01T00:00:00.000Z",
+        "ended_at": null,
         "saved": [
           {
             "id": "media-1",
             "title": "Wait for Dawn",
-            "saved_at": "2025-09-03T11:00:00.000Z"
+            "saved_at": "2025-11-19T21:55:00.000Z"
           },
           {
             "id": "media-2",
             "title": "The Quiet Viaduct",
-            "saved_at": "2025-10-12T11:00:00.000Z"
+            "saved_at": "2025-12-04T11:28:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Garden Weather",
-            "saved_at": "2025-12-19T11:00:00.000Z"
+            "saved_at": "2026-01-22T08:13:00.000Z"
           }
         ],
         "history": [
           {
             "id": "history-1",
             "kind": "subscription_started",
-            "at": "2025-09-01T00:00:00.000Z"
+            "at": "2025-11-19T16:06:00.000Z"
           },
           {
             "id": "history-2",
             "kind": "period_started",
-            "at": "2025-10-01T00:00:00.000Z"
+            "at": "2025-12-19T16:06:00.000Z"
           },
           {
             "id": "history-3",
             "kind": "period_started",
-            "at": "2025-11-01T00:00:00.000Z"
+            "at": "2026-01-19T16:06:00.000Z"
           },
           {
             "id": "history-4",
-            "kind": "period_started",
-            "at": "2025-12-01T00:00:00.000Z"
-          },
-          {
-            "id": "history-5",
             "kind": "cancellation_scheduled",
-            "at": "2025-12-17T15:00:00.000Z"
-          },
-          {
-            "id": "history-6",
-            "kind": "paid_access_ended",
-            "at": "2026-01-01T00:00:00.000Z"
+            "at": "2026-01-29T11:45:00.000Z"
           }
         ],
         "previews": [
@@ -342,7 +418,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 0,
-            "created_at": "2025-12-17T14:00:00.000Z"
+            "created_at": "2026-01-29T11:38:00.000Z"
           }
         ],
         "action_receipts": [
@@ -350,16 +426,16 @@
             "id": "SE-R1",
             "preview_id": "SE-P1",
             "action": "cancel",
-            "confirmed_at": "2025-12-17T15:00:00.000Z",
+            "confirmed_at": "2026-01-29T11:45:00.000Z",
             "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-01-01T00:00:00.000Z"
+            "effective_at": "2026-02-19T16:06:00.000Z"
           }
         ]
       }
     },
     {
       "label": "Noor Vale",
-      "virtual_now": "2026-04-27T18:00:00.000Z",
+      "virtual_now": "2026-06-07T16:42:00.000Z",
       "binding": {
         "people": [
           {
@@ -389,74 +465,72 @@
             "history-7",
             "SE-P1",
             "SE-P2",
-            "SE-P3",
             "SE-R1",
-            "SE-R2",
-            "SE-R3"
+            "SE-R2"
           ]
         }
       },
       "seed": {
         "account_id": "listener-cohort-4",
-        "status": "cancellation_scheduled",
-        "period_start": "2026-04-01T00:00:00.000Z",
-        "period_end": "2026-05-01T00:00:00.000Z",
-        "next_period_end": "2026-06-01T00:00:00.000Z",
+        "status": "paid_active",
+        "period_start": "2026-05-26T05:53:00.000Z",
+        "period_end": "2026-06-26T05:53:00.000Z",
+        "next_period_end": "2026-07-26T05:53:00.000Z",
         "phase": 0,
-        "decision_revision": 3,
+        "decision_revision": 2,
         "ended_at": null,
         "saved": [
           {
             "id": "media-1",
             "title": "Pocket Astronomer",
-            "saved_at": "2026-01-03T11:00:00.000Z"
+            "saved_at": "2026-01-28T05:44:00.000Z"
           },
           {
             "id": "media-2",
             "title": "Cedar and Silt",
-            "saved_at": "2026-02-12T11:00:00.000Z"
+            "saved_at": "2026-02-18T19:02:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Northbound Trio",
-            "saved_at": "2026-04-19T11:00:00.000Z"
+            "saved_at": "2026-05-27T08:59:00.000Z"
           }
         ],
         "history": [
           {
             "id": "history-1",
             "kind": "subscription_started",
-            "at": "2026-01-01T00:00:00.000Z"
+            "at": "2026-01-26T05:53:00.000Z"
           },
           {
             "id": "history-2",
             "kind": "period_started",
-            "at": "2026-02-01T00:00:00.000Z"
+            "at": "2026-02-26T05:53:00.000Z"
           },
           {
             "id": "history-3",
             "kind": "period_started",
-            "at": "2026-03-01T00:00:00.000Z"
+            "at": "2026-03-26T05:53:00.000Z"
           },
           {
             "id": "history-4",
             "kind": "cancellation_scheduled",
-            "at": "2026-03-11T15:00:00.000Z"
+            "at": "2026-04-02T22:07:00.000Z"
           },
           {
             "id": "history-5",
             "kind": "cancellation_revoked",
-            "at": "2026-03-21T15:00:00.000Z"
+            "at": "2026-04-19T04:51:00.000Z"
           },
           {
             "id": "history-6",
             "kind": "period_started",
-            "at": "2026-04-01T00:00:00.000Z"
+            "at": "2026-04-26T05:53:00.000Z"
           },
           {
             "id": "history-7",
-            "kind": "cancellation_scheduled",
-            "at": "2026-04-18T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2026-05-26T05:53:00.000Z"
           }
         ],
         "previews": [
@@ -466,7 +540,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 0,
-            "created_at": "2026-03-11T14:00:00.000Z"
+            "created_at": "2026-04-02T22:05:00.000Z"
           },
           {
             "id": "SE-P2",
@@ -474,15 +548,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 1,
-            "created_at": "2026-03-21T14:00:00.000Z"
-          },
-          {
-            "id": "SE-P3",
-            "action": "cancel",
-            "status": "confirmed",
-            "phase": 0,
-            "decision_revision": 2,
-            "created_at": "2026-04-18T14:00:00.000Z"
+            "created_at": "2026-04-18T16:25:00.000Z"
           }
         ],
         "action_receipts": [
@@ -490,32 +556,24 @@
             "id": "SE-R1",
             "preview_id": "SE-P1",
             "action": "cancel",
-            "confirmed_at": "2026-03-11T15:00:00.000Z",
+            "confirmed_at": "2026-04-02T22:07:00.000Z",
             "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-04-01T00:00:00.000Z"
+            "effective_at": "2026-04-26T05:53:00.000Z"
           },
           {
             "id": "SE-R2",
             "preview_id": "SE-P2",
             "action": "revoke",
-            "confirmed_at": "2026-03-21T15:00:00.000Z",
+            "confirmed_at": "2026-04-19T04:51:00.000Z",
             "resulting_status": "paid_active",
-            "effective_at": "2026-04-01T00:00:00.000Z"
-          },
-          {
-            "id": "SE-R3",
-            "preview_id": "SE-P3",
-            "action": "cancel",
-            "confirmed_at": "2026-04-18T15:00:00.000Z",
-            "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-05-01T00:00:00.000Z"
+            "effective_at": "2026-04-26T05:53:00.000Z"
           }
         ]
       }
     },
     {
       "label": "Mina Hartwell",
-      "virtual_now": "2026-09-01T00:00:00.000Z",
+      "virtual_now": "2026-11-05T16:33:00.000Z",
       "binding": {
         "people": [
           {
@@ -544,81 +602,83 @@
             "history-6",
             "history-7",
             "history-8",
+            "history-9",
             "SE-P1",
-            "SE-P2",
-            "SE-P3",
-            "SE-R1",
-            "SE-R2",
-            "SE-R3"
+            "SE-R1"
           ]
         }
       },
       "seed": {
         "account_id": "listener-cohort-5",
         "status": "free",
-        "period_start": "2026-08-01T00:00:00.000Z",
-        "period_end": "2026-09-01T00:00:00.000Z",
-        "next_period_end": "2026-10-01T00:00:00.000Z",
+        "period_start": "2026-10-05T13:11:00.000Z",
+        "period_end": "2026-11-05T13:11:00.000Z",
+        "next_period_end": "2026-12-05T13:11:00.000Z",
         "phase": 1,
-        "decision_revision": 3,
-        "ended_at": "2026-09-01T00:00:00.000Z",
+        "decision_revision": 1,
+        "ended_at": "2026-11-05T13:11:00.000Z",
         "saved": [
           {
             "id": "media-1",
             "title": "Blue Courtyard",
-            "saved_at": "2026-05-03T11:00:00.000Z"
+            "saved_at": "2026-04-07T08:31:00.000Z"
           },
           {
             "id": "media-2",
             "title": "Canal at Dusk",
-            "saved_at": "2026-06-12T11:00:00.000Z"
+            "saved_at": "2026-06-12T20:44:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Seven Small Winters",
-            "saved_at": "2026-08-19T11:00:00.000Z"
+            "saved_at": "2026-09-14T16:06:00.000Z"
           }
         ],
         "history": [
           {
             "id": "history-1",
             "kind": "subscription_started",
-            "at": "2026-05-01T00:00:00.000Z"
+            "at": "2026-04-05T13:11:00.000Z"
           },
           {
             "id": "history-2",
             "kind": "period_started",
-            "at": "2026-06-01T00:00:00.000Z"
+            "at": "2026-05-05T13:11:00.000Z"
           },
           {
             "id": "history-3",
             "kind": "period_started",
-            "at": "2026-07-01T00:00:00.000Z"
+            "at": "2026-06-05T13:11:00.000Z"
           },
           {
             "id": "history-4",
-            "kind": "cancellation_scheduled",
-            "at": "2026-07-12T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2026-07-05T13:11:00.000Z"
           },
           {
             "id": "history-5",
-            "kind": "cancellation_revoked",
-            "at": "2026-07-22T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2026-08-05T13:11:00.000Z"
           },
           {
             "id": "history-6",
             "kind": "period_started",
-            "at": "2026-08-01T00:00:00.000Z"
+            "at": "2026-09-05T13:11:00.000Z"
           },
           {
             "id": "history-7",
-            "kind": "cancellation_scheduled",
-            "at": "2026-08-19T15:00:00.000Z"
+            "kind": "period_started",
+            "at": "2026-10-05T13:11:00.000Z"
           },
           {
             "id": "history-8",
+            "kind": "cancellation_scheduled",
+            "at": "2026-10-20T08:20:00.000Z"
+          },
+          {
+            "id": "history-9",
             "kind": "paid_access_ended",
-            "at": "2026-09-01T00:00:00.000Z"
+            "at": "2026-11-05T13:11:00.000Z"
           }
         ],
         "previews": [
@@ -628,23 +688,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 0,
-            "created_at": "2026-07-12T14:00:00.000Z"
-          },
-          {
-            "id": "SE-P2",
-            "action": "revoke",
-            "status": "confirmed",
-            "phase": 0,
-            "decision_revision": 1,
-            "created_at": "2026-07-22T14:00:00.000Z"
-          },
-          {
-            "id": "SE-P3",
-            "action": "cancel",
-            "status": "confirmed",
-            "phase": 0,
-            "decision_revision": 2,
-            "created_at": "2026-08-19T14:00:00.000Z"
+            "created_at": "2026-10-17T10:12:00.000Z"
           }
         ],
         "action_receipts": [
@@ -652,32 +696,16 @@
             "id": "SE-R1",
             "preview_id": "SE-P1",
             "action": "cancel",
-            "confirmed_at": "2026-07-12T15:00:00.000Z",
+            "confirmed_at": "2026-10-20T08:20:00.000Z",
             "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-08-01T00:00:00.000Z"
-          },
-          {
-            "id": "SE-R2",
-            "preview_id": "SE-P2",
-            "action": "revoke",
-            "confirmed_at": "2026-07-22T15:00:00.000Z",
-            "resulting_status": "paid_active",
-            "effective_at": "2026-08-01T00:00:00.000Z"
-          },
-          {
-            "id": "SE-R3",
-            "preview_id": "SE-P3",
-            "action": "cancel",
-            "confirmed_at": "2026-08-19T15:00:00.000Z",
-            "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-09-01T00:00:00.000Z"
+            "effective_at": "2026-11-05T13:11:00.000Z"
           }
         ]
       }
     },
     {
       "label": "Eli Sato",
-      "virtual_now": "2026-12-31T18:00:00.000Z",
+      "virtual_now": "2026-12-31T20:14:00.000Z",
       "binding": {
         "people": [
           {
@@ -704,6 +732,7 @@
             "history-4",
             "history-5",
             "history-6",
+            "history-7",
             "SE-P1",
             "SE-P2",
             "SE-R1",
@@ -714,9 +743,9 @@
       "seed": {
         "account_id": "listener-cohort-6",
         "status": "paid_active",
-        "period_start": "2026-12-01T00:00:00.000Z",
-        "period_end": "2027-01-01T00:00:00.000Z",
-        "next_period_end": "2027-02-01T00:00:00.000Z",
+        "period_start": "2026-12-12T19:39:00.000Z",
+        "period_end": "2027-01-12T19:39:00.000Z",
+        "next_period_end": "2027-02-12T19:39:00.000Z",
         "phase": 0,
         "decision_revision": 2,
         "ended_at": null,
@@ -724,49 +753,54 @@
           {
             "id": "media-1",
             "title": "Hidden Bearings",
-            "saved_at": "2026-09-03T11:00:00.000Z"
+            "saved_at": "2026-08-13T07:15:00.000Z"
           },
           {
             "id": "media-2",
             "title": "Patterns in Snow",
-            "saved_at": "2026-10-12T11:00:00.000Z"
+            "saved_at": "2026-10-23T21:52:00.000Z"
           },
           {
             "id": "media-3",
             "title": "Lights Above Harlow",
-            "saved_at": "2026-12-31T11:00:00.000Z"
+            "saved_at": "2026-12-31T12:06:00.000Z"
           }
         ],
         "history": [
           {
             "id": "history-1",
             "kind": "subscription_started",
-            "at": "2026-09-01T00:00:00.000Z"
+            "at": "2026-08-12T19:39:00.000Z"
           },
           {
             "id": "history-2",
             "kind": "period_started",
-            "at": "2026-10-01T00:00:00.000Z"
+            "at": "2026-09-12T19:39:00.000Z"
           },
           {
             "id": "history-3",
             "kind": "period_started",
-            "at": "2026-11-01T00:00:00.000Z"
+            "at": "2026-10-12T19:39:00.000Z"
           },
           {
             "id": "history-4",
             "kind": "cancellation_scheduled",
-            "at": "2026-11-13T15:00:00.000Z"
+            "at": "2026-10-26T15:51:00.000Z"
           },
           {
             "id": "history-5",
             "kind": "cancellation_revoked",
-            "at": "2026-11-23T15:00:00.000Z"
+            "at": "2026-11-04T12:30:00.000Z"
           },
           {
             "id": "history-6",
             "kind": "period_started",
-            "at": "2026-12-01T00:00:00.000Z"
+            "at": "2026-11-12T19:39:00.000Z"
+          },
+          {
+            "id": "history-7",
+            "kind": "period_started",
+            "at": "2026-12-12T19:39:00.000Z"
           }
         ],
         "previews": [
@@ -776,7 +810,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 0,
-            "created_at": "2026-11-13T14:00:00.000Z"
+            "created_at": "2026-10-26T14:06:00.000Z"
           },
           {
             "id": "SE-P2",
@@ -784,7 +818,7 @@
             "status": "confirmed",
             "phase": 0,
             "decision_revision": 1,
-            "created_at": "2026-11-23T14:00:00.000Z"
+            "created_at": "2026-11-04T12:27:00.000Z"
           }
         ],
         "action_receipts": [
@@ -792,17 +826,17 @@
             "id": "SE-R1",
             "preview_id": "SE-P1",
             "action": "cancel",
-            "confirmed_at": "2026-11-13T15:00:00.000Z",
+            "confirmed_at": "2026-10-26T15:51:00.000Z",
             "resulting_status": "cancellation_scheduled",
-            "effective_at": "2026-12-01T00:00:00.000Z"
+            "effective_at": "2026-11-12T19:39:00.000Z"
           },
           {
             "id": "SE-R2",
             "preview_id": "SE-P2",
             "action": "revoke",
-            "confirmed_at": "2026-11-23T15:00:00.000Z",
+            "confirmed_at": "2026-11-04T12:30:00.000Z",
             "resulting_status": "paid_active",
-            "effective_at": "2026-12-01T00:00:00.000Z"
+            "effective_at": "2026-11-12T19:39:00.000Z"
           }
         ]
       }

@@ -59,6 +59,7 @@ async function main(){
  expect(await repeatG.call(app+'.read_status',{account_id:'some-other-account'}),'not_found');
 
  // Load and observe every delivered evaluation partition as a distinct bound account.
+ const expectedEntitlements=['paid_active','free','cancellation_scheduled','paid_active','free','paid_active','free'];
  const cohorts=require('../evaluation/accounts-v1.json');
  const partitions=[...cohorts.accounts,{seed:require('../fixtures/free.json'),binding:require('../fixtures/binding.json'),virtual_now:end}];
  for(const [j,row] of partitions.entries()){
@@ -67,12 +68,35 @@ async function main(){
   bundle.dataset.expected_counts.records=row.seed.saved.length+row.seed.history.length+row.seed.previews.length+row.seed.action_receipts.length;
   expect(await ci.call('env.load_seed',{expected_version:s.version,data:row.seed,binding:row.binding,bundle,virtual_now:row.virtual_now,request_id:'load-cohort'}),'ready');
   const found=expect(await cg.call(app+'.read_status',{}));
+  const expected=expectedEntitlements[j], free=expected==='free';
+  a.equal(found.entitlement.entitlement,expected);
+  a.equal(found.entitlement.access,free?'free':'paid');
+  a.equal(found.virtual_now,new Date(row.virtual_now).toISOString());
+  a.equal(found.entitlement.period_start,row.seed.period_start);
+  a.equal(found.entitlement.period_end,row.seed.period_end);
+  a.equal(found.entitlement.effective_end,expected==='paid_active'?null:row.seed.period_end);
+  if(free){
+   a.ok(Date.parse(row.virtual_now)>=Date.parse(row.seed.period_end));
+   a.ok(found.history.some(record=>record.kind==='paid_access_ended'&&Date.parse(record.at)===Date.parse(row.seed.period_end)));
+  }else{
+   a.ok(Date.parse(row.seed.period_start)<=Date.parse(row.virtual_now)&&Date.parse(row.virtual_now)<Date.parse(row.seed.period_end));
+  }
   a.deepEqual(found.history,row.seed.history);
   a.deepEqual(found.entitlement.saved,row.seed.saved);
   a.deepEqual(found.receipts,row.seed.action_receipts);
   const receipt=row.seed.action_receipts[0];
   if(receipt)a.deepEqual(expect(await cg.call(app+'.read_receipt',{receipt_id:receipt.id})).receipt,receipt);
   if(row.seed.status==='free')a.equal(Date.parse(found.entitlement.effective_end),Date.parse(row.seed.period_end));
+  a.deepEqual((await snap(ci)).snapshot.data,row.seed);
+  const preview=expected==='cancellation_scheduled'?'prepare_revocation':'prepare_cancellation';
+  const action=await cg.call(app+'.'+preview,{expected_version:found.version,request_id:'check-cohort-action'});
+  expect(action,free?'free_account':'committed');
+  if(!free){
+   a.equal(action.preview.action,expected==='cancellation_scheduled'?'revoke':'cancel');
+   a.equal(action.entitlement.entitlement,expected);
+   a.equal(action.entitlement.period_end,row.seed.period_end);
+  }
+  expect(await ci.call('env.reset',{expected_version:(await snap(ci)).version}),'ready');
   a.deepEqual((await snap(ci)).snapshot.data,row.seed);
  }
 

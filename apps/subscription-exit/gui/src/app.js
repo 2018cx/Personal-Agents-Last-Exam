@@ -46,7 +46,9 @@ function statusBlock(x,plan){
  const e=x.entitlement;
  const title=el('h3',{},plan?(e.access==='paid'?plan.name+' plan':'Free plan'):'Plan status');
  const detail=e.entitlement==='free'?'Paid access ended on '+date(e.effective_end)+'.':e.entitlement==='cancellation_scheduled'?'Your paid access continues until '+date(e.effective_end)+'.':'Current billing period ends '+date(e.period_end)+'.';
- const cardNodes=[title,el('p',{class:'tag'},names[e.entitlement]),el('p',{},detail)];
+ const badge=el('p',{class:'tag'},names[e.entitlement]);
+ badge.style.fontSize='13px';
+ const cardNodes=[title,badge,el('p',{},detail)];
  if(plan&&e.access==='paid'){
    const amount=new Intl.NumberFormat('en-US',{style:'currency',currency:plan.currency,currencyDisplay:'code'}).format(plan.renewal_minor/100);
    cardNodes.push(el('p',{class:'muted'},amount+' per modeled period · no charge is made'));
@@ -55,7 +57,7 @@ function statusBlock(x,plan){
  const saved=card('YOUR LIBRARY',el('h3',{},'Saved entries'),el('ul',{},e.saved.map(v=>el('li',{},v.title))));
  return [card('YOUR PLAN',...cardNodes),saved];
 }
-function write(bar,label,op,args,version,token,done){
+function write(bar,label,op,args,version,token,done,style='primary'){
  if(!possible(op))return;
  let pending;const b=button(label,async()=>{
   if(writing||token!==generation)return;
@@ -68,7 +70,10 @@ function write(bar,label,op,args,version,token,done){
    for(const node of bar.querySelectorAll('button'))node.disabled=false;
    b.textContent='Retry '+label;say('No acknowledgement. Retry the same request, or refresh to check its result.');
   }finally{writing=false;}
- });b.classList.add('primary');bar.append(b);
+ });
+ if(style!=='secondary')b.classList.add('primary');
+ if(style==='destructive')Object.assign(b.style,{color:'#fff',background:'#a31930',borderColor:'#a31930'});
+ bar.append(b);
 }
 async function display(target=view,notice=''){
  view=target;const token=++generation;
@@ -87,11 +92,11 @@ async function display(target=view,notice=''){
    const p=x.open_previews.find(p=>p.id===selected);
    if(p){
     area.append(card('REVIEW CHANGE',el('h3',{},p.action==='cancel'?'Review cancellation':'Review withdrawal'),el('p',{},p.action==='cancel'?'Your paid access will continue until '+date(x.entitlement.period_end)+'. Your saved entries will stay in your library.':'Withdraw the scheduled cancellation and keep paid access through the billing boundary.')));
-    write(bar,p.action==='cancel'?'Confirm cancellation':'Confirm revocation','confirm',{preview_id:p.id},x.version,token,async r=>{receiptId=r.receipt.id;await display('Status and receipts','Confirmation recorded.');});
-    write(bar,'Abandon preview','abandon',{preview_id:p.id},x.version,token,async()=>{selected=null;await display('Status and receipts','Preview abandoned. No entitlement change.');});
+    write(bar,p.action==='cancel'?'Confirm cancellation':'Confirm revocation','confirm',{preview_id:p.id},x.version,token,async r=>{receiptId=r.receipt.id;await display('Status and receipts','Confirmation recorded.');},p.action==='cancel'?'destructive':'primary');
+    write(bar,'Abandon preview','abandon',{preview_id:p.id},x.version,token,async()=>{selected=null;await display('Status and receipts','Preview abandoned. No entitlement change.');},'secondary');
    }else{
     area.append(...statusBlock(x),el('p',{},selected?'That preview is no longer current. Start again from Overview.':'No current preview selected.'));
-    for(const p of x.open_previews)bar.append(button('Open preview '+p.id,()=>{selected=p.id;return display('Preview');}));
+    for(const [index,p] of x.open_previews.entries())bar.append(button((p.action==='cancel'?'Open cancellation preview':'Open withdrawal preview')+' · '+time(p.created_at)+' · '+(index+1),()=>{selected=p.id;return display('Preview');}));
    }
   }else{
    area.append(...statusBlock(x));
@@ -99,7 +104,7 @@ async function display(target=view,notice=''){
     const r=await call('read_receipt',{receipt_id:receiptId});if(token!==generation)return;
     area.append(card('CONFIRMATION',el('h3',{},labels[r.receipt.action]),el('p',{},'Confirmed '+time(r.receipt.confirmed_at)+'.'),el('p',{},'Billing boundary: '+date(r.receipt.effective_at)),el('p',{class:'muted'},'Receipt reference '+r.receipt.id)));
    }
-   for(const receipt of x.receipts)bar.append(button('View receipt '+receipt.id,()=>{receiptId=receipt.id;return display('Status and receipts');}));
+   for(const [index,receipt] of x.receipts.entries())bar.append(button('View '+(receipt.action==='cancel'?'cancellation':'withdrawal')+' receipt · '+time(receipt.confirmed_at)+' · '+(index+1),()=>{receiptId=receipt.id;return display('Status and receipts');}));
   }
   area.append(bar,message);if(notice)say(notice);
  } catch(e){if(token===generation)say(friendly(e));}

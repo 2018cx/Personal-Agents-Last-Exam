@@ -1,7 +1,7 @@
 [
   {
     "name": "subscription-exit.read_plan",
-    "description": "Read the fictional plan and informational renewal amount Omit account_id to use the session-bound account; an explicit account_id must match.",
+    "description": "Read the fictional plan and informational renewal amount. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_plan",
     "resource_target": "bound fictional account",
@@ -215,7 +215,7 @@
   },
   {
     "name": "subscription-exit.read_status",
-    "description": "Read current entitlement at Core virtual time, saved entries and initial history Omit account_id to use the session-bound account; an explicit account_id must match.",
+    "description": "Read current entitlement at Core virtual time, saved entries, seed-only history, open previews, and confirmation receipts. Live changes are tracked by receipts and projected entitlement. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_status",
     "resource_target": "bound fictional account",
@@ -533,7 +533,7 @@
   },
   {
     "name": "subscription-exit.read_receipt",
-    "description": "Read an existing confirmation receipt Omit account_id to use the session-bound account; an explicit account_id must match.",
+    "description": "Read an existing confirmation receipt. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_receipt",
     "resource_target": "bound fictional account",
@@ -1264,7 +1264,7 @@
   },
   {
     "name": "subscription-exit.confirm",
-    "description": "Confirm an unchanged, current preview; replay by exactly the same request_id, or read the original receipt Omit account_id to use the session-bound account; an explicit account_id must match.",
+    "description": "Confirm an unchanged, current preview; replay by exactly the same request_id, or read the original receipt. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.confirm",
     "resource_target": "bound fictional account",
@@ -1519,7 +1519,7 @@
   },
   {
     "name": "subscription-exit.abandon",
-    "description": "Abandon a preview without changing entitlement Omit account_id to use the session-bound account; an explicit account_id must match.",
+    "description": "Abandon a preview without changing entitlement. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.abandon",
     "resource_target": "bound fictional account",
