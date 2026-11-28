@@ -1,23 +1,21 @@
-# Subscription Exit v1 validation
+# Subscription Exit validation
+- Approved scope: [PALE #20 design](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/blob/118a5f0665b5c0c9d542a722b4ed73cf371be147/proposals/environment/subscription-exit.md). Implementation and maintenance: Xiao Cui (@2018cx). Proposal unchanged.
+- [Implementation review](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/20#pullrequestreview-6094921997): this candidate addresses renewed-period cancellation, distinct same-time previews, full-window synthetic history, a bound-account browser, readable dates and comparison/ordered evidence.
+- Baselines: public Runtime 1.6.0 / Core API 1.2.0 at 61b637164e4abddf81536bb48935cdb688a69ff1 (pinned) and 25d559778696dff849bb88fcca03f325185f2599 (then-current main). Use the PR's evidence attachment for its exact commit, package digest and verification reports.
 
-- Reviewed proposal: [PALE #20, approved scope](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/blob/118a5f0665b5c0c9d542a722b4ed73cf371be147/proposals/environment/subscription-exit.md). Implementation and maintenance: Xiao Cui (@2018cx). No changes to the approved proposal.
-- The shared runtime baseline is upstream commit `61b637164e4abddf81536bb48935cdb688a69ff1`; the current-main test snapshot is `7a05aa958c824143ab9eee1aa21c2dfacd8be31a`. Both publish Runtime 1.6.0 / Core API 1.2.0.
-- Run from the App directory with Node 18, 22 or 24 and an official PALE checkout:
+From the App directory with an official PALE checkout:
 
-```sh
-export PALE_RUNTIME_ROOT=/absolute/path/to/pale/runtime
-node "$PALE_RUNTIME_ROOT/cli.cjs" verify --app "$PWD"
-npm test
-node examples/run.cjs
-node tests/core.cjs
-# With Playwright available to this test and a sandbox-capable Chromium:
-# set PLAYWRIGHT_MODULE to a local Playwright module path if needed.
-# Set CHROMIUM_PATH to an explicit binary if not using Playwright's browser.
-node tests/browser.cjs
-```
+    export PALE_RUNTIME_ROOT=/absolute/path/to/pale/runtime
+    node "$PALE_RUNTIME_ROOT/cli.cjs" verify --app "$PWD"
+    npm test
+    node examples/run.cjs
+    node tests/core.cjs
+    node evaluation/build.cjs --check
+    # With sandbox-capable Chromium and Playwright:
+    export PLAYWRIGHT_MODULE=/absolute/path/to/playwright
+    export CHROMIUM_PATH=/absolute/path/to/chromium
+    PALE_SCREENSHOTS=/tmp/subscription-exit-evidence node tests/browser.cjs
 
-The public verifier covers package, schema, Agent/Infra discovery and permissions, seed policies, persistence and reset, and runs both the business suite and example. The separate Core MCP trace tests a task-supplied pending fixture, distinct read and write sessions, identity and read-only denials, exact-boundary stale revision and stale preview as separate cases, receipt replay/conflict, and two reset/replays. Business data, receipt set and revision are stable after reads and rejected writes. The clock write itself changes the Core revision; test baselines are taken after that write. Core audit may record observations and denials without changing the business revision.
-
-The browser test uses genuine sandboxed Chromium Headless Shell 156.0.8078.79 with Playwright 1.62.1 (test tools only). It opens an account, reads plan and status, discards both action types without changing the entitlement, confirms a cancellation, reads its receipt, confirms a timely revocation, and verifies one active period transition. It twice resets, confirms a cancel, moves time to one second before period end, opens a revocation preview, advances to exact end, checks a rejected stale confirmation, refreshes to free access and confirms all three saved entries remain. An independent Infra MCP process reads Core state. No live payments, messages, external models or services are used.
-
-Custom seeds use `schemas/seed.schema.json` plus the trusted binding and complete synthetic bundle in `env.load_seed`. When records change count, update `bundle.dataset.expected_counts.records` to saved entries plus history, previews and domain receipts. The default clock is in 2026 and original synthetic history begins on 2025-01-01. Set `policies.scenario` to the bundled read-only policy to exercise the observer case; start a fresh client for UI controls. The model-side role cannot inject clock changes or load fixtures.
+- Public verifier: package/schema, role policies, persistence/reset, App example and business stages. Separate stdio Core test covers both original and renewed exact boundaries, stale version and preview, repeat/abandon at one logical instant, duplicate/conflicting receipts, read-only denial, and resets.
+- Browser: sandboxed Chromium clicks with separate Infra and Agent MCP connections. See the [workflow index](evidence/README.md) and PR attachment for expected versus observed, reload, comparison to public product documentation and exact-commit trace.
+- Environment data: [UTC coverage and public load/read](evaluation/COVERAGE.md), 100% original synthetic. The Free smoke seed has a matching period end, history and receipt; load it at or after its recorded end. To load any larger custom seed, update the bundle's dataset expected record count to saved entries + history + previews + receipts. Task authors should bind exactly one synthetic account per isolated run. No real payment, account data, third-party asset, or cross-App dependency.

@@ -243,7 +243,10 @@
                 "type": "string",
                 "enum": [
                   "subscription_started",
-                  "period_started"
+                  "period_started",
+                  "cancellation_scheduled",
+                  "cancellation_revoked",
+                  "paid_access_ended"
                 ]
               }
             },
@@ -479,7 +482,10 @@
                 "type": "string",
                 "enum": [
                   "subscription_started",
-                  "period_started"
+                  "period_started",
+                  "cancellation_scheduled",
+                  "cancellation_revoked",
+                  "paid_access_ended"
                 ]
               }
             },

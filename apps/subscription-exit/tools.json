@@ -1,7 +1,7 @@
 [
   {
     "name": "subscription-exit.read_plan",
-    "description": "Read the fictional plan and informational renewal amount",
+    "description": "Read the fictional plan and informational renewal amount Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_plan",
     "resource_target": "bound fictional account",
@@ -13,9 +13,7 @@
           "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
         }
       },
-      "required": [
-        "account_id"
-      ],
+      "required": [],
       "additionalProperties": false
     },
     "outputSchema": {
@@ -217,7 +215,7 @@
   },
   {
     "name": "subscription-exit.read_status",
-    "description": "Read current entitlement at Core virtual time, saved entries and initial history",
+    "description": "Read current entitlement at Core virtual time, saved entries and initial history Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_status",
     "resource_target": "bound fictional account",
@@ -229,9 +227,7 @@
           "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
         }
       },
-      "required": [
-        "account_id"
-      ],
+      "required": [],
       "additionalProperties": false
     },
     "outputSchema": {
@@ -399,7 +395,10 @@
                 "type": "string",
                 "enum": [
                   "subscription_started",
-                  "period_started"
+                  "period_started",
+                  "cancellation_scheduled",
+                  "cancellation_revoked",
+                  "paid_access_ended"
                 ]
               }
             },
@@ -534,7 +533,7 @@
   },
   {
     "name": "subscription-exit.read_receipt",
-    "description": "Read an existing confirmation receipt",
+    "description": "Read an existing confirmation receipt Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": true,
     "scope": "subscription-exit.read_receipt",
     "resource_target": "bound fictional account",
@@ -551,7 +550,6 @@
         }
       },
       "required": [
-        "account_id",
         "receipt_id"
       ],
       "additionalProperties": false
@@ -764,7 +762,7 @@
   },
   {
     "name": "subscription-exit.prepare_cancellation",
-    "description": "Prepare an unsubmitted cancellation at period end",
+    "description": "Prepare a cancellation for the bound account before the end of its current modeled paid period, including the single renewed period. No further renewal is inferred. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.prepare_cancellation",
     "resource_target": "bound fictional account",
@@ -801,7 +799,6 @@
         }
       },
       "required": [
-        "account_id",
         "expected_version",
         "request_id"
       ],
@@ -1016,7 +1013,7 @@
   },
   {
     "name": "subscription-exit.prepare_revocation",
-    "description": "Prepare an unsubmitted withdrawal of scheduled cancellation",
+    "description": "Preview reversal of a scheduled cancellation in the bound account before the end of the current modeled paid period. Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.prepare_revocation",
     "resource_target": "bound fictional account",
@@ -1053,7 +1050,6 @@
         }
       },
       "required": [
-        "account_id",
         "expected_version",
         "request_id"
       ],
@@ -1268,7 +1264,7 @@
   },
   {
     "name": "subscription-exit.confirm",
-    "description": "Confirm an unchanged, current preview; replay by exactly the same request_id, or read the original receipt",
+    "description": "Confirm an unchanged, current preview; replay by exactly the same request_id, or read the original receipt Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.confirm",
     "resource_target": "bound fictional account",
@@ -1309,7 +1305,6 @@
         }
       },
       "required": [
-        "account_id",
         "preview_id",
         "expected_version",
         "request_id"
@@ -1524,7 +1519,7 @@
   },
   {
     "name": "subscription-exit.abandon",
-    "description": "Abandon a preview without changing entitlement",
+    "description": "Abandon a preview without changing entitlement Omit account_id to use the session-bound account; an explicit account_id must match.",
     "read_only": false,
     "scope": "subscription-exit.abandon",
     "resource_target": "bound fictional account",
@@ -1565,7 +1560,6 @@
         }
       },
       "required": [
-        "account_id",
         "preview_id",
         "expected_version",
         "request_id"
