@@ -22,37 +22,88 @@ function event(at,n,payload){
 function resolve(m,at,action,attempt,outcome){
  event(at,'desk_outcome',{operation:action,member_id:m,copy_id:attempt.copy_id,attempt:attempt.attempt,outcome});
 }
-const items=[['I4','C7'],['I5','C8'],['I7','C10']];
+// Calendar of pickup sessions, with holiday bursts and quieter weeks.
+const DAY=86400000, HOUR=3600000, MINUTE=60000;
 const members=['M1','M2','M3','M4'];
+const circulation=data.copies.filter(c=>!c.maintenance);
+const single=circulation.filter(c=>circulation.filter(k=>k.item_id===c.item_id).length===1);
+let rng=0x6b6ce71;
+function random(max){rng=(Math.imul(1664525,rng)+1013904223)>>>0;return Math.floor(rng*max/2**32);}
+const pick=a=>a[random(a.length)], iso=t=>new Date(t).toISOString();
+const time=(month,day,h,m)=>Date.UTC(2025,month,day,h-8,m);
+const pending=[];
+function plan(t,fn){pending.push({t,fn});}
+function send(m,t,n,args){return act(m,iso(t),n,args);}
+function status(m,t,c){return send(m,t,'get_item',{item_id:c.item_id}).copies.find(k=>k.id===c.id).status;}
+function queue(m,t,c){event(iso(t),'queue_join',{member_id:m,item_id:c.item_id,sequence:state.next_sequence});}
+function checkout(m,t,h,reject=false){
+ const first=send(m,t,'request_checkout',{hold_id:h.id}).attempt;
+ const resolved=t+(7+random(33))*MINUTE;
+ plan(resolved,()=>{resolve(m,iso(resolved),'checkout',first,reject?'rejected':'accepted');
+   if(reject)plan(resolved+67*MINUTE,()=>checkout(m,resolved+67*MINUTE,h));
+   else {
+    const l=state.loans.at(-1); assert.equal(l.member_id,m);assert.equal(l.copy_id,h.copy_id);
+    if(h.keep)return;
+    const renew=!!h.renew,due=renew?10:7;
+    if(renew){const renewal=resolved+(2+random(3))*DAY+37*MINUTE;plan(renewal,()=>{if(send(m,renewal,'preview_renewal',{loan_id:l.id}).eligible)send(m,renewal,'confirm_renewal',{loan_id:l.id});});}
+    const days=h.fast?1: h.late?due+1+random(2):2+random(due-2);
+    const returned=resolved+days*DAY+(12+random(200))*MINUTE;
+    plan(returned,()=>{
+      const a=send(m,returned,'request_return',{loan_id:l.id}).attempt;
+      resolve(m,iso(returned),'return',a,'accepted');
+      if(h.waiter){
+       const promoted=state.holds.find(x=>x.copy_id===h.copy_id&&x.member_id===h.waiter&&x.status==='open');
+       if(promoted&&h.promotion==='checkout'){const pickup=returned+(19+random(70))*MINUTE;plan(pickup,()=>checkout(h.waiter,pickup,{...promoted,fast:true}));}
+       else if(promoted&&h.promotion==='cancel'){const cancelled=returned+(25+random(130))*MINUTE;plan(cancelled,()=>send(h.waiter,cancelled,'cancel_hold',{hold_id:promoted.id}));}
+       // No pickup means the regular reconcile path expires the promoted hold.
+      }
+    });
+   }
+ });
+}
+const active=m=>state.holds.filter(x=>x.member_id===m&&x.status==='open').length+state.loans.filter(x=>x.member_id===m&&!x.returned_at).length;
+const overdue=(m,t)=>state.loans.some(x=>x.member_id===m&&!x.returned_at&&Date.parse(x.due_at)<=t);
+const slot=(start,opts={})=>plan(start,()=>{
+ // A normal write advances reconciliation; if an old hold expired, signed Agent
+ // availability below sees its projected state without changing that history.
+ const eligible=members.filter(m=>active(m)<2&&!overdue(m,start));
+ const choices=(opts.waiter?single:circulation).filter(c=>status(members[0],start,c)==='available');
+ if(!eligible.length||!choices.length)return;
+ const m=opts.member??pick(eligible), c=opts.copy??pick(choices);
+ const h=send(m,start,'confirm_hold',{item_id:c.item_id,copy_id:c.id}).hold;
+ if(opts.expire||opts.open)return;
+ if(opts.cancel){const at=start+(45+random(410))*MINUTE;plan(at,()=>send(m,at,'cancel_hold',{hold_id:h.id}));return;}
+ const waiter=opts.waiter?pick(members.filter(k=>k!==m&&active(k)<2&&!overdue(k,start))):undefined;
+ if(waiter){
+  const join=start+2*HOUR+19*MINUTE;
+  plan(join,()=>{if(!state.holds.some(k=>k.member_id===waiter&&k.copy_id===c.id&&k.status==='open'))queue(waiter,join,c);});
+ }
+ const at=start+(18+random(48))*MINUTE;
+ plan(at,()=>checkout(m,at,{...h,renew:opts.renew&&!waiter,late:opts.late,fast:opts.fast,waiter,promotion:opts.promotion,keep:opts.keep},opts.reject));
+});
+slot(time(0,1,10,23),{copy:circulation[4],member:'M2',late:true});
 for(let month=0;month<24;month++){
- const y=2025+(month>=12?1:0),m=month%12+1;
- const clock=(day,hour=9,min=0)=>[y,String(m).padStart(2,'0'),String(day).padStart(2,'0')].join('-')+'T'+String(hour).padStart(2,'0')+':'+String(min).padStart(2,'0')+':00+08:00';
- const cycle=(start,returned,pick,mbr,waiting,renew,rejected)=>{
-  const [item_id,copy_id]=items[pick];
-  const h=act(mbr,clock(start),'confirm_hold',{item_id,copy_id}).hold;
-  const req=act(mbr,clock(start,10),'request_checkout',{hold_id:h.id}).attempt;
-  if(rejected){
-   resolve(mbr,clock(start,11),'checkout',req,'rejected');
-   const replacement=act(mbr,clock(start,12),'request_checkout',{hold_id:h.id}).attempt;
-   resolve(mbr,clock(start,13),'checkout',replacement,'accepted');
-  } else resolve(mbr,clock(start,11),'checkout',req,'accepted');
-  const l=state.loans.at(-1);
-  if(renew)act(mbr,clock(start+2,12),'confirm_renewal',{loan_id:l.id});
-  event(clock(start+3,11),'queue_join',{member_id:waiting,item_id,sequence:state.next_sequence});
-  const ret=act(mbr,clock(returned),'request_return',{loan_id:l.id}).attempt;
-  resolve(mbr,clock(returned,10),'return',ret,'accepted');
-  const promoted=state.holds.at(-1);
-  assert.equal(promoted.member_id,waiting);
-  assert.equal(promoted.copy_id,copy_id);
-  act(waiting,clock(returned,13),'cancel_hold',{hold_id:promoted.id});
- };
- cycle(1,6,month%3,members[month%4],members[(month+1)%4],month%2===0,month%3===0);
- cycle(11,16,(month+1)%3,members[(month+2)%4],members[(month+3)%4],month%3!==0,month%4===0);
- cycle(month===23?24:21,month===23?31:26,(month+2)%3,members[(month+3)%4],members[month%4],month%3===1,false);
+ const heavier=[5,10,11].includes(month%12);
+ const days=[month===0?9:1+random(10),13+random(8)];
+ if(heavier||random(4)===0)days.push(21+random(month===23?2:5));
+ if(!heavier&&random(5)===0)days.splice(1,1);
+ for(const day of days){
+  const late=month!==23&&random(5)===0, rotate=random(8), waiter=month!==23&&random(4)===0;
+  slot(time(month,day,9+random(7),random(60)),{
+   late,waiter:waiter&&rotate>1,promotion:['checkout','cancel','expire'][random(3)],renew:random(3)===0,
+   cancel:rotate===0,expire:rotate===1,fast:month===23,reject:random(7)===0
+  });
+ }
+}
+slot(time(23,30,14,36),{copy:circulation.find(c=>c.id==='C7'),member:'M1',keep:true});
+slot(time(23,31,15,51),{copy:circulation.find(c=>c.id==='C8'),member:'M2',open:true});
+while(pending.length){
+ pending.sort((a,b)=>a.t-b.t);
+ const {t,fn}=pending.shift();assert.ok(t>=Date.parse(state.materialized_at));
+ fn();
 }
 state.member_id='M1';
 validateSeed(as('M1',state.materialized_at),state);
-assert.equal(state.queue.length,0);
 const out=JSON.stringify(state,null,2)+'\n';
 if(process.argv.includes('--check'))assert.equal(out,fs.readFileSync(path.join(__dirname,'evaluation-v1.json'),'utf8'));
 else fs.writeFileSync(path.join(__dirname,'evaluation-v1.json'),out);

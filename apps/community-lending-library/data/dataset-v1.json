@@ -1,7 +1,7 @@
 {
   "schema_version": "pale.dataset.v1",
   "dataset_id": "community-lending-library-evaluation-v1",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Full-window fictional lending account evaluation history, separate from smoke data.",
   "record_source_ids": [
     "synthetic-lending-v1"
@@ -18,11 +18,11 @@
       "generation": {
         "method": "deterministic programmatic replay",
         "tool": "data/generate.cjs",
-        "tool_version": "1.0.0",
-        "seed": null,
+        "tool_version": "1.1.0",
+        "seed": "0x06b6ce71",
         "parameters": {
           "months": 24,
-          "cycles_per_month": 3,
+          "pickup_schedule": "irregular sessions; seasonal peaks; dated end-of-window active custody",
           "timezone": "Asia/Shanghai"
         }
       }

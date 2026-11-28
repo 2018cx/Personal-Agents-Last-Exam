@@ -25,7 +25,15 @@ async function main(){
  const snapshots=ok(await i.call('env.snapshot'));
  assert.deepEqual(snapshots.snapshot.data,history);
  assert.equal(snapshots.snapshot.resources.quality.automated_pass,true);
- assert.equal(snapshots.snapshot.data.queue_history.length,72);
+ assert.equal(snapshots.snapshot.data.queue_history.length,report.seeded_rows.queue_history);
+ assert.equal(Object.keys(report.months).length,24);
+ assert.equal(new Set(history.loans.map(l=>l.copy_id)).size,10);
+ assert.ok(history.loans.some(l=>l.returned_at&&Date.parse(l.returned_at)>Date.parse(l.due_at)));
+ assert.ok(history.holds.some(h=>h.status==='expired'));
+ const promoted=history.queue_history.filter(q=>q.outcome==='promoted').map(q=>history.holds.find(h=>h.member_id===q.member_id&&h.created_at===q.ended_at)?.status);
+ assert.ok(promoted.includes('checked_out')&&promoted.includes('expired'));
+ assert.ok(history.holds.some(h=>h.status==='open'&&Date.parse(h.expires_at)>Date.parse(history.materialized_at)));
+ assert.ok(history.loans.some(l=>!l.returned_at&&Date.parse(l.due_at)>Date.parse(history.materialized_at)));
  const reportDates=r=>new Set(r.map(x=>x.slice(0,4)));
  const own=h=>h.member_id===history.member_id;
  const holds=ok(await read('list_holds')).holds,loans=ok(await read('list_loans')).loans,receipts=ok(await read('list_activity')).attempts;
@@ -34,7 +42,8 @@ async function main(){
  assert.deepEqual(receipts.map(r=>r.id),history.attempts.filter(own).map(r=>r.id));
  assert.deepEqual(reportDates(holds.map(x=>x.created_at)),new Set(['2025','2026']));
  assert.deepEqual(reportDates(loans.map(x=>x.checked_out_at)),new Set(['2025','2026']));
- assert.equal(holds.length+loans.length+receipts.length>80,true);
+ assert.ok(holds.length+loans.length+receipts.length>20);
+ assert.ok(loans.some(l=>!l.returned_at&&!l.overdue));
  assert.ok(loans.some(x=>x.renewed&&x.returned_at));
  assert.ok(receipts.some(x=>x.status==='accepted'));
  assert.ok(receipts.some(x=>x.status==='rejected'));
