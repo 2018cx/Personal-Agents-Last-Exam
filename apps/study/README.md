@@ -29,6 +29,11 @@ node runtime/web/server.cjs --app study --registry study-local.registry.json --r
 
 Open the printed loopback link. Use a second `scenario` profile run for observer tests and a separate Agent connection to establish authoritative read-back. Only separate Infra may load history, advance time, apply the two events or reset. Follow the [browser test checklist](tests/FULL_GUI_VALIDATION.md) and the [Core evidence and six scenarios](BACKEND-VALIDATION.md). A second fixture contains two seeded historical reviews.
 
+## Delivery evidence index
+
+- **Business workflows and GUI:** [ordered Chromium evidence and independent Core readbacks](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/51#issuecomment-7204134192) for reviewed App code `3442ef7113b2c988fae2e7536f668893380e0765`. This data-only addition does not change the UI or the default fixtures.
+- **Full-window history v1.0.0:** [provenance, loading and rerun instructions](data/history-v1/README.md), [scope approval and reviewed App code revision](data/history-v1/scope.json), [monthly/source counts and SHA-256s](data/history-v1/generated/coverage.json), [activity ledger](data/history-v1/generated/activity.jsonl) and [opt-in load payload](data/history-v1/generated/load-seed.json). Covers all 24 months of 2025–26: 675 reviews on 408 dates, entirely synthetic. Use the separate public Infra/Agent MCP check to validate, load, query and reset the delivered bytes. The normal smoke run is unchanged.
+
 ## Local results, by mode
 
 | Mode | Result |
