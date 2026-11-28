@@ -86,6 +86,12 @@
                     "type": "null"
                   }
                 ]
+              },
+              "your_active_loan": {
+                "type": "boolean"
+              },
+              "has_circulating_copy": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -94,7 +100,9 @@
               "description",
               "available",
               "queue_length",
-              "your_position"
+              "your_position",
+              "your_active_loan",
+              "has_circulating_copy"
             ],
             "additionalProperties": false
           },
@@ -117,7 +125,7 @@
   },
   {
     "name": "community-lending-library.get_item",
-    "description": "Read item details, copy statuses and public lending rules.",
+    "description": "Read item details, copy statuses and the bound member’s own current due dates.",
     "read_only": true,
     "scope": "community-lending-library.get_item",
     "resource_target": "Bound synthetic member",
@@ -201,6 +209,12 @@
                   "type": "null"
                 }
               ]
+            },
+            "your_active_loan": {
+              "type": "boolean"
+            },
+            "has_circulating_copy": {
+              "type": "boolean"
             }
           },
           "required": [
@@ -209,7 +223,9 @@
             "description",
             "available",
             "queue_length",
-            "your_position"
+            "your_position",
+            "your_active_loan",
+            "has_circulating_copy"
           ],
           "additionalProperties": false
         },
@@ -229,6 +245,10 @@
                   "held",
                   "available"
                 ]
+              },
+              "your_due_at": {
+                "type": "string",
+                "format": "date-time"
               }
             },
             "required": [
@@ -324,6 +344,9 @@
                   "expired",
                   "checked_out"
                 ]
+              },
+              "checkout_pending": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -331,7 +354,8 @@
               "copy_id",
               "created_at",
               "expires_at",
-              "status"
+              "status",
+              "checkout_pending"
             ],
             "additionalProperties": false
           },
@@ -369,6 +393,11 @@
         "now": {
           "type": "string",
           "format": "date-time"
+        },
+        "member_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
         }
       },
       "required": [
@@ -377,7 +406,8 @@
         "version",
         "holds",
         "queue",
-        "now"
+        "now",
+        "member_name"
       ],
       "additionalProperties": false
     }
@@ -1068,6 +1098,12 @@
                   "type": "null"
                 }
               ]
+            },
+            "your_active_loan": {
+              "type": "boolean"
+            },
+            "has_circulating_copy": {
+              "type": "boolean"
             }
           },
           "required": [
@@ -1076,7 +1112,9 @@
             "description",
             "available",
             "queue_length",
-            "your_position"
+            "your_position",
+            "your_active_loan",
+            "has_circulating_copy"
           ],
           "additionalProperties": false
         }
@@ -1203,6 +1241,12 @@
                   "type": "null"
                 }
               ]
+            },
+            "your_active_loan": {
+              "type": "boolean"
+            },
+            "has_circulating_copy": {
+              "type": "boolean"
             }
           },
           "required": [
@@ -1211,7 +1255,9 @@
             "description",
             "available",
             "queue_length",
-            "your_position"
+            "your_position",
+            "your_active_loan",
+            "has_circulating_copy"
           ],
           "additionalProperties": false
         }

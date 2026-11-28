@@ -19,9 +19,10 @@ async function main(){
    const data=()=>infra.call('env.snapshot');
    const before=await data();assert.equal(before.status,'ok');
    const d=preset==='evaluation'?require('../data/evaluation-v1.json'):null;
-   const {profile,...seed}=d?{data:structuredClone(d),binding:structuredClone(require('../fixtures/binding.json')),virtual_now:d.materialized_at}:build(preset);
+   const prefix=preset.startsWith('prefix:')?JSON.parse(require('node:child_process').execFileSync(process.execPath,[path.join(__dirname,'../data/generate.cjs'),'--until',preset.slice(7),'--profile'])):null;
+   const {profile,...seed}=prefix|| (d?{data:structuredClone(d),binding:structuredClone(require('../data/evaluation-binding-v1.json')),virtual_now:d.materialized_at}:build(preset));
    if(member){seed.data.member_id=member;seed.binding.accounts[0].owner_person_id=member;}
-   const loaded=await infra.call('env.load_seed',{...seed,bundle:d?{...before.snapshot.resources.bundle,dataset:require('../data/dataset-v1.json')}:before.snapshot.resources.bundle,expected_version:before.version,request_id:run+'-seed'});
+   const loaded=await infra.call('env.load_seed',{...seed,bundle:d||prefix?{...before.snapshot.resources.bundle,dataset:require('../data/dataset-v1.json')}:before.snapshot.resources.bundle,expected_version:before.version,request_id:run+'-seed'});
    assert.equal(loaded.status,'ready',JSON.stringify(loaded));
    const host=await start({app:APP,registry:p.registry,run,stateDir,profile:'sandbox'});hosts.push(host);
    const page=await browser.newPage({viewport:{width:1280,height:850}}),errors=[];
@@ -50,7 +51,8 @@ async function main(){
   const desk=(operation,attempt,outcome,id)=>apply(id,'desk_outcome',{operation,attempt,outcome,member_id:'M1',copy_id:'C4'});
   const noChange=async before=>{const after=await data();assert.deepEqual(after.snapshot.data,before.snapshot.data);assert.deepEqual(after.version,before.version);};
   assert.equal(await page.locator('.attachment-grid .record').count(),8);
-  await screen('01-catalog','8 named cards with available/maintenance summary.');
+  await text('Signed in as Mei Lin');
+ await screen('01-catalog','8 named cards with available/maintenance summary.');
   await page.getByRole('searchbox',{name:'Search catalog'}).fill('Measuring');
   await press('Search');await text('Measuring tape');
   assert.equal(await page.locator('.attachment-grid .record').count(),1);
@@ -76,7 +78,7 @@ async function main(){
   await screen('07-holds','Private rows show item names, friendly copy labels and library dates.');
   await page.reload();await text('Search the cooperative catalog');await press('Holds and queue');await text('Hold H2 · Catalog ID C1');
   await screen('08-reload','Confirmed hold survives page reload on the same Core run.');
-  await press('Request checkout for Magnifying glass · Copy 2');await text('Checkout requested');await press('Activity and receipts');await text('Magnifying glass');await text('Attempt 2');await text('· Checkout');
+  await press('Request checkout for Magnifying glass · Copy 2');await text('Checkout requested');await text('Checkout request pending.');assert.equal(await page.getByRole('button',{name:'Request checkout for Magnifying glass · Copy 2',exact:true}).count(),0);await press('Activity and receipts');await text('Magnifying glass');await text('Attempt 2');await text('· Checkout');
   assert.equal((await read('list_loans')).loans.length,0);
   await screen('09-pending-checkout','Notification pending with no Agent-visible loan before desk response.');
   const rejection=await data();
@@ -132,8 +134,15 @@ async function main(){
   await late.press('Current loans');await late.text('Overdue');
   await late.press('Preview renewal for Magnifying glass · Copy 1');await late.text('a loan is overdue');
   await late.screen('20-overdue-renewal','Overdue loan cannot renew; existing loan remains open.');
+  await late.press('Catalog');await late.press('Open Magnifying glass');await late.text('You borrowed this copy · due');
+  assert.equal(await late.page.getByRole('button',{name:'Join waitlist',exact:true}).count(),0);
+  const scoped=await late.agent.call(APP+'.get_item',{item_id:'I2'});
+  assert.ok(scoped.copies.find(c=>c.id==='C3').your_due_at);
+  assert.equal((await read('get_item',{item_id:'I2'})).copies.find(c=>c.id==='C3').your_due_at,undefined);
+  await late.screen('20b-own-borrower','Member sees only their own due date and cannot join the queue for the item already borrowed.');
   await late.press('Catalog');await late.press('Open Knit guide');await late.text('Maintenance');
   assert.equal(await late.page.getByRole('button',{name:'Preview hold for Copy 1',exact:true}).count(),0);
+  assert.equal(await late.page.getByRole('button',{name:'Join waitlist',exact:true}).count(),0);
   assert.equal((await late.agent.call(APP+'.get_item',{item_id:'I6'})).copies[0].status,'maintenance');
   await late.screen('21-maintenance','Maintenance badge and no hold action; Core agrees.');
   await late.press('Catalog');await late.press('Open Measuring tape');await late.press('Preview hold for Copy 1');
@@ -170,6 +179,37 @@ async function main(){
   assert.ok(fontSizes.length>0&&fontSizes.every(f=>f>=12),JSON.stringify(fontSizes));
   await evaluation.screen('26-evaluation-loans','Separate active and returned sections, newest first, with checkout date and readable labels; actual generated seed matches separate Agent MCP.');
   assert.deepEqual(evaluation.errors,[]);
+  const floor=await boot('lending-evaluation-2025','prefix:2025-09-10');
+  assert.equal((await floor.agent.call(APP+'.search_items',{})).items.length,8);
+  await floor.screen('27-early-as-of-catalog','2025-09-10 as-of prefix opens the full catalog and a separate Agent reads all eight items.');
+  const holders=await boot('lending-evaluation-open-holds','evaluation','M2');
+  await holders.press('Holds and queue');await holders.text('Open holds');await holders.text('Past holds');
+  const holdRows=(await holders.agent.call(APP+'.list_holds',{})).holds;
+  const sortedIds=(items,key)=>items.sort((a,b)=>Date.parse(b[key])-Date.parse(a[key])||b.id.localeCompare(a.id,undefined,{numeric:true})).map(x=>x.id);
+  const sections=label=>holders.page.locator('section').filter({has:holders.page.getByRole('heading',{name:label,exact:true})});
+  for(const [label,isOpen] of [['Open holds',true],['Past holds',false]]){
+   const section=sections(label), ids=(await section.locator('small[data-supporting-text]').allTextContents()).map(x=>x.split(' ')[1]);
+   assert.deepEqual(ids,sortedIds(holdRows.filter(h=>(h.status==='open')===isOpen),'created_at'));
+   assert.ok(ids.length);assert.equal((await section.getByText(/^Created /).count())+(await section.getByText(/ · Created /).count()),ids.length);
+   assert.equal(await section.getByText(/^Expires /).count(),isOpen?ids.length:0);
+  }
+  assert.ok((await sections('Open holds').boundingBox()).y<(await sections('Past holds').boundingBox()).y);
+  await holders.screen('28-evaluation-holds','Arun’s open hold above past holds: newest first, all creation dates, expiration only for the open hold.');
+  const full=require('../data/evaluation-v1.json');
+  const pendingAt=full.attempts.filter(r=>r.member_id==='M1'&&r.status==='accepted'&&r.operation==='return').at(-1).requested_at;
+  const receipts=await boot('lending-evaluation-pending','prefix:'+pendingAt);
+  await receipts.press('Activity and receipts');await receipts.text('Past requests and receipts');await receipts.text('Pending requests');
+  const ownAttempts=(await receipts.agent.call(APP+'.list_activity',{})).attempts;
+  for(const [label,pending] of [['Pending requests',true],['Past requests and receipts',false]]){
+   const section=receipts.page.locator('section').filter({has:receipts.page.getByRole('heading',{name:label,exact:true})});
+   const ids=(await section.locator('small[data-supporting-text]').allTextContents()).map(x=>x.split(' ')[1]);
+   assert.deepEqual(ids,sortedIds(ownAttempts.filter(r=>(r.status==='pending')===pending),'requested_at'));assert.ok(ids.length);
+  }
+  await receipts.screen('29-evaluation-activity','Exact prefix between return request and desk decision: pending first, past receipts below, each newest first.');
+  const textStyles=await receipts.page.locator('#status, article .row-top strong, article small[data-supporting-text]').evaluateAll(nodes=>nodes.map(n=>({size:parseFloat(getComputedStyle(n).fontSize),color:getComputedStyle(n).color})));
+  for(const {size,color} of textStyles){assert.ok(size>=12);assert.ok(['rgb(68, 82, 104)','rgb(51, 68, 92)'].includes(color),color);}
+  assert.deepEqual([...floor.errors,...holders.errors,...receipts.errors],[]);
+
   if(screenDir)fs.writeFileSync(path.join(screenDir,'steps.json'),JSON.stringify(markers,null,2)+'\n');
   console.log('PASS: '+markers.length+' ordered Chromium states; five views, reload, hold/cap, desk rejection+retry, checkout/return, renewal/race, overdue/maintenance; separate Core/Agent readbacks and no JS errors.');
  }finally{

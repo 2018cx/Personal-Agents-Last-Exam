@@ -94,3 +94,16 @@ test('FIFO terminal history is internal and equal in projection vs committed res
  assert.deepEqual(next.queue_history,[{...prior.queue[0],ended_at:'2026-12-11T01:00:00.000Z',outcome:'promoted'}]);
  assert.deepEqual(call(next,'list_holds',{},later).result.queue,[]);
 });
+
+test('waitlist denies the current borrower and maintenance-only items without leaking other due dates',()=>{
+ const m2=data();m2.member_id='M2';
+ const ownCtx={...ctx(),binding:{...binding,accounts:[{...binding.accounts[0],owner_person_id:'M2'}]}};
+ const req=call(m2,'get_item',{item_id:'I2'},ownCtx).result;
+ assert.equal(req.item.your_active_loan,true);assert.ok(req.copies.find(x=>x.id==='C3').your_due_at);
+ assert.equal(call(data(),'get_item',{item_id:'I2'}).result.copies.find(x=>x.id==='C3').your_due_at,undefined);
+ assert.throws(()=>call(m2,'join_queue',{item_id:'I2'},ownCtx),{code:'already_borrowed'});
+ assert.throws(()=>call(m2,'join_queue',{item_id:'I6'},ownCtx),{code:'not_circulating'});
+ assert.throws(()=>send(m2,{item_id:'I6',member_id:'M3',sequence:12},'queue_join'),{code:'not_circulating'});
+ assert.deepEqual(call(m2,'search_items',{query:'I6'},ownCtx).result.items,[]);
+ assert.equal(call(m2,'list_holds',{},ownCtx).result.member_name,'Arun Patel');
+});

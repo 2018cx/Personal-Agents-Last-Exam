@@ -27,6 +27,7 @@ function validateSeed(ctx,d){
  unique([...d.holds.filter(open),...d.loans.filter(current)].map(x=>x.copy_id),'live custody claim');
  const dates=[d.seed_at,d.materialized_at,...d.holds.flatMap(x=>[x.created_at,x.expires_at]),...d.loans.flatMap(x=>[x.checked_out_at,x.due_at,x.returned_at,x.renewed_at].filter(Boolean)),...d.queue.map(x=>x.joined_at),...(d.queue_history||[]).flatMap(x=>[x.joined_at,x.ended_at]),...d.attempts.flatMap(x=>[x.requested_at,x.resolved_at].filter(Boolean))];
  if(dates.some(x=>!atLeast(x))||epoch(d.materialized_at)<epoch(d.seed_at))fail('invalid_seed','Use valid offset timestamps no earlier than January 1, 2025 (library time).');
+ if(ctx.virtual_now&&epoch(ctx.virtual_now)<epoch(d.materialized_at))fail('invalid_seed','The load clock precedes materialized history. Generate an as-of prefix first.');
  const observed=[...d.holds.map(x=>x.created_at),...d.loans.flatMap(x=>[x.checked_out_at,x.returned_at,x.renewed_at].filter(Boolean)),...[...d.queue,...(d.queue_history||[])].flatMap(x=>[x.joined_at,x.ended_at].filter(Boolean)),...d.attempts.flatMap(x=>[x.requested_at,x.resolved_at].filter(Boolean))];
  if(observed.some(x=>epoch(x)>epoch(d.materialized_at)))fail('invalid_seed','Observed history cannot be later than the materialized clock.');
  if([...d.queue,...(d.queue_history||[])].some(q=>q.sequence>=d.next_sequence||!lookup(d.items,q.item_id)||!lookup(d.members,q.member_id)||(q.ended_at&&epoch(q.ended_at)<epoch(q.joined_at))))fail('invalid_seed','Invalid queue entry or sequence counter.');
@@ -52,10 +53,12 @@ function copyStatus(d,c){
 }
 const forItem=(d,id)=>d.queue.filter(q=>q.item_id===id).sort(order);
 const itemCopies=(d,id)=>d.copies.filter(c=>c.item_id===id);
+const borrowed=(d,id,m)=>d.loans.some(l=>current(l)&&own(l,m)&&itemCopies(d,id).some(c=>c.id===l.copy_id));
+const hasCirculation=(d,id)=>itemCopies(d,id).some(c=>!c.maintenance);
 const available=(d,id)=>itemCopies(d,id).filter(c=>copyStatus(d,c)==='available').sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
 function summary(d,id,m){
  const x=need(lookup(d.items,id)), queue=forItem(d,id),pos=queue.findIndex(q=>own(q,m));
- return {...x,available:available(d,id).length,queue_length:queue.length,your_position:pos<0?null:pos+1};
+ return {...x,available:available(d,id).length,queue_length:queue.length,your_position:pos<0?null:pos+1, your_active_loan:borrowed(d,id,m), has_circulating_copy:hasCirculation(d,id)};
 }
 function createId(d,k,prefix,list,max=700){
  if(list.length>=max)fail('capacity_reached','Local fixture state limit reached.');
@@ -76,7 +79,7 @@ function closeQueue(d,q,t,outcome){
 function promote(d,t){
  for(const item of d.items){
   for(const c of available(d,item.id)){
-   const q=forItem(d,item.id).find(x=>uses(d,x.member_id)<2&&!hasOverdue(d,x.member_id,t));
+   const q=forItem(d,item.id).find(x=>!borrowed(d,item.id,x.member_id)&&uses(d,x.member_id)<2&&!hasOverdue(d,x.member_id,t));
    if(!q)break;
    closeQueue(d,q,t,'promoted');makeHold(d,q.member_id,c.id,t);
   }
@@ -100,6 +103,8 @@ function addQueue(d,m,id,t,sequence=d.next_sequence){
  need(lookup(d.items,id));need(lookup(d.members,m),'invalid_event','Unknown seeded member.');
  if(d.queue.some(q=>q.item_id===id&&own(q,m)))fail('already_queued','The member is already queued for this item.');
  if(d.holds.some(h=>open(h)&&own(h,m)&&lookup(d.copies,h.copy_id).item_id===id))fail('already_held','The member already holds a copy of this item.');
+ if(borrowed(d,id,m))fail('already_borrowed','You already have a copy of this item on loan.');
+ if(!hasCirculation(d,id))fail('not_circulating','This item has no serviceable copies.');
  if(sequence!==d.next_sequence)fail('invalid_event','Queue sequence does not match the next fixture ordinal.');
  if(d.queue.length>=200)fail('capacity_reached','Local queue limit reached.');
  d.next_sequence++;d.queue.push({item_id:id,member_id:m,sequence,joined_at:iso(t)});
@@ -155,10 +160,10 @@ function handleTool(ctx,orig,name,a){
  switch(name.slice(APP.length+1)){
   case 'search_items':{
    const q=(a.query||'').trim().toLowerCase();
-   return read({now,items:d.items.filter(i=>[i.name,i.description,i.id].join(' ').toLowerCase().includes(q)).map(i=>summary(d,i.id,m))});
+   return read({now,items:d.items.filter(i=>i.name.toLowerCase().includes(q)).map(i=>summary(d,i.id,m))});
   }
-  case 'get_item':return read({now,item:summary(d,a.item_id,m),copies:itemCopies(d,a.item_id).map(c=>({id:c.id,status:copyStatus(d,c)}))});
-  case 'list_holds':return read({now,holds:d.holds.filter(h=>own(h,m)).map(publicRow),queue:d.queue.filter(q=>own(q,m)).map(q=>({item_id:q.item_id,position:summary(d,q.item_id,m).your_position,length:forItem(d,q.item_id).length}))});
+  case 'get_item':return read({now,item:summary(d,a.item_id,m),copies:itemCopies(d,a.item_id).map(c=>{const loan=d.loans.find(l=>l.copy_id===c.id&&current(l)&&own(l,m));return {id:c.id,status:copyStatus(d,c),...(loan?{your_due_at:loan.due_at}:{})};})});
+  case 'list_holds':return read({now,member_name:lookup(d.members,m).name,holds:d.holds.filter(h=>own(h,m)).map(h=>({...publicRow(h),checkout_pending:d.attempts.some(r=>pending(r)&&r.operation==='checkout'&&r.reference_id===h.id)})),queue:d.queue.filter(q=>own(q,m)).map(q=>({item_id:q.item_id,position:summary(d,q.item_id,m).your_position,length:forItem(d,q.item_id).length}))});
   case 'list_loans':return read({now,loans:d.loans.filter(x=>own(x,m)).map(x=>({...publicRow(x),overdue:due(x,t)}))});
   case 'list_activity':return read({now,attempts:d.attempts.filter(x=>own(x,m)).map(publicRow)});
   case 'preview_renewal':return read(renewal(d,mine(d.loans,a.loan_id),t));
@@ -204,4 +209,4 @@ function handleTool(ctx,orig,name,a){
   default:fail('invalid_arguments','Unknown lending tool.');
  }
 }
-module.exports={validateSeed,applyEvent,handleTool,objects:d=>[...d.items,...d.copies,...d.holds,...d.loans,...d.attempts].map(x=>x.id),records:d=>d.copies,references:()=>[]};
+module.exports={reconcile,validateSeed,applyEvent,handleTool,objects:d=>[...d.items,...d.copies,...d.holds,...d.loans,...d.attempts].map(x=>x.id),records:d=>d.copies,references:()=>[]};

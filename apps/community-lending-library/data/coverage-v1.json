@@ -2,25 +2,25 @@
   "source": "synthetic-lending-v1",
   "real_records": 0,
   "timezone": "Asia/Shanghai",
-  "sha256": "ea69d810581f6dd5524e1fd26dd5b180cc9c01e2cd5682d8fc3f232cc00e0da2",
+  "sha256": "8a9dadb1b2e0555a098b827498af98f991f1e6164a4d865d1f362958c983659c",
   "first_date": "2025-01-01",
   "last_date": "2026-12-31",
-  "distinct_dates": 106,
+  "distinct_dates": 101,
   "realism": {
     "loans_by_item": {
-      "I1": 10,
-      "I2": 4,
-      "I3": 5,
-      "I4": 7,
-      "I5": 5,
-      "I7": 9,
+      "I1": 5,
+      "I2": 9,
+      "I3": 9,
+      "I4": 2,
+      "I5": 3,
+      "I7": 12,
       "I8": 3
     },
     "loans_by_member": {
-      "M1": 17,
-      "M2": 11,
-      "M3": 5,
-      "M4": 10
+      "M1": 8,
+      "M2": 14,
+      "M3": 6,
+      "M4": 15
     },
     "hold_outcomes": {
       "cancelled": 8,
@@ -35,18 +35,17 @@
     "returned_late": 9,
     "returns_by_elapsed_full_days": {
       "1": 7,
-      "2": 1,
-      "3": 3,
-      "4": 7,
-      "5": 5,
-      "6": 5,
+      "2": 3,
+      "3": 7,
+      "4": 4,
+      "5": 3,
+      "6": 3,
       "7": 3,
-      "8": 5,
-      "9": 3,
-      "11": 1,
-      "12": 2
+      "8": 8,
+      "9": 1,
+      "12": 3
     },
-    "renewed": 12,
+    "renewed": 11,
     "open_loans": 1,
     "open_holds": 1,
     "materialized_at": "2026-12-31T07:51:00.000Z"
@@ -80,12 +79,12 @@
     ]
   },
   "field_distinct_dates": {
-    "hold_created": 61,
+    "hold_created": 60,
     "checkout": 43,
-    "return": 42,
-    "renewal": 12,
-    "desk_requested": 79,
-    "desk_resolved": 79,
+    "return": 41,
+    "renewal": 11,
+    "desk_requested": 76,
+    "desk_resolved": 76,
     "queue_joined": 6,
     "queue_ended": 6
   },
@@ -119,7 +118,7 @@
       "source": "synthetic-lending-v1"
     },
     "2025-03": {
-      "dates": 3,
+      "dates": 4,
       "events": {
         "hold_created": 2,
         "checkout": 1,
@@ -131,7 +130,7 @@
       "source": "synthetic-lending-v1"
     },
     "2025-04": {
-      "dates": 4,
+      "dates": 3,
       "events": {
         "hold_created": 2,
         "checkout": 1,
@@ -186,7 +185,7 @@
       "source": "synthetic-lending-v1"
     },
     "2025-09": {
-      "dates": 7,
+      "dates": 6,
       "events": {
         "hold_created": 3,
         "return": 4,
@@ -222,7 +221,7 @@
       "source": "synthetic-lending-v1"
     },
     "2025-12": {
-      "dates": 7,
+      "dates": 6,
       "events": {
         "hold_created": 3,
         "checkout": 3,
@@ -248,24 +247,25 @@
       "source": "synthetic-lending-v1"
     },
     "2026-02": {
-      "dates": 3,
+      "dates": 4,
       "events": {
         "hold_created": 2,
         "checkout": 1,
         "renewal": 1,
-        "desk_requested": 1,
-        "desk_resolved": 1
+        "return": 1,
+        "desk_requested": 2,
+        "desk_resolved": 2
       },
       "source": "synthetic-lending-v1"
     },
     "2026-03": {
-      "dates": 4,
+      "dates": 3,
       "events": {
         "hold_created": 2,
-        "return": 3,
         "checkout": 2,
-        "desk_requested": 5,
-        "desk_resolved": 5,
+        "return": 2,
+        "desk_requested": 4,
+        "desk_resolved": 4,
         "queue_joined": 1,
         "queue_ended": 1
       },
@@ -306,12 +306,11 @@
       "source": "synthetic-lending-v1"
     },
     "2026-07": {
-      "dates": 5,
+      "dates": 4,
       "events": {
         "hold_created": 2,
         "return": 2,
         "checkout": 1,
-        "renewal": 1,
         "desk_requested": 4,
         "desk_resolved": 4
       },
@@ -330,7 +329,7 @@
       "source": "synthetic-lending-v1"
     },
     "2026-09": {
-      "dates": 4,
+      "dates": 3,
       "events": {
         "hold_created": 3,
         "checkout": 2,
@@ -350,7 +349,7 @@
       "source": "synthetic-lending-v1"
     },
     "2026-11": {
-      "dates": 4,
+      "dates": 3,
       "events": {
         "hold_created": 3,
         "checkout": 1,

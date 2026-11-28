@@ -1,8 +1,9 @@
 import {el} from '/shared/client.js';
 const app='community-lending-library.', root=document.querySelector('#app');
 const nav=el('nav',{'aria-label':'Lending views'}),status=el('p',{id:'status',role:'status','aria-live':'polite'},'Connecting…'),stage=el('article',{'aria-label':'Lending workspace'});
+const signedIn=el('p',{},'Fictional account');
 const brand=el('div',{class:'brand'},el('span',{class:'brand-mark','aria-hidden':'true'},'L'),el('h1',{},'Lending Library'));
-root.replaceChildren(el('aside',{class:'sidebar'},brand,nav,el('div',{class:'sidebar-foot'},el('p',{},'Community Lending Library · fictional account'))),el('main',{class:'app-main'},status,el('div',{class:'detail'},stage)));
+root.replaceChildren(el('aside',{class:'sidebar'},brand,nav,el('div',{class:'sidebar-foot'},signedIn)),el('main',{class:'app-main'},status,el('div',{class:'detail'},stage)));
 const pages=['Catalog','Item','Holds and queue','Current loans','Activity and receipts'];
 let csrf, tools=new Set(), page='Catalog', selection=null, serial=0;
 const say=text=>{status.textContent=text;};
@@ -16,6 +17,7 @@ const card=(...nodes)=>el('div',{class:'record fields'},...nodes);
 const desc=text=>el('small',{'data-supporting-text':''},text);
 const dateFmt=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',dateStyle:'medium',timeStyle:'short'});
 const when=t=>dateFmt.format(new Date(t))+' (library time)';
+const newest=key=>(a,b)=>Date.parse(b[key])-Date.parse(a[key])||b.id.localeCompare(a.id,undefined,{numeric:true});
 const nice=s=>({on_loan:'On loan',available:'Available',held:'Held',maintenance:'Maintenance',checked_out:'Checked out',cancelled:'Cancelled',expired:'Expired',open:'Open',pending:'Pending',accepted:'Accepted',rejected:'Desk rejected',member_waiting:'another member is waiting',overdue:'a loan is overdue',return_pending:'a return is pending',already_renewed:'already renewed',loan_closed:'this loan is closed'})[s]||s;
 const titleRow=(name,label)=>el('div',{class:'row-top'},el('h3',{},name),badge(label));
 async function catalog(){
@@ -95,27 +97,31 @@ async function show(next=page,message){
    const [d,member]=await Promise.all([call('get_item',{item_id:selection}),call('list_holds')]);if(t!==serial)return;
    const i=d.item, operations=el('div',{class:'actions'});
    const hasHold=member.holds.some(h=>h.status==='open'&&d.copies.some(c=>c.id===h.copy_id));
-   if(!i.available&&i.your_position==null&&!hasHold)action(operations,'Join waitlist','join_queue',{item_id:i.id},d.version,t,'Your queue entry was recorded.');
+   if(!i.available&&i.your_position==null&&!hasHold&&!i.your_active_loan&&i.has_circulating_copy)action(operations,'Join waitlist','join_queue',{item_id:i.id},d.version,t,'Your queue entry was recorded.');
    if(i.your_position!==null)action(operations,'Leave waitlist','leave_queue',{item_id:i.id},d.version,t,'You left this item’s waitlist.');
    const copies=d.copies.map((c,idx)=>{
     const view=card(titleRow('Copy '+(idx+1),nice(c.status)),desc('Catalog ID '+c.id));
+    if(c.your_due_at)view.append(p('You borrowed this copy · due '+when(c.your_due_at)));
     if(c.status==='available')planned(view,'Preview hold for Copy '+(idx+1),'Confirm hold','Hold only '+i.name+' · Copy '+(idx+1)+' for one simulated day.','confirm_hold',{item_id:i.id,copy_id:c.id},d.version,t,'Hold confirmed. Checkout still needs a simulated desk receipt.');
     return view;
    });
-   mount(panel(i.name,p(itemLine(i)),p('At most two copies; one-day holds; seven-day loans; one three-day renewal if eligible and nobody else is waiting.'),rows(copies,'There are no copies of this item.'),operations));
+   mount(panel(i.name,p(itemLine(i)),p(i.description),p('At most two copies; one-day holds; seven-day loans; one three-day renewal if eligible and nobody else is waiting.'),rows(copies,'There are no copies of this item.'),operations));
   } else if(page==='Holds and queue'){
    const [d,names]=await Promise.all([call('list_holds'),catalog()]);if(t!==serial)return;
-   const entries=d.holds.map(h=>{
+   const showHold=h=>{
     const {name,label}=identity(names,h.copy_id);
-    const view=card(titleRow(name,nice(h.status)),p(label+' · expires '+when(h.expires_at)),desc('Hold '+h.id+' · Catalog ID '+h.copy_id));
+    const view=card(titleRow(name,nice(h.status)),p(label+' · Created '+when(h.created_at)),desc('Hold '+h.id+' · Catalog ID '+h.copy_id));
     if(h.status==='open'){
-      action(view,'Request checkout for '+name+' · '+label,'request_checkout',{hold_id:h.id},d.version,t,'Checkout requested. Custody is unchanged until an accepted desk receipt.');
+      view.append(p('Expires '+when(h.expires_at)));
+      if(h.checkout_pending)view.append(p('Checkout request pending.'));
+      else action(view,'Request checkout for '+name+' · '+label,'request_checkout',{hold_id:h.id},d.version,t,'Checkout requested. Custody is unchanged until an accepted desk receipt.');
       planned(view,'Cancel hold for '+name+' · '+label,'Confirm cancellation','Cancel this hold and its pending checkout.','cancel_hold',{hold_id:h.id},d.version,t,'Hold cancelled; pending checkout cannot be accepted.');
     }
     return view;
-   });
+   };
+   const holds=(open)=>d.holds.filter(h=>(h.status==='open')===open).sort(newest('created_at')).map(showHold);
    const queues=d.queue.map(q=>{const name=names.byItem.get(q.item_id)||'Catalog item';const view=card(titleRow(name,'Waiting'),p('Position '+q.position+' of '+q.length),desc('Item '+q.item_id));action(view,'Leave waitlist for '+name,'leave_queue',{item_id:q.item_id},d.version,t,'You left this item’s waitlist.');return view;});
-   mount(panel('Your holds',rows(entries,'No holds.')),panel('Your queue positions',rows(queues,'You are not waiting for any item.')));
+   mount(panel('Open holds',rows(holds(true),'No open holds.')),panel('Past holds',rows(holds(false),'No past holds.')),panel('Your queue positions',rows(queues,'You are not waiting for any item.')));
   } else if(page==='Current loans'){
    const [d,names]=await Promise.all([call('list_loans'),catalog()]);if(t!==serial)return;
    const showLoan=l=>{
@@ -138,21 +144,34 @@ async function show(next=page,message){
    mount(panel('On loan now',rows(d.loans.filter(l=>!l.returned_at).sort(newest).map(showLoan),'No current loans.')),panel('Returned loans',rows(d.loans.filter(l=>l.returned_at).sort(newest).map(showLoan),'No returned loans.')));
   } else {
    const [d,names]=await Promise.all([call('list_activity'),catalog()]);if(t!==serial)return;
-   mount(rows(d.attempts.map(r=>{
+   const showAttempt=r=>{
     const {name,label}=identity(names,r.copy_id);
     const view=card(titleRow(name,nice(r.status)),p(label+' · '+(r.operation==='checkout'?'Checkout':'Return')),p('Requested '+when(r.requested_at)),desc('Request '+r.id+' · Attempt '+r.attempt+' · Catalog ID '+r.copy_id+(r.event_id?' · Desk receipt '+r.event_id:'')));
     if(r.status==='pending')planned(view,'Cancel '+(r.operation==='checkout'?'checkout':'return')+' request for '+name+' · '+label,'Confirm cancellation','Invalidate this request before desk acceptance.','cancel_request',{attempt_id:r.id},d.version,t,'Request cancelled; no custody change.');
     return view;
-   }),'No desk requests or receipts.'));
+   };
+   const attempts=(pending)=>d.attempts.filter(r=>(r.status==='pending')===pending).sort(newest('requested_at')).map(showAttempt);
+   mount(panel('Pending requests',rows(attempts(true),'No pending requests.')),panel('Past requests and receipts',rows(attempts(false),'No past requests or receipts.')));
   }
  }catch(e){if(t===serial)say(e.message);}
 }
 async function init(){
+ // Web Host serves a fixed asset allowlist. Keep application styling scoped
+ // without relaxing its CSP or modifying the shared style sheet on disk.
+ const sheet=[...document.styleSheets].find(s=>s.href?.endsWith('/shared/style.css'));
+ if(sheet)for(const custom of [
+  '#app #status {font-size: 12px; color: #445268; height: auto; min-height: 30px;}',
+  '#app .sidebar-foot {display: flex;}',
+  '#app .sidebar-foot p, #app [data-supporting-text], #app .empty {font-size: 12px; color: #445268;}',
+  '#app .row-top strong {font-size: 12px; font-weight: 600; color: #33445c;}',
+ ])sheet.insertRule(custom,sheet.cssRules.length);
+
  const token=new URLSearchParams(location.hash.slice(1)).get('access');
  if(token){history.replaceState(null,'',location.pathname);({csrf}=await request('/session',{token}));}
  else ({csrf}=await request('/session'));
  tools=new Set((await request('/api/tools')).tools.map(t=>t.name));
  nav.replaceChildren(...pages.map(label=>{const b=button(label,()=>show(label));b.dataset.page=label;return b;}),button('Refresh',()=>show()));
+ if(supported('list_holds')){const {member_name}=await call('list_holds');signedIn.textContent='Signed in as '+member_name+' · fictional account';}
  await show();
 }
 init().catch(e=>say(e.message));

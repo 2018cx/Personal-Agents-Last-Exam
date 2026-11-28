@@ -6,7 +6,7 @@ const root=process.env.PALE_RUNTIME_ROOT||path.resolve(__dirname,'../../../runti
 const {prepare}=require(path.join(root,'prepare.cjs')),{Client}=require(path.join(root,'client.cjs'));
 const src=path.resolve(__dirname,'..'), staging=prepare(src), history=require('../data/evaluation-v1.json');
 const provenance=require('../data/dataset-v1.json'), report=require('../data/coverage-v1.json');
-const base=require('../fixtures/minimal.json'), binding=require('../fixtures/binding.json');
+const base=require('../fixtures/minimal.json'), binding=require('../data/evaluation-binding-v1.json');
 const state=path.join(staging.root,'history-test'), run='lending-evaluation-proof';
 const make=(role,id=run)=>new Client(app,role,id,state,'history-'+role,{registry:staging.registry,...(role==='infra'?{initialProfile:'sandbox'}:{})});
 const i=make('infra'),a=make('agent'),isolated=make('agent','lending-unrelated'),otherI=make('infra','lending-unrelated');
@@ -21,6 +21,8 @@ async function main(){
  const opts={expected_version:initial.version,bundle,binding,data:history,virtual_now:history.materialized_at,request_id:'load-history-exact'};
  const beforeFloor={...history,seed_at:'2024-12-31T23:59:59+08:00'};
  ok(await i.call('env.load_seed',{...opts,data:beforeFloor,request_id:'reject-pre-floor'}),'invalid_seed');
+ const invalidClock=await i.call('env.load_seed',{...opts,virtual_now:'2026-11-20T00:00:00+08:00',request_id:'reject-earlier-clock'});
+ ok(invalidClock,'invalid_seed'); assert.deepEqual(ok(await i.call('env.snapshot')).snapshot.data,initial.snapshot.data);
  const loaded=ok(await i.call('env.load_seed',opts),'ready');
  const snapshots=ok(await i.call('env.snapshot'));
  assert.deepEqual(snapshots.snapshot.data,history);
@@ -55,6 +57,18 @@ async function main(){
  assert.deepEqual(ok(await i.call('env.snapshot')).snapshot.data,history);
  assert.deepEqual(ok(await i.call('env.snapshot')).snapshot.receipts,{});
  assert.deepEqual(ok(await read('list_holds')).holds,holds);
- console.log('PASS: versioned full-window seed in real Infra MCP; 2025 accepted, pre-floor rejected; separate Agent queried '+holds.length+' holds, '+loans.length+' loans and '+receipts.length+' attempts; owner scope, other-run isolation and reset verified.');
+ for(const clock of ['2025-01-01','2025-09-10','2026-06-15','2026-11-20','2026-12-31T15:51:00+08:00']){
+  const profile=JSON.parse(require('node:child_process').execFileSync(process.execPath,[path.join(src,'data','generate.cjs'),'--until',clock,'--profile'],{encoding:'utf8'}));
+  const {data,binding}=profile;
+  assert.deepEqual(binding.objects[app],[...data.items,...data.copies,...data.holds,...data.loans,...data.attempts].map(x=>x.id));
+  const old=ok(await i.call('env.snapshot'));
+  ok(await i.call('env.load_seed',{...profile,bundle,expected_version:old.version,request_id:'prefix-'+clock}),'ready');
+  const p=ok(await i.call('env.snapshot'));
+  assert.deepEqual(p.snapshot.data,data);
+  assert.equal(p.snapshot.virtual_now,data.materialized_at);
+  ok(await read('search_items'));ok(await read('list_holds'));ok(await read('list_loans'));ok(await read('list_activity'));
+  if(clock.endsWith('+08:00')){assert.deepEqual(data,history);assert.deepEqual(binding,opts.binding);}
+ }
+ console.log('PASS: versioned full-window seed in real Infra MCP; 2025 accepted, pre-floor rejected; separate Agent queried '+holds.length+' holds, '+loans.length+' loans and '+receipts.length+' attempts; owner scope, other-run isolation and reset verified. A mismatched early clock was rejected without committing; five exact-time prefixes were loaded and queried separately.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await Promise.allSettled([i.close(),a.close(),isolated.close(),otherI.close()]);staging.cleanup();});

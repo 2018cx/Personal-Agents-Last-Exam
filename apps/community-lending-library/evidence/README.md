@@ -2,9 +2,11 @@
 
 Scope: [approved proposal at 8dc6998b](https://github.com/2018cx/Personal-Agents-Last-Exam/blob/8dc6998b3520e093e17f73aa4263dedd36be8b98/proposals/environment/community-lending-library.md), with the [implementation-review evidence requirements](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/50#pullrequestreview-6094922236). The [second implementation review](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/50#pullrequestreview-6095914829) confirmed the first repair and requested the evaluation realism and UI follow-up delivered here. The new evidence supersedes the browser status in the initial implementation at `c11ce571e59aa1ee4119dfd13a6950e9a26d7792`. The follow-up commit containing this index is the candidate; the PR's evidence ZIP includes its exact Git commit and package-tree hash, browser logs, numbered screenshots and Core revision/time at each shot.
 
+[Follow-up review at `3933b37`](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/50#pullrequestreview-6096954924): steps 27–29 add a real early-clock catalog run, separate open/past holds with creation dates, and separate pending/past activity. Step 20b checks own-loan due date and the waitlist exclusion. The full-window clock test and independent earlier-clock loads are in [history-core.cjs](../tests/history-core.cjs).
+
 ## Original-product comparison
 
-These sources show the actual myTurn product. The public captures are linked at the publisher rather than copied into the App. The nominal dates are the publication/update date shown by the article or the capture date embedded in its filename, not a new sign-in session.
+These sources show the actual myTurn product. The public captures are linked at the publisher rather than copied into the App. Fresh signed-in screenshots were not captured because no authorized myTurn test account was available, and registration was outside the approved work. The published loans/reservation captures and guide remain the reference evidence; none is presented as a newly captured account. The nominal dates are the publication/update date shown by the article or the capture date embedded in its filename, not a new sign-in session.
 
 | Workflow | Public reference screenshots / documented behavior | Implemented comparison |
 | --- | --- | --- |
@@ -15,7 +17,7 @@ These sources show the actual myTurn product. The public captures are linked at 
 
 ## Ordered implemented captures and assertions
 
-Rerun [tests/browser.cjs](../tests/browser.cjs) with `PALE_LENDING_SCREEN_DIR` to regenerate the captures below and `steps.json`. Captures use Chromium Headless Shell 156.0.8078.79, Playwright Core 1.62.1, a 1280 × 850 viewport, sandbox profile and five named synthetic runs on Core. Browsing and decisions use the same App Agent tools as direct MCP. A distinct Infra MCP client checks persisted data/version; a second Agent client verifies user-scoped results.
+Rerun [tests/browser.cjs](../tests/browser.cjs) with `PALE_LENDING_SCREEN_DIR` to regenerate the captures below and `steps.json`. Captures use Chromium Headless Shell 156.0.8078.79, Playwright 1.56.1, a 1280 × 850 viewport, sandbox profile and eight named synthetic runs on Core. Browsing and decisions use the same App Agent tools as direct MCP. A distinct Infra MCP client checks persisted data/version; a second Agent client verifies user-scoped results.
 
 | Run / stage | Start → control → result | Observed / Core readback |
 | --- | --- | --- |
