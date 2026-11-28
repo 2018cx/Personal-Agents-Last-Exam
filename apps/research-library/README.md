@@ -97,6 +97,11 @@ The public Host exposes these sections against the standalone second-milestone b
 
 Viewer/editor grants remain authoritative in the App; tool discovery alone does not distinguish those grants. Available write forms explicitly warn that saving requires an editor grant and display Core's denial without changing state. Browser controls capture versions at form open; Cancel sends no business write, and retry of an identical form in the same dialog keeps a stable request ID.
 
+## Delivery evidence index
+
+- **Business workflows and GUI:** [ordered Chromium evidence and independent Core readbacks](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/4#issuecomment-7204126885) for reviewed App code `43d7789694090b50af365b3f08d6ea52d0faf60c`. This data-only addition does not change the UI or the default fixtures.
+- **Full-window history v1.0.0:** [provenance, loading and rerun instructions](data/history-v1/README.md), [scope approval and reviewed App code revision](data/history-v1/scope.json), [monthly/source counts and SHA-256s](data/history-v1/generated/coverage.json), [activity ledger](data/history-v1/generated/activity.jsonl) and [opt-in load payload](data/history-v1/generated/load-seed.json). Covers all 24 months of 2025–26: 486 activities on 408 dates, entirely synthetic. Use the separate public Infra/Agent MCP check to validate, load, query and reset the delivered bytes. The normal smoke run is unchanged.
+
 ## Standalone validation evidence
 
 Validated with public PALE runtime 1.6.0 / Core API 1.2.0 at pinned commit `61b637164e4abddf81536bb48935cdb688a69ff1`. The initial immutable backend milestone already delivered to the PR was `63241ad122603b31aea363942f1dfd378d82a4f5`; this candidate expands it without changing the approved proposal. The App instructions above reproduce the tests from a clean app-only copy and the pinned runtime.
