@@ -1,8 +1,8 @@
 {
   "schema_version": "pale.dataset.v1",
-  "dataset_id": "refund-only-returns-evaluation-v1",
-  "version": "1.0.0",
-  "description": "Versioned synthetic two-year order and request history, separate from smoke fixtures.",
+  "dataset_id": "refund-only-returns-evaluation-v2",
+  "version": "2.0.0",
+  "description": "Synthetic evaluation history materialized as of 2026-12-31T23:59:59.000Z.",
   "record_source_ids": [
     "synthetic-evaluation"
   ],
@@ -10,7 +10,7 @@
     {
       "source_id": "synthetic-evaluation",
       "kind": "synthetic",
-      "description": "Independently authored product names, order prices and deterministic simulated request histories. No external records or media.",
+      "description": "Original fictional product names, prices, and order/request episodes. No external records or media.",
       "uri": null,
       "license": "MIT",
       "usage": "permitted",
@@ -18,21 +18,20 @@
       "generation": {
         "method": "deterministic_rule_based",
         "tool": "evaluation/recount.cjs",
-        "tool_version": "1.0.0",
-        "seed": "fixed-2025-2026",
+        "tool_version": "2.0.0",
+        "seed": "0x2b8d9061",
         "parameters": {
-          "months": 24,
-          "orders_per_month": 2,
-          "counting_zone": "UTC"
+          "counting_zone": "UTC",
+          "as_of": "2026-12-31T23:59:59.000Z"
         }
       }
     }
   ],
   "transformations": [
-    "Deterministic synthetic IDs, fixed minor-unit amounts and UTC timestamps."
+    "Cutoff filters future orders and submissions, then projects each submitted request to the latest known status."
   ],
   "expected_counts": {
-    "records": 74,
+    "records": 78,
     "assets": 0
   },
   "quality_policy": {
@@ -43,6 +42,6 @@
   "review": {
     "status": "pending",
     "reviewer": null,
-    "notes": "Smoke fixtures are hand-authored; the evaluation dataset is independently generated. Xiao Cui (@2018cx) is responsible for human provenance and license review; no reviewer approval is asserted."
+    "notes": "Xiao Cui (@2018cx) is responsible for human provenance and license review."
   }
 }

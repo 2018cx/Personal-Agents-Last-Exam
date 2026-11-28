@@ -11,7 +11,7 @@ async function main(){
  h=await start({app:p.app,registry:p.registry,run,profile:'scenario',stateDir:path.join(p.root,'state')});
  i=new Client(p.app,'infra',h.run,h.stateDir,'browser-verifier',{registry:p.registry});await i.initialize();
  b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||undefined,headless:true,chromiumSandbox:true});
- const page=await b.newPage({viewport}),errors=[],steps=[];page.on('pageerror',e=>errors.push(e.message));
+ const page=await b.newPage({viewport,timezoneId:'Asia/Shanghai'}),errors=[],steps=[];page.on('pageerror',e=>errors.push(e.message));
  const btn=name=>page.getByRole('button',{name,exact:true}),visible=txt=>page.getByText(txt,{exact:true}).waitFor(),status=page.getByRole('status'),field=page.getByLabel('Order number');
  const open=async id=>{await btn('Order lookup').click();await field.fill(id);await btn('Find order').click();};
  const snap=()=>i.call('env.snapshot'),base=await snap();
@@ -26,6 +26,7 @@ async function main(){
  const reset=async()=>{a.equal((await i.call('env.reset',{expected_version:(await snap()).version})).status,'ready');const s=await snap();a.deepEqual(s.snapshot.data,base.snapshot.data);a.deepEqual(s.snapshot.receipts,{});a.equal(s.snapshot.virtual_now,base.snapshot.virtual_now);};
  const forward=async id=>{const s=await snap();a.equal((await i.call('env.advance_time',{expected_version:s.version,request_id:id,virtual_now:'2026-01-10T10:00:01Z'})).status,'committed');};
  await page.goto(h.accessUrl);await field.waitFor();
+ a.equal(await page.locator('p[role=status]').isVisible(),false);
  await frame('lookup','Open Web Host access link','Order lookup has a labeled order-number field and start action',noWrite);
  await open('bad?input');await visible('Enter a valid order number, such as #10421.');a.equal(await field.getAttribute('aria-invalid'),'true');
  await frame('malformed-number','Submit malformed order number','Inline message; no raw validator text and no state mutation',noWrite);
@@ -36,6 +37,7 @@ async function main(){
  await open('#10421');await visible('Desk organizer');
  a.match(await page.locator('article').innerText(),/¥13\.50/);
  a.doesNotMatch(await page.locator('article').innerText(),/2026-01-02T09:/);
+ a.match(await page.getByRole('region',{name:'Order summary'}).innerText(),/5:00 PM/);
  await frame('order-detail','Find #10421','Item, amount, formatted dates and eligibility visible; read only',noWrite);
  for(let pass=0;pass<2;pass++){
   await btn('Prepare refund preview').click();await status.getByText('Preview prepared. Nothing has been submitted.').waitFor();
@@ -60,6 +62,7 @@ async function main(){
  for(let pass=0;pass<2;pass++){
   await btn('Prepare refund preview').click();await btn('Confirm refund request').click();
   await status.getByText('Synthetic request recorded. No money was returned.').waitFor();
+  await visible('Submitted');await visible('Your request is recorded. You can cancel it before dispatch. No money was returned.');
   const id='RR-'+(pass+1);
   await frame('cancel-'+pass+'-confirmed','Confirm the '+(pass+1)+' refund request','Current request is confirmed',s=>{a.equal(s.data.requests.find(r=>r.id===id).status,'confirmed');return id+' confirmed';});
   await btn('Cancel request…').click();
@@ -75,13 +78,24 @@ async function main(){
  await frame('confirmed-after-cutoff','Advance past deadline after confirmation, then refresh','Request remains confirmed',s=>{a.equal(s.data.requests.find(r=>r.id==='request-1').status,'confirmed');return 'request-1 confirmed after deadline';});
  await btn('Cancel request…').click();await btn('Confirm cancellation').click();await status.getByText('Synthetic request cancelled.').waitFor();
  a.equal((await snap()).snapshot.data.requests.find(r=>r.id==='request-1').status,'cancelled');
- await open('#10426');await btn('View request 1 · dispatched').click();await visible('Dispatched requests cannot be cancelled.');
+ await open('#10426');await visible('Request already dispatched');await btn('View request 1 · dispatched').click();await visible('Dispatched requests cannot be cancelled.');
  a.equal(await btn('Cancel request…').count(),0);
  await frame('dispatched','Open dispatched request','Status stays dispatched; no cancellation button',s=>{a.equal(s.data.requests.find(r=>r.id==='request-4').status,'dispatched');return 'request-4 dispatched';});
+ await reset();await open('#10422');await btn('Review preview').click();await btn('Confirm refund request').waitFor();
+ const other=new Client(p.app,'agent',h.run,h.stateDir,'other-browser-session',{registry:p.registry});
+ try {
+  await other.initialize();
+  const prior=await snap(),confirmed=await other.call(p.app+'.confirm_request',{refund_request_id:'request-1',expected_version:prior.version,request_id:'second-tab-confirm'});
+  a.equal(confirmed.status,'committed');a.equal(confirmed.request.submitted_at,prior.snapshot.virtual_now);
+  await btn('Confirm refund request').click();await visible('The workspace changed. Refresh and review before retrying.');
+  await btn('Refresh view').click();await page.getByRole('heading',{name:'Request status',exact:true}).waitFor();
+  await visible('Submitted');a.equal(await btn('Confirm refund request').count(),0);a.equal(await btn('Cancel request…').count(),1);
+  await frame('stale-confirmed-refresh','Second session confirms; stale first session refreshes','Heading changes to Request status, submitted time and cancellation are shown',s=>{a.equal(s.data.requests.find(x=>x.id==='request-1').status,'confirmed');return 'request-1 confirmed once; first session is on Request status';});
+ } finally { await other.close(); }
  await reset();await open('#10421');await btn('Prepare refund preview').waitFor();
  await frame('reset','Reset through independent Infra, then look up again','Baseline and clock restored',noWrite);
  a.deepEqual(errors,[]);
- if(out)fs.writeFileSync(path.join(out,'sequence.json'),JSON.stringify({chromium:b.version(),viewport,run,steps},null,2)+'\n');
+ if(out)fs.writeFileSync(path.join(out,'sequence.json'),JSON.stringify({chromium:b.version(),viewport,timezone:'Asia/Shanghai',run,steps},null,2)+'\n');
  console.log('PASS: actual Chromium and independent Infra checks for lookup, malformed/missing order, two same-clock discards and cancellations, stale expiry, confirmed-after-deadline, dispatch cutoff and reset/replay.');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await Promise.allSettled([b?.close(),i?.close()]);await h?.close();p?.cleanup();});

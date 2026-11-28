@@ -1,5 +1,5 @@
 {
-  "schema": "refund-only-returns.coverage.v1",
+  "schema": "refund-only-returns.coverage.v2",
   "source": "synthetic-evaluation",
   "counting_zone": "UTC",
   "counted_fields": {
@@ -15,37 +15,37 @@
     "2026-12-31"
   ],
   "real": 0,
-  "synthetic": 74,
-  "distinct_dates": 74,
+  "synthetic": 78,
+  "distinct_dates": 78,
   "missing_months": [],
   "monthly": {
     "2025-01": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 5,
+      "days": 5
     },
     "2025-02": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 1,
+      "requests": 0,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 1,
+      "days": 1
     },
     "2025-03": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 0,
       "real": 0,
       "synthetic": 3,
       "days": 3
     },
     "2025-04": {
-      "orders": 2,
+      "orders": 0,
       "requests": 1,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 1,
+      "days": 1
     },
     "2025-05": {
       "orders": 2,
@@ -55,102 +55,102 @@
       "days": 3
     },
     "2025-06": {
+      "orders": 1,
+      "requests": 0,
+      "real": 0,
+      "synthetic": 1,
+      "days": 1
+    },
+    "2025-07": {
       "orders": 2,
       "requests": 1,
       "real": 0,
       "synthetic": 3,
       "days": 3
     },
-    "2025-07": {
-      "orders": 2,
-      "requests": 2,
-      "real": 0,
-      "synthetic": 4,
-      "days": 4
-    },
     "2025-08": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 0,
       "real": 0,
       "synthetic": 3,
       "days": 3
     },
     "2025-09": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 5,
+      "days": 5
     },
     "2025-10": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 1,
+      "requests": 0,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 1,
+      "days": 1
     },
     "2025-11": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 4,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 6,
+      "days": 6
     },
     "2025-12": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 5,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 7,
+      "days": 7
     },
     "2026-01": {
       "orders": 2,
-      "requests": 1,
+      "requests": 0,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 2,
+      "days": 2
     },
     "2026-02": {
-      "orders": 2,
+      "orders": 1,
       "requests": 1,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 2,
+      "days": 2
     },
     "2026-03": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 0,
       "real": 0,
       "synthetic": 3,
       "days": 3
     },
     "2026-04": {
-      "orders": 2,
+      "orders": 0,
       "requests": 1,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 1,
+      "days": 1
     },
     "2026-05": {
-      "orders": 2,
+      "orders": 1,
       "requests": 1,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 2,
+      "days": 2
     },
     "2026-06": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 3,
+      "requests": 0,
       "real": 0,
       "synthetic": 3,
       "days": 3
     },
     "2026-07": {
-      "orders": 2,
+      "orders": 1,
       "requests": 1,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 2,
+      "days": 2
     },
     "2026-08": {
       "orders": 2,
@@ -160,33 +160,33 @@
       "days": 3
     },
     "2026-09": {
-      "orders": 2,
-      "requests": 2,
+      "orders": 4,
+      "requests": 1,
       "real": 0,
-      "synthetic": 4,
-      "days": 4
+      "synthetic": 5,
+      "days": 5
     },
     "2026-10": {
       "orders": 2,
-      "requests": 1,
+      "requests": 0,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 2,
+      "days": 2
     },
     "2026-11": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 4,
+      "requests": 3,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 7,
+      "days": 7
     },
     "2026-12": {
-      "orders": 2,
-      "requests": 1,
+      "orders": 5,
+      "requests": 2,
       "real": 0,
-      "synthetic": 3,
-      "days": 3
+      "synthetic": 7,
+      "days": 7
     }
   },
-  "seed_sha256": "2e73ded1c247cfd132c90c7ba2d57a2347739fadec6d9c466cc8791cc217af34"
+  "seed_sha256": "ed6c039d262b07fc020b06d9808d6fbb0443bfbfdf6795fea0fba2e7a1997fb9"
 }

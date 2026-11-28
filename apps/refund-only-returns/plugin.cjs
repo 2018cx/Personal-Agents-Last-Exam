@@ -19,12 +19,13 @@ function validateSeed(ctx,d){
  for(const r of d.requests){
   const o=d.orders.find(o=>o.id===r.order_id);
   if(!o||!o.refundable||after(o.ordered_at,r.created_at)||after(r.created_at,o.return_deadline)||after(r.created_at,ctx.virtual_now))fail('invalid_seed','Invalid request history.');
+  if(r.submitted_at&&(!['confirmed','cancelled','dispatched'].includes(r.status)||after(r.created_at,r.submitted_at)||after(r.submitted_at,o.return_deadline)||after(r.submitted_at,ctx.virtual_now)))fail('invalid_seed','Invalid request submission time.');
  }
 }
 function handleTool(ctx,d,name,a){
  if(!owner(ctx,d))fail('permission_denied','Unbound synthetic account.');
  const get=(rows,id,n)=>rows.find(x=>x.id===id)||fail('not_found',n+' was not found in this account.');
- const order=id=>d.orders.find(o=>o.order_number===id)||get(d.orders,id,'Order'),request=id=>get(d.requests,id,'Request');
+ const order=id=>d.orders.find(o=>o.order_number===id.replace(/^#/,'').trim())||get(d.orders,id,'Order'),request=id=>get(d.requests,id,'Request');
  const view=o=>{const deadline_passed=after(ctx.virtual_now,o.return_deadline);return {...o,deadline_passed,eligibility:active(d,o.id)?'already_requested':!o.refundable?'ineligible':deadline_passed?'expired':'eligible'};};
  const out=result=>({data:d,result:{virtual_now:ctx.virtual_now,...result}});
  const read=r=>out({request:r,order:view(order(r.order_id))});
@@ -32,7 +33,7 @@ function handleTool(ctx,d,name,a){
   const e=view(o).eligibility;
   if(e==='expired')fail('return_expired','The deadline has passed. Nothing was submitted.');
   if(e==='ineligible')fail('ineligible','This item is not eligible.');
-  if(e==='already_requested')fail('already_requested','An active request already exists.');
+  if(e==='already_requested')fail('already_requested',active(d,o.id)?.status==='dispatched'?'A request has already been dispatched.':'An active request already exists.');
  };
  switch(name){
  case APP+'.lookup_order':return out({order:view(order(a.order_id))});
@@ -56,7 +57,7 @@ function handleTool(ctx,d,name,a){
   const r=request(a.refund_request_id),o=order(r.order_id);
   if(active(d,o.id)?.id===r.id)return read(r);
   if(r.status!=='draft')fail('not_draft','Only open previews may be confirmed.');
-  eligible(o);r.status='confirmed';return read(r);
+  eligible(o);r.status='confirmed';r.submitted_at=ctx.virtual_now;return read(r);
  }
  case APP+'.cancel_request':{
   const r=request(a.refund_request_id);

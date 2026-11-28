@@ -21,6 +21,6 @@ npm test
 ```
 
 - Business example and tests cover eligibility, date boundaries, allowed cancellation after deadline, repeat attempts and opaque IDs. Strict duplicate rejection stays enabled; separate per-order attempt ordinals distinguish a same-time second cancellation/discard from the first.
-- Live Core MCP verified versioned stale and fresh-expiry rejection, exact idempotent replay, per-role and per-run isolation, two reset/replays, and independent full-window data load plus monthly retrieval. The cutoff is inclusive. There was no real refund or external API use.
-- Live Web Host HTTP and browser mode verifies shared Core state, administrative denial, layout and input feedback, same-time reattempts, and complete scene transitions. See [GUI evidence and reference comparison](evidence/README.md).
-- Dataset: see [evaluation instructions and coverage](evaluation/README.md). The pinned monthly evaluation seed is separate from smoke fixtures; for a task at an earlier initial time, provide a scoped seed with no future orders or requests.
+- Live Core MCP verified versioned stale and fresh-expiry rejection, exact idempotent replay, per-role and per-run isolation, two reset/replays, and independent full-window and earlier Task loads, status as-of cutoff, public lookup with or without #, and reset. The cutoff is inclusive. There was no real refund or external API use.
+- Live Web Host HTTP and browser mode verifies shared Core state, administrative denial, layout and input feedback, same-time reattempts, and complete scene transitions including confirmed state after a stale refresh. See [GUI evidence and reference comparison](evidence/README.md).
+- Dataset: see [evaluation instructions and coverage](evaluation/README.md). The evaluation dataset is separate from smoke fixtures; for a Task at an earlier initial time, generate a loadable profile with matching metadata and no future records.

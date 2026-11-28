@@ -1,7 +1,7 @@
 [
   {
     "name": "refund-only-returns.lookup_order",
-    "description": "Find synthetic order by ID",
+    "description": "Look up a synthetic order by stable ID or order number, with or without the leading #.",
     "read_only": true,
     "scope": "refund-only-returns.lookup_order",
     "resource_target": "bound synthetic shopper account",
@@ -10,7 +10,7 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
         }
       },
       "required": [
@@ -144,7 +144,7 @@
   },
   {
     "name": "refund-only-returns.read_order",
-    "description": "Read order and its request history",
+    "description": "Read a synthetic order, its policy, and requests by stable ID or order number, with or without the leading #.",
     "read_only": true,
     "scope": "refund-only-returns.read_order",
     "resource_target": "bound synthetic shopper account",
@@ -153,7 +153,7 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
         }
       },
       "required": [
@@ -349,6 +349,10 @@
                 "type": "integer",
                 "minimum": 1,
                 "maximum": 256
+              },
+              "submitted_at": {
+                "type": "string",
+                "format": "date-time"
               }
             },
             "required": [
@@ -462,6 +466,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 256
+            },
+            "submitted_at": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -560,7 +568,7 @@
   },
   {
     "name": "refund-only-returns.prepare_preview",
-    "description": "Prepare a draft without submitting",
+    "description": "Prepare a refund preview for a synthetic order by stable ID or order number, with or without the leading #.",
     "read_only": false,
     "scope": "refund-only-returns.prepare_preview",
     "resource_target": "bound synthetic shopper account",
@@ -569,7 +577,7 @@
       "properties": {
         "order_id": {
           "type": "string",
-          "pattern": "^[A-Za-z0-9][-A-Za-z0-9_]{0,79}$"
+          "pattern": "^(?:[A-Za-z0-9][-A-Za-z0-9_]{0,79}|#[0-9]{5,12})$"
         },
         "expected_version": {
           "type": "object",
@@ -671,6 +679,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 256
+            },
+            "submitted_at": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -880,6 +892,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 256
+            },
+            "submitted_at": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -1089,6 +1105,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 256
+            },
+            "submitted_at": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [
@@ -1298,6 +1318,10 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 256
+            },
+            "submitted_at": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           "required": [

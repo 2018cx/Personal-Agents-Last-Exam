@@ -62,7 +62,7 @@ async function main(){
  const rs=make('infra','repeat-attempts'),ra=make('agent','repeat-attempts');await Promise.all([rs.initialize(),ra.initialize()]);
  const first=await snap(rs);let v=first.version;
  for(let k=0;k<4;k++){
-  let live=exp(await write(ra,'prepare_preview',o('10421'),v,'repeat-prepare-'+k),'committed');
+  let live=exp(await write(ra,'prepare_preview',o('#10421'),v,'repeat-prepare-'+k),'committed');
   a.equal(live.request.attempt,k+2);
   if(k<2)live=exp(await write(ra,'confirm_request',q(live.request.id),live.version,'repeat-confirm-'+k),'committed');
   live=exp(await write(ra,k<2?'cancel_request':'discard_preview',q(live.request.id),live.version,'repeat-end-'+k),'committed');
@@ -71,19 +71,46 @@ async function main(){
  const repeated=await snap(rs);
  a.equal(repeated.snapshot.virtual_now,first.snapshot.virtual_now);
  a.deepEqual(repeated.snapshot.data.requests.filter(r=>r.order_id==='order-1').map(r=>r.attempt),[1,2,3,4,5]);
- const ev=make('infra','full-window'),ea=make('agent','full-window');await Promise.all([ev.initialize(),ea.initialize()]);
- const pre=await snap(ev),data=require('../evaluation/seed.json'),dataset=require('../evaluation/dataset.json');
- const full=exp(await ev.call('env.load_seed',{expected_version:pre.version,request_id:'full-window-v1',data,virtual_now:'2026-12-31T23:59:59Z',bundle:{...pre.snapshot.resources.bundle,dataset}}),'ready');
- a.equal(full.quality.automated_pass,true);
- a.equal(exp(await call(ea,'read_order',o('20001'))).order.ordered_at.slice(0,10),'2025-01-01');
- a.equal(exp(await call(ea,'read_order',o('20048'))).order.ordered_at.slice(0,10),'2026-12-31');
- for(let m=0;m<24;m++){
-  const id='history-'+(2*m+1),r=exp(await call(ea,'read_order',o(id)));
-  a.equal(r.order.ordered_at.slice(0,7),new Date(Date.UTC(2025,m,1)).toISOString().slice(0,7));
-  a.ok(r.requests.length>=1);
-  a.equal(exp(await call(ea,'read_request',q(r.requests[0].id))).request.attempt,1);
+ const {profileAt,fullClock}=require('../evaluation/recount.cjs');
+ const timeline=require('../evaluation/timeline.json'),coverage=require('../evaluation/coverage.json');
+ a.equal(coverage.missing_months.length,0);a.ok(Object.values(coverage.monthly).some(m=>m.orders===0));
+ a.ok(Math.max(...Object.values(coverage.monthly).map(m=>m.orders))>=4);
+ const e=timeline.episodes.find(e=>e.outcome==='dispatched');
+ const profiles=[['full-window',fullClock],['task-start','2026-11-20T09:00:00Z'],
+  ['during-pending',e.submitted_at],['after-resolution',e.resolved_at],['empty-start','2025-01-01T00:00:00Z']];
+ for(const [run,cut] of profiles){
+  const ev=make('infra',run),ea=make('agent',run);await Promise.all([ev.initialize(),ea.initialize()]);
+  const pre=await snap(ev),{data,dataset,virtual_now}=profileAt(cut,timeline);
+  const full=exp(await ev.call('env.load_seed',{expected_version:pre.version,request_id:run,data,virtual_now,bundle:{...pre.snapshot.resources.bundle,dataset}}),'ready');
+  a.equal(full.quality.automated_pass,true);
+  const current=await snap(ev);a.deepEqual(current.snapshot.data,data);
+  a.equal(Date.parse(current.snapshot.virtual_now),Date.parse(cut));
+  a.equal(dataset.expected_counts.records,data.orders.length+data.requests.length);
+  const sample=data.orders[0];
+  if(sample){
+   const prefix='#'+sample.order_number;
+   a.deepEqual(exp(await call(ea,'lookup_order',o(prefix))).order,exp(await call(ea,'read_order',o(prefix))).order);
+  }else{
+   a.equal(run,'empty-start');exp(await call(ea,'read_order',o('#20001')),'not_found');
+  }
+  if(run==='full-window'){
+   a.deepEqual(data,require('../evaluation/seed.json'));a.deepEqual(dataset,require('../evaluation/dataset.json'));
+   a.equal(data.orders[0].ordered_at.slice(0,10),'2025-01-01');a.equal(data.orders.at(-1).ordered_at.slice(0,10),'2026-12-31');
+   a.deepEqual([...new Set(data.requests.map(q=>q.status))].sort(),['cancelled','dispatched']);
+   for(const qv of data.requests){
+    a.equal(exp(await call(ea,'read_request',q(qv.id))).request.submitted_at,qv.submitted_at);
+   }
+  }
+  if(run==='task-start'){
+   const someday=timeline.orders.find(x=>Date.parse(x.ordered_at)>Date.parse(cut));
+   exp(await call(ea,'read_order',o('#'+someday.order_number)),'not_found');
+   a.ok(data.requests.every(x=>Date.parse(x.submitted_at)<=Date.parse(cut)));
+  }
+  if(run==='during-pending'||run==='after-resolution')a.equal(exp(await call(ea,'read_request',q(e.id))).request.status,run==='during-pending'?'confirmed':'dispatched');
+  exp(await ev.call('env.reset',{expected_version:current.version}),'ready');
+  a.deepEqual((await snap(ev)).snapshot.data,data);
  }
- console.log('PASS: independent Infra/Agent MCP same-clock repeat cancellations and discards; full-window seed and per-month public reads.');
+ console.log('PASS: independent Infra/Agent MCP same-clock repeat cancellations and discards; full-window and early Task profile load, cutoff-aware request status, public #number lookup, and reset.');
  console.log('PASS: real Core MCP state, roles, time/optimistic-version boundary, replay/conflict, cancellation and two full resets/replays.');
 }
 main().catch(e=>{console.error(e,cs.map(c=>c.errors));process.exitCode=1;}).finally(async()=>{await Promise.allSettled(cs.map(c=>c.close()));p.cleanup();});
