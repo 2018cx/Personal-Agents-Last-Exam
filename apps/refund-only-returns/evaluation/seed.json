@@ -1,0 +1,774 @@
+{
+  "account_id": "shopper-local",
+  "merchant": {
+    "id": "paperfield",
+    "name": "Paperfield Goods (fictional)"
+  },
+  "policy": {
+    "id": "returns-v1",
+    "version": "1.0",
+    "summary": "Confirm through the return deadline; cancellation is available until dispatch."
+  },
+  "orders": [
+    {
+      "id": "history-1",
+      "item_id": "history-item-1",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-01-01T09:15:00.000Z",
+      "return_deadline": "2025-01-15T09:15:00.000Z",
+      "refund_minor": 1350,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20001"
+    },
+    {
+      "id": "history-2",
+      "item_id": "history-item-2",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-01-18T10:30:00.000Z",
+      "return_deadline": "2025-02-01T10:30:00.000Z",
+      "refund_minor": 2890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20002"
+    },
+    {
+      "id": "history-3",
+      "item_id": "history-item-3",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-02-04T11:45:00.000Z",
+      "return_deadline": "2025-02-25T11:45:00.000Z",
+      "refund_minor": 1790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20003"
+    },
+    {
+      "id": "history-4",
+      "item_id": "history-item-4",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-02-19T12:00:00.000Z",
+      "return_deadline": "2025-03-12T12:00:00.000Z",
+      "refund_minor": 2530,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20004"
+    },
+    {
+      "id": "history-5",
+      "item_id": "history-item-5",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-03-05T13:15:00.000Z",
+      "return_deadline": "2025-03-26T13:15:00.000Z",
+      "refund_minor": 2400,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20005"
+    },
+    {
+      "id": "history-6",
+      "item_id": "history-item-6",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-03-20T14:30:00.000Z",
+      "return_deadline": "2025-04-10T14:30:00.000Z",
+      "refund_minor": 5180,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20006"
+    },
+    {
+      "id": "history-7",
+      "item_id": "history-item-7",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-04-06T15:45:00.000Z",
+      "return_deadline": "2025-04-20T15:45:00.000Z",
+      "refund_minor": 3190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20007"
+    },
+    {
+      "id": "history-8",
+      "item_id": "history-item-8",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-04-21T16:00:00.000Z",
+      "return_deadline": "2025-05-05T16:00:00.000Z",
+      "refund_minor": 3890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20008"
+    },
+    {
+      "id": "history-9",
+      "item_id": "history-item-9",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-05-07T17:15:00.000Z",
+      "return_deadline": "2025-05-28T17:15:00.000Z",
+      "refund_minor": 2430,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20009"
+    },
+    {
+      "id": "history-10",
+      "item_id": "history-item-10",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-05-22T08:30:00.000Z",
+      "return_deadline": "2025-06-12T08:30:00.000Z",
+      "refund_minor": 1190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20010"
+    },
+    {
+      "id": "history-11",
+      "item_id": "history-item-11",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-06-03T09:45:00.000Z",
+      "return_deadline": "2025-06-24T09:45:00.000Z",
+      "refund_minor": 5080,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20011"
+    },
+    {
+      "id": "history-12",
+      "item_id": "history-item-12",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-06-23T10:00:00.000Z",
+      "return_deadline": "2025-07-14T10:00:00.000Z",
+      "refund_minor": 1450,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20012"
+    },
+    {
+      "id": "history-13",
+      "item_id": "history-item-13",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-07-04T11:15:00.000Z",
+      "return_deadline": "2025-07-18T11:15:00.000Z",
+      "refund_minor": 3790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20013"
+    },
+    {
+      "id": "history-14",
+      "item_id": "history-item-14",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-07-24T12:30:00.000Z",
+      "return_deadline": "2025-08-07T12:30:00.000Z",
+      "refund_minor": 1890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20014"
+    },
+    {
+      "id": "history-15",
+      "item_id": "history-item-15",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-08-05T13:45:00.000Z",
+      "return_deadline": "2025-08-26T13:45:00.000Z",
+      "refund_minor": 1490,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20015"
+    },
+    {
+      "id": "history-16",
+      "item_id": "history-item-16",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-08-18T14:00:00.000Z",
+      "return_deadline": "2025-09-08T14:00:00.000Z",
+      "refund_minor": 2500,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20016"
+    },
+    {
+      "id": "history-17",
+      "item_id": "history-item-17",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-09-06T15:15:00.000Z",
+      "return_deadline": "2025-09-27T15:15:00.000Z",
+      "refund_minor": 1350,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20017"
+    },
+    {
+      "id": "history-18",
+      "item_id": "history-item-18",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-09-19T16:30:00.000Z",
+      "return_deadline": "2025-10-10T16:30:00.000Z",
+      "refund_minor": 2890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20018"
+    },
+    {
+      "id": "history-19",
+      "item_id": "history-item-19",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-10-07T17:45:00.000Z",
+      "return_deadline": "2025-10-21T17:45:00.000Z",
+      "refund_minor": 1790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20019"
+    },
+    {
+      "id": "history-20",
+      "item_id": "history-item-20",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-10-20T08:00:00.000Z",
+      "return_deadline": "2025-11-03T08:00:00.000Z",
+      "refund_minor": 2530,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20020"
+    },
+    {
+      "id": "history-21",
+      "item_id": "history-item-21",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-11-03T09:15:00.000Z",
+      "return_deadline": "2025-11-24T09:15:00.000Z",
+      "refund_minor": 2400,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20021"
+    },
+    {
+      "id": "history-22",
+      "item_id": "history-item-22",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-11-21T10:30:00.000Z",
+      "return_deadline": "2025-12-12T10:30:00.000Z",
+      "refund_minor": 5180,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20022"
+    },
+    {
+      "id": "history-23",
+      "item_id": "history-item-23",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-12-04T11:45:00.000Z",
+      "return_deadline": "2025-12-25T11:45:00.000Z",
+      "refund_minor": 3190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20023"
+    },
+    {
+      "id": "history-24",
+      "item_id": "history-item-24",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2025-12-22T12:00:00.000Z",
+      "return_deadline": "2026-01-12T12:00:00.000Z",
+      "refund_minor": 3890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20024"
+    },
+    {
+      "id": "history-25",
+      "item_id": "history-item-25",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-01-05T13:15:00.000Z",
+      "return_deadline": "2026-01-19T13:15:00.000Z",
+      "refund_minor": 2430,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20025"
+    },
+    {
+      "id": "history-26",
+      "item_id": "history-item-26",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-01-23T14:30:00.000Z",
+      "return_deadline": "2026-02-06T14:30:00.000Z",
+      "refund_minor": 1190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20026"
+    },
+    {
+      "id": "history-27",
+      "item_id": "history-item-27",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-02-06T15:45:00.000Z",
+      "return_deadline": "2026-02-27T15:45:00.000Z",
+      "refund_minor": 5080,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20027"
+    },
+    {
+      "id": "history-28",
+      "item_id": "history-item-28",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-02-24T16:00:00.000Z",
+      "return_deadline": "2026-03-17T16:00:00.000Z",
+      "refund_minor": 1450,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20028"
+    },
+    {
+      "id": "history-29",
+      "item_id": "history-item-29",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-03-07T17:15:00.000Z",
+      "return_deadline": "2026-03-28T17:15:00.000Z",
+      "refund_minor": 3790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20029"
+    },
+    {
+      "id": "history-30",
+      "item_id": "history-item-30",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-03-18T08:30:00.000Z",
+      "return_deadline": "2026-04-08T08:30:00.000Z",
+      "refund_minor": 1890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20030"
+    },
+    {
+      "id": "history-31",
+      "item_id": "history-item-31",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-04-03T09:45:00.000Z",
+      "return_deadline": "2026-04-17T09:45:00.000Z",
+      "refund_minor": 1490,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20031"
+    },
+    {
+      "id": "history-32",
+      "item_id": "history-item-32",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-04-19T10:00:00.000Z",
+      "return_deadline": "2026-05-03T10:00:00.000Z",
+      "refund_minor": 2500,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20032"
+    },
+    {
+      "id": "history-33",
+      "item_id": "history-item-33",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-05-04T11:15:00.000Z",
+      "return_deadline": "2026-05-25T11:15:00.000Z",
+      "refund_minor": 1350,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20033"
+    },
+    {
+      "id": "history-34",
+      "item_id": "history-item-34",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-05-20T12:30:00.000Z",
+      "return_deadline": "2026-06-10T12:30:00.000Z",
+      "refund_minor": 2890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20034"
+    },
+    {
+      "id": "history-35",
+      "item_id": "history-item-35",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-06-05T13:45:00.000Z",
+      "return_deadline": "2026-06-26T13:45:00.000Z",
+      "refund_minor": 1790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20035"
+    },
+    {
+      "id": "history-36",
+      "item_id": "history-item-36",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-06-21T14:00:00.000Z",
+      "return_deadline": "2026-07-12T14:00:00.000Z",
+      "refund_minor": 2530,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20036"
+    },
+    {
+      "id": "history-37",
+      "item_id": "history-item-37",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-07-06T15:15:00.000Z",
+      "return_deadline": "2026-07-20T15:15:00.000Z",
+      "refund_minor": 2400,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20037"
+    },
+    {
+      "id": "history-38",
+      "item_id": "history-item-38",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-07-22T16:30:00.000Z",
+      "return_deadline": "2026-08-05T16:30:00.000Z",
+      "refund_minor": 5180,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20038"
+    },
+    {
+      "id": "history-39",
+      "item_id": "history-item-39",
+      "item_name": "Cotton tote",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-08-07T17:45:00.000Z",
+      "return_deadline": "2026-08-28T17:45:00.000Z",
+      "refund_minor": 3190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20039"
+    },
+    {
+      "id": "history-40",
+      "item_id": "history-item-40",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-08-23T08:00:00.000Z",
+      "return_deadline": "2026-09-13T08:00:00.000Z",
+      "refund_minor": 3890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20040"
+    },
+    {
+      "id": "history-41",
+      "item_id": "history-item-41",
+      "item_name": "A5 sketchbook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-09-03T09:15:00.000Z",
+      "return_deadline": "2026-09-24T09:15:00.000Z",
+      "refund_minor": 2430,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20041"
+    },
+    {
+      "id": "history-42",
+      "item_id": "history-item-42",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-09-24T10:30:00.000Z",
+      "return_deadline": "2026-10-15T10:30:00.000Z",
+      "refund_minor": 1190,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20042"
+    },
+    {
+      "id": "history-43",
+      "item_id": "history-item-43",
+      "item_name": "Steel bottle",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-10-04T11:45:00.000Z",
+      "return_deadline": "2026-10-18T11:45:00.000Z",
+      "refund_minor": 5080,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20043"
+    },
+    {
+      "id": "history-44",
+      "item_id": "history-item-44",
+      "item_name": "Desk organizer",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-10-18T12:00:00.000Z",
+      "return_deadline": "2026-11-01T12:00:00.000Z",
+      "refund_minor": 1450,
+      "currency": "CNY",
+      "refundable": false,
+      "order_number": "20044"
+    },
+    {
+      "id": "history-45",
+      "item_id": "history-item-45",
+      "item_name": "Reading stand",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-11-05T13:15:00.000Z",
+      "return_deadline": "2026-11-26T13:15:00.000Z",
+      "refund_minor": 3790,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20045"
+    },
+    {
+      "id": "history-46",
+      "item_id": "history-item-46",
+      "item_name": "Canvas pencil case",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-11-19T14:30:00.000Z",
+      "return_deadline": "2026-12-10T14:30:00.000Z",
+      "refund_minor": 1890,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20046"
+    },
+    {
+      "id": "history-47",
+      "item_id": "history-item-47",
+      "item_name": "Cable clips",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-12-06T15:45:00.000Z",
+      "return_deadline": "2026-12-27T15:45:00.000Z",
+      "refund_minor": 1490,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20047"
+    },
+    {
+      "id": "history-48",
+      "item_id": "history-item-48",
+      "item_name": "Linen notebook",
+      "policy_id": "returns-v1",
+      "ordered_at": "2026-12-31T16:00:00.000Z",
+      "return_deadline": "2027-01-21T16:00:00.000Z",
+      "refund_minor": 2500,
+      "currency": "CNY",
+      "refundable": true,
+      "order_number": "20048"
+    }
+  ],
+  "requests": [
+    {
+      "id": "history-request-1",
+      "order_id": "history-1",
+      "status": "cancelled",
+      "created_at": "2025-01-03T09:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-3",
+      "order_id": "history-3",
+      "status": "dispatched",
+      "created_at": "2025-02-07T11:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-5",
+      "order_id": "history-5",
+      "status": "confirmed",
+      "created_at": "2025-03-09T13:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-7",
+      "order_id": "history-7",
+      "status": "discarded",
+      "created_at": "2025-04-11T15:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-9",
+      "order_id": "history-9",
+      "status": "cancelled",
+      "created_at": "2025-05-13T17:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-11",
+      "order_id": "history-11",
+      "status": "dispatched",
+      "created_at": "2025-06-05T09:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-13",
+      "order_id": "history-13",
+      "status": "confirmed",
+      "created_at": "2025-07-07T11:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-14",
+      "order_id": "history-14",
+      "status": "discarded",
+      "created_at": "2025-07-27T12:30:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-15",
+      "order_id": "history-15",
+      "status": "discarded",
+      "created_at": "2025-08-09T13:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-17",
+      "order_id": "history-17",
+      "status": "cancelled",
+      "created_at": "2025-09-11T15:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-19",
+      "order_id": "history-19",
+      "status": "dispatched",
+      "created_at": "2025-10-13T17:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-21",
+      "order_id": "history-21",
+      "status": "confirmed",
+      "created_at": "2025-11-05T09:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-23",
+      "order_id": "history-23",
+      "status": "discarded",
+      "created_at": "2025-12-07T11:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-25",
+      "order_id": "history-25",
+      "status": "cancelled",
+      "created_at": "2026-01-09T13:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-27",
+      "order_id": "history-27",
+      "status": "dispatched",
+      "created_at": "2026-02-11T15:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-29",
+      "order_id": "history-29",
+      "status": "confirmed",
+      "created_at": "2026-03-13T17:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-31",
+      "order_id": "history-31",
+      "status": "discarded",
+      "created_at": "2026-04-05T09:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-33",
+      "order_id": "history-33",
+      "status": "cancelled",
+      "created_at": "2026-05-07T11:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-35",
+      "order_id": "history-35",
+      "status": "dispatched",
+      "created_at": "2026-06-09T13:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-37",
+      "order_id": "history-37",
+      "status": "confirmed",
+      "created_at": "2026-07-11T15:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-39",
+      "order_id": "history-39",
+      "status": "discarded",
+      "created_at": "2026-08-13T17:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-41",
+      "order_id": "history-41",
+      "status": "cancelled",
+      "created_at": "2026-09-05T09:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-42",
+      "order_id": "history-42",
+      "status": "dispatched",
+      "created_at": "2026-09-26T10:30:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-43",
+      "order_id": "history-43",
+      "status": "dispatched",
+      "created_at": "2026-10-07T11:45:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-45",
+      "order_id": "history-45",
+      "status": "confirmed",
+      "created_at": "2026-11-09T13:15:00.000Z",
+      "attempt": 1
+    },
+    {
+      "id": "history-request-47",
+      "order_id": "history-47",
+      "status": "discarded",
+      "created_at": "2026-12-11T15:45:00.000Z",
+      "attempt": 1
+    }
+  ]
+}

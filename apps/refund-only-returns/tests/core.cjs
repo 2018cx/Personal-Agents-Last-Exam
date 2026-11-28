@@ -1,5 +1,5 @@
 'use strict';
-const a=require('node:assert/strict'),path=require('node:path'),r=path.resolve(process.env.PALE_RUNTIME_ROOT);
+const a=require('node:assert/strict'),path=require('node:path'),r=path.resolve(process.env.PALE_RUNTIME_ROOT||path.join(__dirname,'../../../runtime'));
 const {prepare}=require(r+'/prepare.cjs'),{Client}=require(r+'/client.cjs');
 const app='refund-only-returns',p=prepare(path.join(__dirname,'..')),cs=[];
 const make=(role,run,initialProfile)=>{const c=new Client(app,role,run,path.join(p.root,'state'),'returns-verifier',{registry:p.registry,initialProfile});cs.push(c);return c;};
@@ -58,6 +58,32 @@ async function main(){
   a.equal(drop.request.status,'discarded');
   a.equal(exp(await call(g2,'read_order',o('order-1'))).requests.filter(x=>x.status==='confirmed').length,0);
  }
+ // Identical virtual time, distinct attempt records. Core must retain duplicate_records: reject.
+ const rs=make('infra','repeat-attempts'),ra=make('agent','repeat-attempts');await Promise.all([rs.initialize(),ra.initialize()]);
+ const first=await snap(rs);let v=first.version;
+ for(let k=0;k<4;k++){
+  let live=exp(await write(ra,'prepare_preview',o('10421'),v,'repeat-prepare-'+k),'committed');
+  a.equal(live.request.attempt,k+2);
+  if(k<2)live=exp(await write(ra,'confirm_request',q(live.request.id),live.version,'repeat-confirm-'+k),'committed');
+  live=exp(await write(ra,k<2?'cancel_request':'discard_preview',q(live.request.id),live.version,'repeat-end-'+k),'committed');
+  a.equal(live.request.status,k<2?'cancelled':'discarded');v=live.version;
+ }
+ const repeated=await snap(rs);
+ a.equal(repeated.snapshot.virtual_now,first.snapshot.virtual_now);
+ a.deepEqual(repeated.snapshot.data.requests.filter(r=>r.order_id==='order-1').map(r=>r.attempt),[1,2,3,4,5]);
+ const ev=make('infra','full-window'),ea=make('agent','full-window');await Promise.all([ev.initialize(),ea.initialize()]);
+ const pre=await snap(ev),data=require('../evaluation/seed.json'),dataset=require('../evaluation/dataset.json');
+ const full=exp(await ev.call('env.load_seed',{expected_version:pre.version,request_id:'full-window-v1',data,virtual_now:'2026-12-31T23:59:59Z',bundle:{...pre.snapshot.resources.bundle,dataset}}),'ready');
+ a.equal(full.quality.automated_pass,true);
+ a.equal(exp(await call(ea,'read_order',o('20001'))).order.ordered_at.slice(0,10),'2025-01-01');
+ a.equal(exp(await call(ea,'read_order',o('20048'))).order.ordered_at.slice(0,10),'2026-12-31');
+ for(let m=0;m<24;m++){
+  const id='history-'+(2*m+1),r=exp(await call(ea,'read_order',o(id)));
+  a.equal(r.order.ordered_at.slice(0,7),new Date(Date.UTC(2025,m,1)).toISOString().slice(0,7));
+  a.ok(r.requests.length>=1);
+  a.equal(exp(await call(ea,'read_request',q(r.requests[0].id))).request.attempt,1);
+ }
+ console.log('PASS: independent Infra/Agent MCP same-clock repeat cancellations and discards; full-window seed and per-month public reads.');
  console.log('PASS: real Core MCP state, roles, time/optimistic-version boundary, replay/conflict, cancellation and two full resets/replays.');
 }
 main().catch(e=>{console.error(e,cs.map(c=>c.errors));process.exitCode=1;}).finally(async()=>{await Promise.allSettled(cs.map(c=>c.close()));p.cleanup();});

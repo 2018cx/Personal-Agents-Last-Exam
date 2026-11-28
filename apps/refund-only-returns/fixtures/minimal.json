@@ -19,7 +19,8 @@
       "return_deadline": "2026-01-15T10:00:00Z",
       "refund_minor": 1350,
       "currency": "CNY",
-      "refundable": true
+      "refundable": true,
+      "order_number": "10421"
     },
     {
       "id": "order-2",
@@ -30,7 +31,8 @@
       "return_deadline": "2026-01-10T10:00:00Z",
       "refund_minor": 1700,
       "currency": "CNY",
-      "refundable": true
+      "refundable": true,
+      "order_number": "10422"
     },
     {
       "id": "order-3",
@@ -41,7 +43,8 @@
       "return_deadline": "2025-01-14T10:00:00Z",
       "refund_minor": 2050,
       "currency": "CNY",
-      "refundable": true
+      "refundable": true,
+      "order_number": "10423"
     },
     {
       "id": "order-4",
@@ -52,7 +55,8 @@
       "return_deadline": "2026-01-15T10:00:00Z",
       "refund_minor": 2400,
       "currency": "CNY",
-      "refundable": false
+      "refundable": false,
+      "order_number": "10424"
     },
     {
       "id": "order-5",
@@ -63,7 +67,8 @@
       "return_deadline": "2026-01-15T10:00:00Z",
       "refund_minor": 2750,
       "currency": "CNY",
-      "refundable": true
+      "refundable": true,
+      "order_number": "10425"
     },
     {
       "id": "order-6",
@@ -74,7 +79,8 @@
       "return_deadline": "2026-01-15T10:00:00Z",
       "refund_minor": 3100,
       "currency": "CNY",
-      "refundable": true
+      "refundable": true,
+      "order_number": "10426"
     }
   ],
   "requests": [
@@ -82,25 +88,29 @@
       "id": "request-1",
       "order_id": "order-2",
       "status": "draft",
-      "created_at": "2026-01-03T09:00:00Z"
+      "created_at": "2026-01-03T09:00:00Z",
+      "attempt": 1
     },
     {
       "id": "request-2",
       "order_id": "order-5",
       "status": "confirmed",
-      "created_at": "2026-01-03T09:00:00Z"
+      "created_at": "2026-01-03T09:00:00Z",
+      "attempt": 1
     },
     {
       "id": "request-3",
       "order_id": "order-1",
       "status": "cancelled",
-      "created_at": "2026-01-03T09:00:00Z"
+      "created_at": "2026-01-03T09:00:00Z",
+      "attempt": 1
     },
     {
       "id": "request-4",
       "order_id": "order-6",
       "status": "dispatched",
-      "created_at": "2026-01-03T09:00:00Z"
+      "created_at": "2026-01-03T09:00:00Z",
+      "attempt": 1
     }
   ]
 }

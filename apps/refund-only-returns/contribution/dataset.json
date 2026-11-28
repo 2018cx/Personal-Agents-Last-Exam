@@ -2,7 +2,7 @@
   "schema_version": "pale.dataset.v1",
   "dataset_id": "refund-only-returns-v1",
   "version": "0.1.0",
-  "description": "Fictional orders and refund-request history.",
+  "description": "Independent fictional smoke fixture. See evaluation/dataset.json and coverage.json for the separate full-window synthetic evaluation package.",
   "record_source_ids": [
     "authored"
   ],
@@ -39,6 +39,6 @@
   "review": {
     "status": "pending",
     "reviewer": null,
-    "notes": "Human provenance and license review remains pending."
+    "notes": "Smoke fixtures are hand-authored; the evaluation dataset is independently generated. Xiao Cui (@2018cx) is responsible for human provenance and license review; no reviewer approval is asserted."
   }
 }

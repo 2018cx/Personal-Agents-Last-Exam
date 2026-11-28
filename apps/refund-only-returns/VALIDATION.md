@@ -1,21 +1,26 @@
 # Refund-only Returns v1 validation
+Scope: [PALE #7](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/7), approved plan commit `eae4dd2625981deb4776fe2ba452717fb4e41e03`. Implementation and maintenance: Xiao Cui (@2018cx). The approved proposal is unchanged; there are no sibling Apps or integrations.
 
-Scope: [PALE #7](https://github.com/MatrAIx-ai/Personal-Agents-Last-Exam/pull/7), approved proposal commit `eae4dd2625981deb4776fe2ba452717fb4e41e03`. Implementation and maintenance: Xiao Cui (@2018cx). The proposal file is not modified by this implementation.
+The shared runtime is Core API 1.2.0 / runtime 1.6.0. The compatibility baselines are current main at `25d559778696dff849bb88fcca03f325185f2599` and the pinned `61b637164e4abddf81536bb48935cdb688a69ff1`. The companion validation capture records the exact candidate, runtime, browser and Node versions and check outputs.
 
-Verified with PALE Core API 1.2.0 / runtime 1.6.0 from upstream `ae889d2cbbfc72242fc5e70b877f3f2a2f029618` and the pinned reference `61b637164e4abddf81536bb48935cdb688a69ff1` on Node 24.22.3. Optional browser driver uses Playwright and sandbox-enabled Chromium 156.0.8078.79; those are test tools, not dependencies of the App. From this App directory:
-
+From the App directory:
 ```sh
-export PALE_RUNTIME_ROOT=/absolute/path/to/pale/runtime
-node "$PALE_RUNTIME_ROOT/cli.cjs" verify --app "$PWD"
+# PALE_RUNTIME_ROOT defaults to the checkout's runtime; optionally set it to a different checkout.
+node --test tests/business.test.cjs
+node examples/run.cjs
+node evaluation/recount.cjs
 node tests/core.cjs
 node tests/web-http.cjs
-# Point CHROMIUM_PATH at sandbox-capable browser if not using Playwright's installed browser.
-node tests/browser.cjs
+# Optional driver only; CHROMIUM_PATH may point to a sandbox-capable Chromium executable.
+PLAYWRIGHT_MODULE=/absolute/path/to/playwright PALE_EVIDENCE_DIR=/tmp/refund-evidence node tests/browser.cjs
+```
+From the full checkout root:
+```sh
+npm run app:verify -- --app apps/refund-only-returns
+npm test
 ```
 
-- CLI validation checks the standalone package/schema/contracts, seed/reset/persistence, Agent-only business calls and denial of all Infra commands through Agent MCP. Both runtimes report 34 passing checks. Domain tests also run standalone and are included in the CLI validation.
-- Live MCP scenario verifies default task permissions and separate read-only policy; custom seed history in the future fails atomically. The cutoff test first confirms an obsolete expected version returns `stale_version`, then a freshly versioned call returns `return_expired`, with exact unchanged business state. The matching pre-cutoff replay returns the original receipt without another write after advancement. Two reset/replays verify clock, receipts, entities and request history. Boundary equality remains eligible.
-- Loopback Web Host HTTP plus independent Agent/Infra MCP verifies shared persisted state and that browser access cannot call administrative operations. This is distinct from browser evidence.
-- Real browser clicks exercised lookup, details, preview and discard, request status, stale recovery and expiry on two fresh resets, then a pre-expiry confirmation with post-expiry cancellation. A dispatched request had no cancellation control. A separate Infra MCP process read the persisted state after each relevant transition. No money is returned or refunds executed. No external model trials or physical/merchant service was used.
-
-For a custom seed, use `env.load_seed` with a complete synthetic bundle, an explicit `virtual_now`, and `request_id`. Example: reuse the fixture snapshot bundle when replacing only timestamps or policy; if orders or request count changes, set `bundle.dataset.expected_counts.records` to orders plus requests, and supply a binding when the account changes. Orders and historical request creation dates must be on or after 2025-01-01 and no later than the seed's initial time. Deadlines can be in the future. A LifePack task's first session starts on or after 2026-01-01; this is separate from the history floor. Order 3 illustrates allowed 2025 history, while the actual example session starts in January 2026.
+- Business example and tests cover eligibility, date boundaries, allowed cancellation after deadline, repeat attempts and opaque IDs. Strict duplicate rejection stays enabled; separate per-order attempt ordinals distinguish a same-time second cancellation/discard from the first.
+- Live Core MCP verified versioned stale and fresh-expiry rejection, exact idempotent replay, per-role and per-run isolation, two reset/replays, and independent full-window data load plus monthly retrieval. The cutoff is inclusive. There was no real refund or external API use.
+- Live Web Host HTTP and browser mode verifies shared Core state, administrative denial, layout and input feedback, same-time reattempts, and complete scene transitions. See [GUI evidence and reference comparison](evidence/README.md).
+- Dataset: see [evaluation instructions and coverage](evaluation/README.md). The pinned monthly evaluation seed is separate from smoke fixtures; for a task at an earlier initial time, provide a scoped seed with no future orders or requests.

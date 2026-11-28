@@ -1,5 +1,5 @@
 'use strict';
-const a=require('node:assert/strict'),path=require('node:path'),r=path.resolve(process.env.PALE_RUNTIME_ROOT);
+const a=require('node:assert/strict'),path=require('node:path'),r=path.resolve(process.env.PALE_RUNTIME_ROOT||path.join(__dirname,'../../../runtime'));
 const {prepare}=require(r+'/prepare.cjs'),{Client}=require(r+'/client.cjs'),{start}=require(r+'/web/server.cjs');
 const p=prepare(path.join(__dirname,'..'));let h,i,g;
 async function main(){
